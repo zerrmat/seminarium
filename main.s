@@ -21,8 +21,6 @@ machineRegion: .res 1
 
 .segment "CODE"
 reset:
-	ldx #0
-	ldy #0
 	sei			; disable IRQs
 	cld			; disable decimal mode
 	ldx	#$40
@@ -52,7 +50,7 @@ clear_memory:
 	inx
 	bne	clear_memory
 
-	ldy #$00
+	ldy #0
 	;; second wait for vblank, PPU is ready after this
 vblankwait2:
 	inx
