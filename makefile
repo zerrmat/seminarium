@@ -13,3 +13,9 @@ main:
 clean:
 	rm main.o
 	rm demo.nes
+	
+# Silent make execution: https://www.gnu.org/software/make/manual/html_node/Echoing.html
+run:
+	@make -s
+	@echo "Wait for emulator to open and run ROM file"
+	@./Mesen demo.nes
