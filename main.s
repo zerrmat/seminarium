@@ -4,7 +4,7 @@
 ; ddribin's "Nerdy Nights ca65 remix lesson 03: background"
 ; https://bitbucket.org/ddribin/nerdy-nights/src/default/03-background/background.asm
 ; Detect console region
-; http://wiki.nesdev.com/w/index.php/Detect_TV_system
+; http://forums.nesdev.com/viewtopic.php?p=163258#p163258
 
 .segment "HEADER"
     .byte "NES"		; Magic number for files which are meant to run in NES emulators
@@ -72,6 +72,7 @@ vblankwait2:
 ;;; Dendy:    1 VBlank - 35464 cycles / 12.005 -> $7B6 or $1166
 
 ;;; Sadly, this code is cycle-dependent on code between vblankwait1 and vblankwait2
+;;; Original code: http://forums.nesdev.com/viewtopic.php?p=163258#p163258
 
 	tya
 	cmp #$E		; value lower than two VBlanks NTSC
@@ -85,7 +86,7 @@ vblankwait2:
 	bcc @noclip3
 	lda #3
 @noclip3:
-;;; Right now, A contains 0,1,2,3 for NTSC,PAL,Dendy,Bad
+;;; Right now, A contains 0, 1, 2, 3 for NTSC, PAL, Dendy, Bad
 	sta machineRegion
 	
 clear_palette:	
