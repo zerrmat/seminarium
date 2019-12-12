@@ -20,3 +20,7 @@ run:
 	@make -s
 	@echo "Wait for emulator to open and run ROM file"
 	@./Mesen demo.nes
+tests:
+	@make -s
+	@echo "Wait for emulator to end headless testing"
+	./Mesen --testrunner demo.nes test/demoTests.lua
