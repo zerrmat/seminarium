@@ -1,0 +1,4 @@
+Region: BSS + $0000
+NTSC = 00
+PAL = 01
+Dendy = 02

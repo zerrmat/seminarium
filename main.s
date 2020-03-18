@@ -1,3 +1,5 @@
+; Notepad++ ASM6502 NES highlight: https://github.com/vblank182/6502-npp-syntax
+
 ; Code based on following resources:
 ; Blargg's "Absolute minimal example"
 ; http://forums.nesdev.com/viewtopic.php?t=4247
@@ -17,6 +19,10 @@
 .segment "STARTUP" ; avoids warning
 
 .segment "ZEROPAGE"
+nametable_lo: .res 1
+nametable_hi: .res 1
+
+.segment "BSS"
 machineRegion: .res 1
 
 .segment "CODE"
@@ -53,12 +59,8 @@ clear_memory:
 	ldy #0
 	;; second wait for vblank, PPU is ready after this
 vblankwait2:
-	inx
-	bne @noincy
-	iny
-@noincy:
-	bit	$2002
-	bpl	vblankwait2
+	bit $2002
+	bpl vblankwait2
 	
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; now the machine setup is done
@@ -67,21 +69,27 @@ vblankwait2:
 ;;; BUT because of a hardware oversight, we might have missed a vblank flag.
 ;;;  so we need to both check for 1Vbl and 2Vbl
 ;;; VBlank flag is modified each $9B0 cycles (in hex)
-;;; NTSC NES: 1 VBlank - 29780 cycles / 12.005 -> $5DC or $F8C (Y:X)
-;;; PAL NES:  1 VBlank - 33247 cycles / 12.005 -> $6FD or $10AD
-;;; Dendy:    1 VBlank - 35464 cycles / 12.005 -> $7B6 or $1166
+;;; NTSC NES: 29780 cycles / 12.005 -> $9B1 or $1362 (Y:X)
+;;; PAL NES:  33247 cycles / 12.005 -> $AD2 or $15A3
+;;; Dendy:    35464 cycles / 12.005 -> $B8B or $1715
 
-;;; Sadly, this code is cycle-dependent on code between vblankwait1 and vblankwait2
 ;;; Original code: http://forums.nesdev.com/viewtopic.php?p=163258#p163258
 
+vblankwait3:
+	inx
+	bne @noincy
+	iny
+@noincy:
+	bit $2002
+	bpl vblankwait3
+
 	tya
-	cmp #$E		; value lower than two VBlanks NTSC
-	bcc @nodiv2	; if 1Vb1 (VBlank not missed), jump
-	clc			; otherwise code missed one VBlank (2Vb1 situation) so normalize it like it was 1Vb1
-	adc #<-9			
+	cmp #$C
+	bcc @nodiv2
+	lsr
 @nodiv2:
 	clc
-	adc #<-5	; subtract value equal to high byte for NTSC cycle count
+	adc #<-9
 	cmp #3
 	bcc @noclip3
 	lda #3
@@ -89,26 +97,39 @@ vblankwait2:
 ;;; Right now, A contains 0, 1, 2, 3 for NTSC, PAL, Dendy, Bad
 	sta machineRegion
 	
-clear_palette:	
-	;; Need clear both palettes to $00. Needed for Nestopia. Not
-	;; needed for FCEU* as they're already $00 on powerup.
+	;; Set mainmenu palette
 	lda	$2002		; Read PPU status to reset PPU address
 	lda	#$3f		; Set PPU address to BG palette RAM ($3F00)
 	sta	$2006
 	lda	#$00
 	sta $2006
 
-	ldx	#$20		; Loop $20 times (up to $3F20)
-	lda	#$00		; Set each entry to $00
+	ldx	#$00		
 @loop:
+	lda mainmenu_palette, x
 	sta	$2007
-	dex
+	inx
+	cpx #$20 ; Loop $20 times (up to $3F20)
 	bne	@loop
+	
+	jsr loadBackground
+	
+	jsr initSprites
+	
+	; Set RAM region $0200 as SPRRAM
+	lda #$00
+	sta $2003
+	lda #$02
+	sta $4014
 
-	lda	#%10000000	; intensify blues
+	; Set PPU
+	lda #%10000000	; NMI on
+	sta $2000
+	lda	#%00011110	; BGR, SPR, show BGR and SPR in leftmost 8 pixels
 	sta	$2001
 	
-    lda #$01 ; play short tone
+	; Play short tone
+    lda #$01
     sta $4015
     lda #$9F
     sta $4000
@@ -121,5 +142,53 @@ nmi:
 irq:
 	rti
 	
-.segment "CHARS"
-    ;.incbin "chr.bin" ; if you have one
+initSprites:
+	lda #$00
+	sta $0200
+	lda #$01
+	sta $0201
+	lda #%00000000
+	sta $0202
+	lda #$00
+	sta $0203
+	rts
+	
+loadBackground:
+	lda $2002
+	lda #$20
+	sta $2006
+	lda #$00
+	sta $2006
+	
+	lda #<(mainmenu_nametable)
+	sta nametable_lo
+	lda #>(mainmenu_nametable)
+	sta nametable_hi
+	ldx #$00
+	ldy #$00
+@outer_loop:
+@inner_loop:
+	lda (nametable_lo), y
+	sta $2007
+	iny
+	cpy #$00
+	bne @inner_loop
+	
+	inc nametable_hi	
+	inx
+	cpx #$04
+	bne @outer_loop
+	rts
+
+test_sprite:
+	.byte $00, $01, $00, $00
+
+mainmenu_palette:
+	.byte $0f,$30,$10,$30,$0f,$01,$21,$31,$0f,$06,$16,$26,$0f,$09,$19,$29	; BGR
+	.byte $0f,$30,$10,$30,$0f,$01,$21,$31,$0f,$06,$16,$26,$0f,$09,$19,$29	; SPR
+
+mainmenu_nametable:
+	.incbin "mainmenu.nam"
+
+.segment "TILES"
+    .incbin "my.chr" ; if you have one
