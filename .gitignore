@@ -1,0 +1,10 @@
+main.o
+demo.dbg
+demo.nes
+ca65.exe
+ld65.exe
+mesen.exe
+nes.cfg
+main.lst
+utilities/cc65
+utilities/Mesen.exe
