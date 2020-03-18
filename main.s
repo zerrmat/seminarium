@@ -13,7 +13,7 @@
 	.byte $1A		; MS-DOS end-of-file byte
 	.byte 2			; 2 x 16 KB (32 KB) for code (PRG)
 	.byte 1 		; 1 x 8 KB (8 KB) for graphics (CHR)
-	.byte %00000001 ; mapper 0 (highest 4 bits), vertical mirroring (8th bit)
+	.byte %00000000 ; mapper 0 (highest 4 bits), vertical mirroring (8th bit)
 .segment "VECTORS"
     .word nmi, reset, irq
 .segment "STARTUP" ; avoids warning
@@ -24,6 +24,7 @@ nametable_hi: .res 1
 
 .segment "BSS"
 machineRegion: .res 1
+mainmenuScrollY: .res 1
 
 .segment "CODE"
 reset:
@@ -123,10 +124,10 @@ vblankwait3:
 	sta $4014
 
 	; Set PPU
-	lda #%10000000	; NMI on
-	sta $2000
 	lda	#%00011110	; BGR, SPR, show BGR and SPR in leftmost 8 pixels
 	sta	$2001
+	lda #%10000010	; NMI on
+	sta $2000
 	
 	; Play short tone
     lda #$01
@@ -135,10 +136,26 @@ vblankwait3:
     sta $4000
     lda #$22
     sta $4003
+	
+	; Init state
+	lda #$F0
+	sta mainmenuScrollY
 forever:
     jmp forever
 	
 nmi:
+	ldy mainmenuScrollY
+	beq skip_mainmenu_scroll
+	
+	dey
+	sty mainmenuScrollY
+	lda #$00
+	sta $2005
+	sty $2005
+	lda #%10000000
+	sta $2000
+	
+skip_mainmenu_scroll:
 irq:
 	rti
 	
@@ -178,6 +195,31 @@ loadBackground:
 	inx
 	cpx #$04
 	bne @outer_loop
+;;; second
+	lda $2002
+	lda #$28
+	sta $2006
+	lda #$00
+	sta $2006
+	
+	lda #<(mainmenu_nametable_2)
+	sta nametable_lo
+	lda #>(mainmenu_nametable_2)
+	sta nametable_hi
+	ldx #$00
+	ldy #$00
+@outer_loop2:
+@inner_loop2:
+	lda (nametable_lo), y
+	sta $2007
+	iny
+	cpy #$00
+	bne @inner_loop2
+	
+	inc nametable_hi	
+	inx
+	cpx #$04
+	bne @outer_loop2
 	rts
 
 test_sprite:
@@ -189,6 +231,9 @@ mainmenu_palette:
 
 mainmenu_nametable:
 	.incbin "mainmenu.nam"
+	
+mainmenu_nametable_2:
+	.incbin "mainmenu2.nam"
 
 .segment "TILES"
     .incbin "my.chr" ; if you have one
