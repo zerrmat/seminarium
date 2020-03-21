@@ -33,8 +33,14 @@ secondsCounter: .res 1
 minutesCounter: .res 1
 hoursCounter: .res 1
 ; bits:
+; 7 - 
+; 6 - 
+; 5 - 
+; 4 - 
+; 3 -
+; 2 -  
+; 1 - "Push Start" text: 1 - shown, 0 - hidden
 ; 0 - end of scrolling
-; 1 - "Push Start" text should switch state
 mainmenuFlags: .res 1
 mainLoopSleeping: .res 1
 
