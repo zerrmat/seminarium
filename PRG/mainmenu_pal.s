@@ -1,14 +1,14 @@
 ;; Set mainmenu palette
-	lda	$2002		; Read PPU status to reset PPU address
-	lda	#$3f		; Set PPU address to BG palette RAM ($3F00)
-	sta	$2006
-	lda	#$00
-	sta $2006
+	lda	PPUSTATUS		; Read PPU status to reset PPU address
+	lda	#>BGR_PALETTE_PPU_ADDR		; Set PPU address to BG palette RAM ($3F00)
+	sta	PPUADDR
+	lda	#<BGR_PALETTE_PPU_ADDR
+	sta PPUADDR
 
 	ldx	#$00		
 @loop:
 	lda mainmenu_palette, x
-	sta	$2007
+	sta	PPUDATA
 	inx
-	cpx #$20 ; Loop $20 times (up to $3F20)
+	cpx #PPU_PALETTES_SIZE ; Loop $20 times (up to $3F20)
 	bne	@loop

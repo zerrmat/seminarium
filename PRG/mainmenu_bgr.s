@@ -1,8 +1,8 @@
-	lda $2002
-	lda #$20
-	sta $2006
-	lda #$00
-	sta $2006
+	lda PPUSTATUS
+	lda #>NAMETABLE_0_ADDR
+	sta PPUADDR
+	lda #<NAMETABLE_0_ADDR
+	sta PPUADDR
 	
 	lda #<(mainmenu_nametable)
 	sta nametable_lo
@@ -13,21 +13,21 @@
 @outer_loop:
 @inner_loop:
 	lda (nametable_lo), y
-	sta $2007
+	sta PPUDATA
 	iny
-	cpy #$00
+	cpy #<NAMETABLE_LENGTH
 	bne @inner_loop
 	
 	inc nametable_hi	
 	inx
-	cpx #$04
+	cpx #>NAMETABLE_LENGTH
 	bne @outer_loop
 ;;; second
-	lda $2002
-	lda #$28
-	sta $2006
-	lda #$00
-	sta $2006
+	lda PPUSTATUS
+	lda #>NAMETABLE_1_ADDR
+	sta PPUADDR
+	lda #<NAMETABLE_1_ADDR
+	sta PPUADDR
 	
 	lda #<(mainmenu_nametable_2)
 	sta nametable_lo
@@ -38,12 +38,12 @@
 @outer_loop2:
 @inner_loop2:
 	lda (nametable_lo), y
-	sta $2007
+	sta PPUDATA
 	iny
-	cpy #$00
+	cpy #<NAMETABLE_LENGTH
 	bne @inner_loop2
 	
 	inc nametable_hi	
 	inx
-	cpx #$04
+	cpx #>NAMETABLE_LENGTH
 	bne @outer_loop2

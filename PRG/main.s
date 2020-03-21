@@ -39,10 +39,10 @@
 .include "mainmenu_snd.s"
 
 	; Set PPU
-	lda	#%00011110	; BGR, SPR, show BGR and SPR in leftmost 8 pixels
-	sta	$2001
-	lda #%10000010	; NMI on
-	sta $2000
+	lda	#(PPUMASK_SPR_ON | PPUMASK_BGR_ON | PPUMASK_SPR_LEFT8_ON | PPUMASK_BGR_LEFT8_ON)
+	sta	PPUMASK
+	lda #PPUCTRL_NMI_ON	; NMI on
+	sta PPUCTRL
 
 ; Main loop synchronization with VBlank: https://wiki.nesdev.com/w/index.php/The_frame_and_NMIs
 ; "Take Full Advantage of NMI" section

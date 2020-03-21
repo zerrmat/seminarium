@@ -1,2 +1,2 @@
-	lda #$F0	; visible area starts at 240 pixel
+	lda #MAINMENU_START_SCROLL_POS
 	sta mainmenuScrollY

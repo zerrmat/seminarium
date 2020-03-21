@@ -1,14 +1,14 @@
 	lda #$00
-	sta $0200
+	sta OAM
 	lda #$01
-	sta $0201
+	sta OAM + $01
 	lda #%00000000
-	sta $0202
+	sta OAM + $02
 	lda #$00
-	sta $0203
+	sta OAM + $03
 	
 	; Set RAM region $0200 as SPRRAM
-	lda #$00
-	sta $2003
-	lda #$02
-	sta $4014
+	lda #<OAM
+	sta OAMADDR
+	lda #>OAM
+	sta OAMDMA

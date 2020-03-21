@@ -2,7 +2,7 @@ updateFrameCounters:
 	inc frameCounter
 ; applySecondsFix:
 	ldy machineRegion
-	cpy #$00
+	cpy #MACHINEREGION_NTSC
 	bne applyPALDendySecondsFix	; PAL and Dendy have 50 VBlanks per second
 	jmp endUpdateFrameCounters
 applyPALDendySecondsFix:
@@ -19,26 +19,26 @@ endUpdateFrameCounters:
 	
 updateTimeCounters:	
 	lda frameCounter
-	cmp #$3C
+	cmp #60
 	bmi checkSeconds
 	sec
-	sbc #$3C
+	sbc #60
 	sta frameCounter
 	inc secondsCounter
 checkSeconds:
 	lda secondsCounter
-	cmp #$3C
+	cmp #60
 	bmi checkMinutes
 	sec
-	sbc #$3C
+	sbc #60
 	sta secondsCounter
 	inc minutesCounter
 checkMinutes:
 	lda minutesCounter
-	cmp #$3C
+	cmp #60
 	bmi endUpdateTimeCounters
 	sec
-	sbc #$3C
+	sbc #60
 	sta minutesCounter
 	inc hoursCounter
 endUpdateTimeCounters:
@@ -49,7 +49,7 @@ updateTextBlinkFlag:
 	beq handleTextBlinkFlag
 	jmp endUpdateTextBlinkFlag
 handleTextBlinkFlag:
-	lda #%00000010
+	lda #MAINMENU_FLAG_TEXTBLINK
 	and mainmenuFlags
 	bne clearTextBlinkFlag
 ; setTextBlinkFlag:
@@ -57,8 +57,42 @@ handleTextBlinkFlag:
 	inc mainmenuFlags
 	jmp endUpdateTextBlinkFlag
 clearTextBlinkFlag:
-	lda #%11111101
+	lda #MAINMENU_FLAGS_NO_TEXTBLINK
 	and mainmenuFlags
 	sta mainmenuFlags
 endUpdateTextBlinkFlag:
+	rts 
+	
+drawBlinkText:
+	lda #MAINMENU_FLAG_TEXTBLINK
+	and mainmenuFlags
+	bne showBlinkText
+; hideBlinkText:
+	lda PPUSTATUS
+	lda #>MAINMENU_PUSHSTART_NAMETABLE_START
+	sta PPUADDR
+	lda #<MAINMENU_PUSHSTART_NAMETABLE_START
+	sta PPUADDR
+	ldx #$00
+hideBlinkTextLoop:
+	lda #$00
+	sta PPUDATA
+	inx
+	cpx #MAINMENU_PUSHSTART_NAMETABLE_LENGTH
+	bne hideBlinkTextLoop
+	jmp endBlinkText
+showBlinkText:
+	lda PPUSTATUS
+	lda #>MAINMENU_PUSHSTART_NAMETABLE_START
+	sta PPUADDR
+	lda #<MAINMENU_PUSHSTART_NAMETABLE_START
+	sta PPUADDR
+	ldx #$00
+showBlinkTextLoop:
+	lda mainmenu_pushstart_text, x
+	sta PPUDATA
+	inx
+	cpx #MAINMENU_PUSHSTART_NAMETABLE_LENGTH
+	bne showBlinkTextLoop
+endBlinkText:
 	rts 

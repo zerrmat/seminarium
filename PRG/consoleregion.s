@@ -12,7 +12,7 @@ vblankwait3:
 	bne @noincy
 	iny
 @noincy:
-	bit $2002
+	bit PPUSTATUS
 	bpl vblankwait3
 
 	tya

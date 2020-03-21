@@ -1,7 +1,7 @@
 	; Play short tone
     lda #$01
-    sta $4015
+    sta SND_CHN
     lda #$8F
-    sta $4000
+    sta SQ1_VOL
     lda #$32
-    sta $4003
+    sta SQ1_HI
