@@ -27,9 +27,11 @@ nametable_hi: .res 1
 .segment "BSS"
 machineRegion: .res 1
 mainmenuScrollY: .res 1
+frameCounter: .res 1
+regionFixFrameCounter: .res 1
 secondsCounter: .res 1
-regionFixSecondsCounter: .res 1
 mainmenuScrolled: .res 1
+mainLoopSleeping: .res 1
 
 .segment "CODE"
 reset:
@@ -145,39 +147,55 @@ vblankwait3:
     sta $4000
     lda #$22
     sta $4003
-	
+
+; Main loop synchronization with VBlank: https://wiki.nesdev.com/w/index.php/The_frame_and_NMIs
+; "Take Full Advantage of NMI" section
 forever:
+    inc mainLoopSleeping
+@loop:
+	lda mainLoopSleeping
+	bne @loop
+mainLoopStart:
 	lda mainmenuScrolled
 	and #%00000001
 	bne handlePostScrollFrame
 	jmp endForever
 handlePostScrollFrame:
+	ldx frameCounter
+	inx
+	stx frameCounter
+	cpx #$3C
+	bmi applySecondsFix
+	ldx #$00
+	stx frameCounter
 	ldx secondsCounter
 	inx
 	stx secondsCounter
-	cpx #$3C
-	bne applySecondsFix
-	ldx #$00
-	stx secondsCounter
 applySecondsFix:
 	ldy machineRegion
-	cpy #$01
-	beq applyPALSecondsFix
+	cpy #$00
+	bne applyPALDendySecondsFix
 	jmp endSecondsFix
-applyPALSecondsFix:
-	ldy regionFixSecondsCounter
+applyPALDendySecondsFix:
+	ldy regionFixFrameCounter
 	iny
-	sty regionFixSecondsCounter
+	sty regionFixFrameCounter
 	cpy #$05
 	bne endSecondsFix
 	ldy #$00
-	sty regionFixSecondsCounter
-	inc secondsCounter
+	sty regionFixFrameCounter
+	inc frameCounter
 endSecondsFix:
 endForever:
     jmp forever
 	
 nmi:
+	pha         ; back up registers (important)
+    txa
+    pha
+    tya
+    pha
+	
 	ldy mainmenuScrollY
 	beq skip_mainmenu_scroll
 	
@@ -193,6 +211,14 @@ skip_mainmenu_scroll:
 	lda #%00000001
 	sta mainmenuScrolled
 endNMI:
+	lda #$00
+	sta mainLoopSleeping
+	
+	pla            ; restore regs and exit
+    tay
+    pla
+    tax
+    pla
 irq:
 	rti
 	
