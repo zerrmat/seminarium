@@ -32,7 +32,10 @@ regionFixFrameCounter: .res 1
 secondsCounter: .res 1
 minutesCounter: .res 1
 hoursCounter: .res 1
-mainmenuScrolled: .res 1
+; bits:
+; 0 - end of scrolling
+; 1 - "Push Start" text should switch state
+mainmenuFlags: .res 1
 mainLoopSleeping: .res 1
 
 .segment "CODE"
@@ -158,10 +161,10 @@ forever:
 	lda mainLoopSleeping
 	bne @loop
 ; mainLoopStart:
-	lda mainmenuScrolled
+	lda mainmenuFlags
 	and #%00000001
 	bne handlePostScrollFrame
-	jmp endForever
+	jmp endMainLoop
 handlePostScrollFrame:
 	inc frameCounter
 ; applySecondsFix:
@@ -204,7 +207,23 @@ checkMinutes:
 	sta minutesCounter
 	inc hoursCounter
 endHandleTimeCounters:
-endForever:
+; handleTextBlink:
+	lda frameCounter
+	beq handleTextBlinkFlag
+	jmp endMainLoop
+handleTextBlinkFlag:
+	lda #%00000010
+	and mainmenuFlags
+	bne clearTextBlinkFlag
+; setTextBlinkFlag:
+	inc mainmenuFlags
+	inc mainmenuFlags
+	jmp endMainLoop
+clearTextBlinkFlag:
+	lda #%11111101
+	and mainmenuFlags
+	sta mainmenuFlags
+endMainLoop:
     jmp forever
 	
 nmi:
@@ -226,8 +245,9 @@ nmi:
 	sta $2000
 	jmp endNMI
 skip_mainmenu_scroll:
-	lda #%00000001
-	sta mainmenuScrolled
+	lda mainmenuFlags
+	ora #%00000001
+	sta mainmenuFlags
 endNMI:
 	lda #$00
 	sta mainLoopSleeping
