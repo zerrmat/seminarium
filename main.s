@@ -1,5 +1,7 @@
 ; Notepad++ ASM6502 NES highlight: https://github.com/vblank182/6502-npp-syntax
 
+; Everdrive runs roms with header
+
 ; Code based on following resources:
 ; Blargg's "Absolute minimal example"
 ; http://forums.nesdev.com/viewtopic.php?t=4247
@@ -226,15 +228,15 @@ test_sprite:
 	.byte $00, $01, $00, $00
 
 mainmenu_palette:
-	.incbin "mainmenu_palette.pal"
+	.incbin "Palettes/mainmenu_palette.pal"
 	;.byte $21,$20,$10,$00,$21,$01,$21,$31,$21,$06,$16,$26,$21,$09,$19,$29	; BGR
 	;.byte $21,$30,$10,$30,$21,$01,$21,$31,$21,$06,$16,$26,$21,$09,$19,$29	; SPR
 
 mainmenu_nametable:
-	.incbin "mainmenu.nam"
+	.incbin "Nametables/mainmenu.nam"
 	
 mainmenu_nametable_2:
-	.incbin "mainmenu2.nam"
+	.incbin "Nametables/mainmenu2.nam"
 
 .segment "TILES"
-    .incbin "my.chr" ; if you have one
+    .incbin "CHR/my.chr" ; if you have one
