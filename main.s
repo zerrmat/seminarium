@@ -27,6 +27,16 @@ nametable_hi: .res 1
 .segment "BSS"
 machineRegion: .res 1
 mainmenuScrollY: .res 1
+frameCounter: .res 1
+regionFixFrameCounter: .res 1
+secondsCounter: .res 1
+minutesCounter: .res 1
+hoursCounter: .res 1
+; bits:
+; 0 - end of scrolling
+; 1 - "Push Start" text should switch state
+mainmenuFlags: .res 1
+mainLoopSleeping: .res 1
 
 .segment "CODE"
 reset:
@@ -125,6 +135,10 @@ vblankwait3:
 	lda #$02
 	sta $4014
 
+	; Init state
+	lda #$F0
+	sta mainmenuScrollY
+
 	; Set PPU
 	lda	#%00011110	; BGR, SPR, show BGR and SPR in leftmost 8 pixels
 	sta	$2001
@@ -138,14 +152,87 @@ vblankwait3:
     sta $4000
     lda #$22
     sta $4003
-	
-	; Init state
-	lda #$F0
-	sta mainmenuScrollY
+
+; Main loop synchronization with VBlank: https://wiki.nesdev.com/w/index.php/The_frame_and_NMIs
+; "Take Full Advantage of NMI" section
 forever:
+    inc mainLoopSleeping
+@loop:
+	lda mainLoopSleeping
+	bne @loop
+; mainLoopStart:
+	lda mainmenuFlags
+	and #%00000001
+	bne handlePostScrollFrame
+	jmp endMainLoop
+handlePostScrollFrame:
+	inc frameCounter
+; applySecondsFix:
+	ldy machineRegion
+	cpy #$00
+	bne applyPALDendySecondsFix	; PAL and Dendy have 50 VBlanks per second
+	jmp endHandlePostScrollFrame
+applyPALDendySecondsFix:
+	ldy regionFixFrameCounter
+	iny
+	sty regionFixFrameCounter
+	cpy #$05
+	bne endHandlePostScrollFrame
+	ldy #$00
+	sty regionFixFrameCounter
+	inc frameCounter
+endHandlePostScrollFrame:
+; handleTimeCounters:
+	lda frameCounter
+	cmp #$3C
+	bmi checkSeconds
+	sec
+	sbc #$3C
+	sta frameCounter
+	inc secondsCounter
+checkSeconds:
+	lda secondsCounter
+	cmp #$3C
+	bmi checkMinutes
+	sec
+	sbc #$3C
+	sta secondsCounter
+	inc minutesCounter
+checkMinutes:
+	lda minutesCounter
+	cmp #$3C
+	bmi endHandleTimeCounters
+	sec
+	sbc #$3C
+	sta minutesCounter
+	inc hoursCounter
+endHandleTimeCounters:
+; handleTextBlink:
+	lda frameCounter
+	beq handleTextBlinkFlag
+	jmp endMainLoop
+handleTextBlinkFlag:
+	lda #%00000010
+	and mainmenuFlags
+	bne clearTextBlinkFlag
+; setTextBlinkFlag:
+	inc mainmenuFlags
+	inc mainmenuFlags
+	jmp endMainLoop
+clearTextBlinkFlag:
+	lda #%11111101
+	and mainmenuFlags
+	sta mainmenuFlags
+endMainLoop:
     jmp forever
 	
 nmi:
+	pha         ; back up registers (important)
+    txa
+    pha
+    tya
+    pha
+	
 	ldy mainmenuScrollY
 	beq skip_mainmenu_scroll
 	
@@ -156,8 +243,58 @@ nmi:
 	sty $2005
 	lda #%10000000
 	sta $2000
-	
+	jmp endNMI
 skip_mainmenu_scroll:
+	lda mainmenuFlags
+	ora #%00000001
+	sta mainmenuFlags
+; drawBlinkText:
+	lda #%00000010
+	and mainmenuFlags
+	bne showBlinkText
+; hideBlinkText:
+	lda $2002
+	lda #$21
+	sta $2006
+	lda #$07
+	sta $2006
+	ldx #$00
+hideBlinkTextLoop:
+	lda #$00
+	sta $2007
+	inx
+	cpx #$11
+	bne hideBlinkTextLoop
+	jmp endBlinkText
+showBlinkText:
+	lda $2002
+	lda #$21
+	sta $2006
+	lda #$07
+	sta $2006
+	ldx #$00
+showBlinkTextLoop:
+	lda mainmenu_pushstart_text, x
+	sta $2007
+	inx
+	cpx #$11
+	bne showBlinkTextLoop
+endBlinkText:
+; fixScroll:
+	lda mainmenuScrollY
+	sta $2005
+	sty $2005
+	lda #%10000000
+	sta $2000
+endNMI:
+	lda #$00
+	sta mainLoopSleeping
+	
+	pla            ; restore regs and exit
+    tay
+    pla
+    tax
+    pla
 irq:
 	rti
 	
@@ -237,6 +374,9 @@ mainmenu_nametable:
 	
 mainmenu_nametable_2:
 	.incbin "Nametables/mainmenu2.nam"
+	
+mainmenu_pushstart_text:
+	.byte $1A, $1F, $1D, $12, $00, $1D, $1E, $0B, $1C, $1E, $00, $0C, $1F, $1E, $1E, $19, $18
 
 .segment "TILES"
     .incbin "CHR/my.chr" ; if you have one
