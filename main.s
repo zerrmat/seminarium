@@ -30,6 +30,8 @@ mainmenuScrollY: .res 1
 frameCounter: .res 1
 regionFixFrameCounter: .res 1
 secondsCounter: .res 1
+minutesCounter: .res 1
+hoursCounter: .res 1
 mainmenuScrolled: .res 1
 mainLoopSleeping: .res 1
 
@@ -155,37 +157,53 @@ forever:
 @loop:
 	lda mainLoopSleeping
 	bne @loop
-mainLoopStart:
+; mainLoopStart:
 	lda mainmenuScrolled
 	and #%00000001
 	bne handlePostScrollFrame
 	jmp endForever
 handlePostScrollFrame:
-	ldx frameCounter
-	inx
-	stx frameCounter
-	cpx #$3C
-	bmi applySecondsFix
-	ldx #$00
-	stx frameCounter
-	ldx secondsCounter
-	inx
-	stx secondsCounter
-applySecondsFix:
+	inc frameCounter
+; applySecondsFix:
 	ldy machineRegion
 	cpy #$00
-	bne applyPALDendySecondsFix
-	jmp endSecondsFix
+	bne applyPALDendySecondsFix	; PAL and Dendy have 50 VBlanks per second
+	jmp endHandlePostScrollFrame
 applyPALDendySecondsFix:
 	ldy regionFixFrameCounter
 	iny
 	sty regionFixFrameCounter
 	cpy #$05
-	bne endSecondsFix
+	bne endHandlePostScrollFrame
 	ldy #$00
 	sty regionFixFrameCounter
 	inc frameCounter
-endSecondsFix:
+endHandlePostScrollFrame:
+; handleTimeCounters:
+	lda frameCounter
+	cmp #$3C
+	bmi checkSeconds
+	sec
+	sbc #$3C
+	sta frameCounter
+	inc secondsCounter
+checkSeconds:
+	lda secondsCounter
+	cmp #$3C
+	bmi checkMinutes
+	sec
+	sbc #$3C
+	sta secondsCounter
+	inc minutesCounter
+checkMinutes:
+	lda minutesCounter
+	cmp #$3C
+	bmi endHandleTimeCounters
+	sec
+	sbc #$3C
+	sta minutesCounter
+	inc hoursCounter
+endHandleTimeCounters:
 endForever:
     jmp forever
 	

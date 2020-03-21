@@ -1,4 +1,9 @@
-Region: BSS + $0000
+Region: BSS; machineRegion
 NTSC = 00
 PAL = 01
 Dendy = 02
+
+Region: BSS; frame / seconds / minutes / hoursCounter, regionFixFrameCounter
+frameCounter = 50 (PAL & Dendy), 60 (NTSC)
+regionFixFrameCounter = counts only when machineRegion is PAL or Dendy
+
