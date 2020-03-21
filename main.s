@@ -233,10 +233,10 @@ mainmenu_palette:
 	;.byte $21,$30,$10,$30,$21,$01,$21,$31,$21,$06,$16,$26,$21,$09,$19,$29	; SPR
 
 mainmenu_nametable:
-	.incbin "mainmenu.nam"
+	.incbin "Nametables/mainmenu.nam"
 	
 mainmenu_nametable_2:
-	.incbin "mainmenu2.nam"
+	.incbin "Nametables/mainmenu2.nam"
 
 .segment "TILES"
     .incbin "CHR/my.chr" ; if you have one
