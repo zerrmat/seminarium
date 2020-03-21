@@ -27,6 +27,9 @@ nametable_hi: .res 1
 .segment "BSS"
 machineRegion: .res 1
 mainmenuScrollY: .res 1
+secondsCounter: .res 1
+regionFixSecondsCounter: .res 1
+mainmenuScrolled: .res 1
 
 .segment "CODE"
 reset:
@@ -125,6 +128,10 @@ vblankwait3:
 	lda #$02
 	sta $4014
 
+	; Init state
+	lda #$F0
+	sta mainmenuScrollY
+
 	; Set PPU
 	lda	#%00011110	; BGR, SPR, show BGR and SPR in leftmost 8 pixels
 	sta	$2001
@@ -139,10 +146,35 @@ vblankwait3:
     lda #$22
     sta $4003
 	
-	; Init state
-	lda #$F0
-	sta mainmenuScrollY
 forever:
+	lda mainmenuScrolled
+	and #%00000001
+	bne handlePostScrollFrame
+	jmp endForever
+handlePostScrollFrame:
+	ldx secondsCounter
+	inx
+	stx secondsCounter
+	cpx #$3C
+	bne applySecondsFix
+	ldx #$00
+	stx secondsCounter
+applySecondsFix:
+	ldy machineRegion
+	cpy #$01
+	beq applyPALSecondsFix
+	jmp endSecondsFix
+applyPALSecondsFix:
+	ldy regionFixSecondsCounter
+	iny
+	sty regionFixSecondsCounter
+	cpy #$05
+	bne endSecondsFix
+	ldy #$00
+	sty regionFixSecondsCounter
+	inc secondsCounter
+endSecondsFix:
+endForever:
     jmp forever
 	
 nmi:
@@ -156,8 +188,11 @@ nmi:
 	sty $2005
 	lda #%10000000
 	sta $2000
-	
+	jmp endNMI
 skip_mainmenu_scroll:
+	lda #%00000001
+	sta mainmenuScrolled
+endNMI:
 irq:
 	rti
 	
