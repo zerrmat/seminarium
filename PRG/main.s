@@ -18,7 +18,7 @@
     .word nmi, reset, irq
 	
 .segment "ZEROPAGE"
-.include "title_zp.inc"
+.include "title_zp.h"
 
 .segment "BSS"
 .include "title_bss.inc"
