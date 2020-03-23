@@ -17,7 +17,10 @@
 .segment "VECTORS"
     .word nmi, reset, irq
 	
-.segment "ZEROPAGE"
+.include "title_zp.h"
+.include "title_zp.h"
+.include "title_zp.h"
+.include "title_zp.h"
 .include "title_zp.h"
 
 .segment "BSS"
