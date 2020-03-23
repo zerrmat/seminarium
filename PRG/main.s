@@ -18,10 +18,10 @@
     .word nmi, reset, irq
 	
 .segment "ZEROPAGE"
-.include "mainmenu_zp.inc"
+.include "title_zp.inc"
 
 .segment "BSS"
-.include "mainmenu_bss.inc"
+.include "title_bss.inc"
 
 .segment "CODE"
 .include "warmup.s"
@@ -32,11 +32,11 @@
 	
 .include "consoleregion.s"
 
-.include "mainmenu_pal.s"
-.include "mainmenu_bgr.s"
-.include "mainmenu_spr.s"
-.include "mainmenu_state.s"
-.include "mainmenu_snd.s"
+.include "title_pal.s"
+.include "title_bgr.s"
+.include "title_spr.s"
+.include "title_state.s"
+.include "title_snd.s"
 
 	; Set PPU
 	lda	#(PPUMASK_SPR_ON | PPUMASK_BGR_ON | PPUMASK_SPR_LEFT8_ON | PPUMASK_BGR_LEFT8_ON)
@@ -51,7 +51,7 @@ forever:
 @loop:
 	lda mainLoopSleeping
 	bne @loop
-.include "mainmenu_loop.s"
+.include "title_loop.s"
 endMainLoop:
     jmp forever
 	
@@ -62,7 +62,7 @@ nmi:
     tya
     pha
 	
-.include "mainmenu_nmi.s"
+.include "title_nmi.s"
 	
 endNMI:
 	lda #$00
@@ -76,5 +76,5 @@ endNMI:
 irq:
 	rti
 	
-.include "mainmenu_subs.s"	
-.include "mainmenu_data.inc"
+.include "title_subs.s"	
+.include "title_data.inc"

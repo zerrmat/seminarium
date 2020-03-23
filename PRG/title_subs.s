@@ -49,50 +49,50 @@ updateTextBlinkFlag:
 	beq handleTextBlinkFlag
 	jmp endUpdateTextBlinkFlag
 handleTextBlinkFlag:
-	lda #MAINMENU_FLAG_TEXTBLINK
-	and mainmenuFlags
+	lda #TITLE_FLAG_TEXTBLINK
+	and titleFlags
 	bne clearTextBlinkFlag
 ; setTextBlinkFlag:
-	inc mainmenuFlags
-	inc mainmenuFlags
+	inc titleFlags
+	inc titleFlags
 	jmp endUpdateTextBlinkFlag
 clearTextBlinkFlag:
-	lda #MAINMENU_FLAGS_NO_TEXTBLINK
-	and mainmenuFlags
-	sta mainmenuFlags
+	lda #TITLE_FLAGS_NO_TEXTBLINK
+	and titleFlags
+	sta titleFlags
 endUpdateTextBlinkFlag:
 	rts 
 	
 drawBlinkText:
-	lda #MAINMENU_FLAG_TEXTBLINK
-	and mainmenuFlags
+	lda #TITLE_FLAG_TEXTBLINK
+	and titleFlags
 	bne showBlinkText
 ; hideBlinkText:
 	lda PPUSTATUS
-	lda #>MAINMENU_PUSHSTART_NAMETABLE_START
+	lda #>TITLE_PUSHSTART_NAMETABLE_START
 	sta PPUADDR
-	lda #<MAINMENU_PUSHSTART_NAMETABLE_START
+	lda #<TITLE_PUSHSTART_NAMETABLE_START
 	sta PPUADDR
 	ldx #$00
 hideBlinkTextLoop:
 	lda #$00
 	sta PPUDATA
 	inx
-	cpx #MAINMENU_PUSHSTART_NAMETABLE_LENGTH
+	cpx #TITLE_PUSHSTART_NAMETABLE_LENGTH
 	bne hideBlinkTextLoop
 	jmp endBlinkText
 showBlinkText:
 	lda PPUSTATUS
-	lda #>MAINMENU_PUSHSTART_NAMETABLE_START
+	lda #>TITLE_PUSHSTART_NAMETABLE_START
 	sta PPUADDR
-	lda #<MAINMENU_PUSHSTART_NAMETABLE_START
+	lda #<TITLE_PUSHSTART_NAMETABLE_START
 	sta PPUADDR
 	ldx #$00
 showBlinkTextLoop:
-	lda mainmenu_pushstart_text, x
+	lda title_pushstart_text, x
 	sta PPUDATA
 	inx
-	cpx #MAINMENU_PUSHSTART_NAMETABLE_LENGTH
+	cpx #TITLE_PUSHSTART_NAMETABLE_LENGTH
 	bne showBlinkTextLoop
 endBlinkText:
 	rts 

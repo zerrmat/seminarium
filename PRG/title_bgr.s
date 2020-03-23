@@ -4,9 +4,9 @@
 	lda #<NAMETABLE_0_ADDR
 	sta PPUADDR
 	
-	lda #<(mainmenu_nametable)
+	lda #<(title_nametable)
 	sta nametable_lo
-	lda #>(mainmenu_nametable)
+	lda #>(title_nametable)
 	sta nametable_hi
 	ldx #$00
 	ldy #$00
@@ -29,9 +29,9 @@
 	lda #<NAMETABLE_1_ADDR
 	sta PPUADDR
 	
-	lda #<(mainmenu_nametable_2)
+	lda #<(title_nametable_2)
 	sta nametable_lo
-	lda #>(mainmenu_nametable_2)
+	lda #>(title_nametable_2)
 	sta nametable_hi
 	ldx #$00
 	ldy #$00

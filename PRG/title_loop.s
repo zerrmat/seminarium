@@ -1,7 +1,7 @@
 
 ; mainLoopStart:
-	lda mainmenuFlags
-	and #MAINMENU_FLAG_ENDSCROLL
+	lda titleFlags
+	and #TITLE_FLAG_ENDSCROLL
 	bne handlePostScrollFrame
 	jmp endMainLoop
 handlePostScrollFrame:
