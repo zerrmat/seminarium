@@ -13,7 +13,7 @@ CFG_DIR = ${BIN_DIR}
 CA65 = ${BIN_DIR}/ca65.exe
 LD65 = ${BIN_DIR}/ld65.exe
 
-TARGET = main title_zp
+TARGET = main title_zp title_bss registers title_consts
 OBJ = $(patsubst %, ${OBJ_DIR}/%.o, ${TARGET})
 
 PRG_NAME = demo

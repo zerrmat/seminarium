@@ -1,0 +1,6 @@
+.ifndef TITLE_CONSTS_H
+TITLE_CONSTS_H = 1
+
+.import APU_FRAME_IRQ_OFF
+
+.endif
