@@ -1,3 +1,7 @@
+.include "registers.h"
+
+APU_FRAME_IRQ_OFF = %01000000
+
 reset:
 	sei			; disable IRQs
 	cld			; disable decimal mode

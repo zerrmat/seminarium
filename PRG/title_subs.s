@@ -1,3 +1,12 @@
+.include "title_consts.h"
+.include "title_bss.h"
+.include "nes_consts.h"
+.include "title_data.h"
+.include "registers.h"
+
+.export updateFrameCounters, updateTimeCounters, updateTextBlinkFlag
+.export drawBlinkText
+
 updateFrameCounters:
 	inc frameCounter
 ; applySecondsFix:

@@ -9,11 +9,14 @@ OBJ_DIR = ${BIN_DIR}/obj
 ROM_DIR = .
 DBG_DIR = ${BIN_DIR}
 CFG_DIR = ${BIN_DIR}
+LST_DIR = ./bin/lst
 
 CA65 = ${BIN_DIR}/ca65.exe
 LD65 = ${BIN_DIR}/ld65.exe
 
-TARGET = main title_zp title_bss registers title_consts
+TARGET = main title_zp title_bss registers consoleregion romheader title_bgr \
+		title_loop title_nmi title_pal title_snd title_spr title_state \
+		title_subs title_data
 OBJ = $(patsubst %, ${OBJ_DIR}/%.o, ${TARGET})
 
 PRG_NAME = demo
@@ -40,13 +43,39 @@ make: ${TARGET}
 ${TARGET}: %: ${SRC_DIR}/%.s
 # Take ca65 source code, make main.o from it
 	@echo -e "${COMPILATION_STRING}"
-	@${CA65} -W2 -l ${BIN_DIR}/$@.lst -g $< -o ${OBJ_DIR}/$@.o || (echo -e "${COMPILATION_FAILED}"; exit 1)
+	@${CA65} -W1 -l ${LST_DIR}/$@.lst -g $< -o ${OBJ_DIR}/$@.o || (echo -e "${COMPILATION_FAILED}"; exit 1)
 	
 clean:
+	rm ${OBJ_DIR}/consoleregion.o
 	rm ${OBJ_DIR}/main.o
+	rm ${OBJ_DIR}/registers.o
+	rm ${OBJ_DIR}/romheader.o
+	rm ${OBJ_DIR}/title_bgr.o
+	rm ${OBJ_DIR}/title_bss.o
+	rm ${OBJ_DIR}/title_data.o
+	rm ${OBJ_DIR}/title_loop.o
+	rm ${OBJ_DIR}/title_nmi.o
+	rm ${OBJ_DIR}/title_pal.o
+	rm ${OBJ_DIR}/title_snd.o
+	rm ${OBJ_DIR}/title_spr.o
+	rm ${OBJ_DIR}/title_state.o
+	rm ${OBJ_DIR}/title_subs.o
 	rm ${OBJ_DIR}/title_zp.o
-	rm ${BIN_DIR}/main.lst
-	rm ${BIN_DIR}/title_zp.lst
+	rm ${LST_DIR}/consoleregion.lst
+	rm ${LST_DIR}/main.lst
+	rm ${LST_DIR}/registers.lst
+	rm ${LST_DIR}/romheader.lst
+	rm ${LST_DIR}/title_bgr.lst
+	rm ${LST_DIR}/title_bss.lst
+	rm ${LST_DIR}/title_data.lst
+	rm ${LST_DIR}/title_loop.lst
+	rm ${LST_DIR}/title_nmi.lst
+	rm ${LST_DIR}/title_pal.lst
+	rm ${LST_DIR}/title_snd.lst
+	rm ${LST_DIR}/title_spr.lst
+	rm ${LST_DIR}/title_state.lst
+	rm ${LST_DIR}/title_subs.lst
+	rm ${LST_DIR}/title_zp.lst
 	rm ${DBG_FILE}
 	rm ./demo.nes
 	

@@ -1,5 +1,13 @@
+.include "title_bss.h"
+.include "title_consts.h"
+.include "title_subs.h"
 
-; mainLoopStart:
+forever:
+    inc mainLoopSleeping
+@loop:
+	lda mainLoopSleeping
+	bne @loop
+	; mainLoopStart:
 	lda titleFlags
 	and #TITLE_FLAG_ENDSCROLL
 	bne handlePostScrollFrame
@@ -8,3 +16,5 @@ handlePostScrollFrame:
 	jsr updateFrameCounters
 	jsr updateTimeCounters
 	jsr updateTextBlinkFlag
+endMainLoop:
+    jmp forever

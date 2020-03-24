@@ -12,44 +12,12 @@
 
 .include "romheader.s"
 
+.import nmi
+
 .segment "STARTUP" ; avoids warning
 
 .segment "VECTORS"
     .word nmi, reset, irq
-	
-.include "title_zp.h"
-.include "title_bss.h"
-.include "registers.h"
-.include "title_consts.h"
-
-PPUCTRL_NMI_ON = %10000000
-
-PPUMASK_SPR_ON = %00010000
-PPUMASK_BGR_ON = %00001000
-PPUMASK_SPR_LEFT8_ON = %00000100
-PPUMASK_BGR_LEFT8_ON = %00000010
-
-TITLE_FLAG_ENDSCROLL = %00000001
-TITLE_FLAG_TEXTBLINK = %00000010
-TITLE_FLAGS_NO_TEXTBLINK = %11111101
-TITLE_START_SCROLL_POS = $F0
-TITLE_END_SCROLL_POS = $00
-
-TITLE_PUSHSTART_NAMETABLE_START = $2107
-TITLE_PUSHSTART_NAMETABLE_LENGTH = $11
-
-NAMETABLE_LENGTH = $0400
-
-NAMETABLE_0_ADDR = $2000
-NAMETABLE_1_ADDR = $2800
-
-BGR_PALETTE_PPU_ADDR = $3F00
-SPR_PALETTE_PPU_ADDR = $3F10
-PPU_PALETTES_SIZE = $20
-
-MACHINEREGION_NTSC = $00
-MACHINEREGION_PAL = $01
-MACHINEREGION_DENDY = $02
 
 .segment "CODE"
 .include "warmup.s"
@@ -74,35 +42,7 @@ MACHINEREGION_DENDY = $02
 
 ; Main loop synchronization with VBlank: https://wiki.nesdev.com/w/index.php/The_frame_and_NMIs
 ; "Take Full Advantage of NMI" section
-forever:
-    inc mainLoopSleeping
-@loop:
-	lda mainLoopSleeping
-	bne @loop
 .include "title_loop.s"
-endMainLoop:
-    jmp forever
 	
-nmi:
-	pha         ; back up registers (important)
-    txa
-    pha
-    tya
-    pha
-	
-.include "title_nmi.s"
-	
-endNMI:
-	lda #$00
-	sta mainLoopSleeping
-	
-	pla            ; restore regs and exit
-    tay
-    pla
-    tax
-    pla
 irq:
 	rti
-	
-.include "title_subs.s"	
-.include "title_data.inc"

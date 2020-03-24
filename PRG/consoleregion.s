@@ -1,3 +1,6 @@
+.include "title_bss.h"
+.include "registers.h"
+
 ;;; BUT because of a hardware oversight, we might have missed a vblank flag.
 ;;;  so we need to both check for 1Vbl and 2Vbl
 ;;; VBlank flag is modified each $9B0 cycles (in hex)

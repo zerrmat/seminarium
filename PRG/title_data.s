@@ -1,3 +1,6 @@
+.export test_sprite, title_palette, title_nametable, title_nametable_2
+.export title_pushstart_text
+
 test_sprite:
 	.byte $00, $01, $00, $00
 

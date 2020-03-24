@@ -1,3 +1,18 @@
+.include "title_consts.h"
+.include "title_bss.h"
+.include "registers.h"
+.include "title_subs.h"
+.include "nes_consts.h"
+
+.export nmi
+
+nmi:
+	pha         ; back up registers (important)
+    txa
+    pha
+    tya
+    pha
+	
 	ldy titleScrollY
 	beq skip_title_scroll
 	
@@ -20,3 +35,15 @@ skip_title_scroll:
 	sty PPUSCROLL
 	lda #PPUCTRL_NMI_ON
 	sta PPUCTRL
+	
+endNMI:
+	lda #$00
+	sta mainLoopSleeping
+	
+	pla            ; restore regs and exit
+    tay
+    pla
+    tax
+    pla
+	rti
+	

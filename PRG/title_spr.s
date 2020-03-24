@@ -1,3 +1,4 @@
+.include "registers.h"
 	lda #$00
 	sta OAM
 	lda #$01

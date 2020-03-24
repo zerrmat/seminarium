@@ -1,3 +1,8 @@
+.include "title_zp.h"
+.include "registers.h"
+.include "nes_consts.h"
+.include "title_data.h"
+
 	lda PPUSTATUS
 	lda #>NAMETABLE_0_ADDR
 	sta PPUADDR

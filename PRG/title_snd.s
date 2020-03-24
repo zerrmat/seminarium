@@ -1,3 +1,5 @@
+.include "registers.h"
+
 	; Play short tone
     lda #$01
     sta SND_CHN
