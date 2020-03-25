@@ -13,30 +13,30 @@
 .include "nes_consts.h"
 .include "registers.h"
 
-.import detect_region	; console_region.s
-.import title_nmi	; title_nmi.s
-.import title_main	; title_loop.s
+.import DetectRegion	; console_region.s
+.import TitleNMI	; title_nmi.s
+.import TitleMain	; title_loop.s
 .import mainLoopSleeping	; title_bss.s
-.import set_title_palette	; title_pal.s
-.import set_backgrounds	; title_bgr.s
-.import set_sprites	; title_spr.s
-.import init_title_state	; title_state.s
-.import play_sound	; title_snd.s
-.import warmup_start	; warmup.s
+.import SetTitlePalette	; title_pal.s
+.import SetBackgrounds	; title_bgr.s
+.import SetSprites	; title_spr.s
+.import InitTitleState	; title_state.s
+.import PlaySound	; title_snd.s
+.import WarmupStart	; warmup.s
 
-.export warmup_end
+.export WarmupEnd
 
 .segment "CODE"
-INT_reset:
-	jmp warmup_start
-	warmup_end:
-	jsr detect_region
-	jsr set_title_palette
-	jsr set_backgrounds
-	jsr set_sprites
-	jsr init_title_state
+_INT_Reset:
+	jmp WarmupStart
+	WarmupEnd:
+	jsr DetectRegion
+	jsr SetTitlePalette
+	jsr SetBackgrounds
+	jsr SetSprites
+	jsr InitTitleState
 		
-	jsr play_sound
+	jsr PlaySound
 
 	; Set PPU
 	lda	#(PPUMASK_SPR_ON | PPUMASK_BGR_ON | PPUMASK_SPR_LEFT8_ON | PPUMASK_BGR_LEFT8_ON)
@@ -46,23 +46,23 @@ INT_reset:
 
 	; Main loop synchronization with VBlank: https://wiki.nesdev.com/w/index.php/The_frame_and_NMIs
 	; "Take Full Advantage of NMI" section		
-	main_loop:
+	_loop_Main:
 		inc mainLoopSleeping
-		sleep_loop:
+		_loop_Sleep:
 			lda mainLoopSleeping
-			bne sleep_loop
+			bne _loop_Sleep
 		
-		jsr title_main
-		jmp main_loop
+		jsr TitleMain
+		jmp _loop_Main
 	
-INT_nmi:
+_INT_NMI:
 	pha         ; back up registers (important)
     txa
     pha
     tya
     pha
 
-	jsr title_nmi
+	jsr TitleNMI
 	
 	lda #$00
 	sta mainLoopSleeping
@@ -72,9 +72,8 @@ INT_nmi:
     pla
     tax
     pla
-	rti
-INT_irq:
+_INT_IRQ:
 	rti
 	
 .segment "VECTORS"
-    .word INT_nmi, INT_reset, INT_irq
+    .word _INT_NMI, _INT_Reset, _INT_IRQ

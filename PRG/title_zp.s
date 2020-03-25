@@ -1,5 +1,5 @@
 .segment "ZEROPAGE"
-.exportzp nametable_lo, nametable_hi
+.exportzp nametableLo, nametableHi
 
-nametable_lo: .res 1
-nametable_hi: .res 1
+nametableLo: .res 1
+nametableHi: .res 1

@@ -3,92 +3,98 @@
 .include "registers.h"
 
 ; title_data.s
-.import title_pushstart_text
+.import _data_titlePushstartText
 
 ; title_bss.s
 .import machineRegion, frameCounter, secondsCounter, minutesCounter, hoursCounter
 .import titleFlags, regionFixFrameCounter
 
-.export updateFrameCounters, updateTimeCounters, updateTextBlinkFlag
-.export drawBlinkText
+.export UpdateFrameCounters, UpdateTimeCounters, UpdateTextBlinkFlag
+.export DrawBlinkText
 
-updateFrameCounters:
+TITLE_FLAG_TEXTBLINK = %00000010
+TITLE_FLAG_NO_TEXTBLINK = %11111101
+
+TITLE_PUSHSTART_NAMETABLE_START = $2107
+TITLE_PUSHSTART_NAMETABLE_DATA_LENGTH = $11
+
+UpdateFrameCounters:
 	inc frameCounter
 ; applySecondsFix:
 	ldy machineRegion
 	cpy #MACHINEREGION_NTSC
-	bne applyPALDendySecondsFix	; PAL and Dendy have 50 VBlanks per second
-		jmp endUpdateFrameCounters
+	bne _ApplyPALDendySecondsFix	; PAL and Dendy have 50 VBlanks per second
+		jmp _EndUpdateFrameCounters
 		
-	applyPALDendySecondsFix:
+	_ApplyPALDendySecondsFix:
 	ldy regionFixFrameCounter
 	iny
 	sty regionFixFrameCounter
 	cpy #$05
-	bne endUpdateFrameCounters
+	bne _EndUpdateFrameCounters
 		ldy #$00
 		sty regionFixFrameCounter
 		inc frameCounter
 		
-	endUpdateFrameCounters:
+	_EndUpdateFrameCounters:
 	rts
 	
-updateTimeCounters:	
+UpdateTimeCounters:	
 	lda frameCounter
 	cmp #60
-	bmi checkSeconds
+	bmi _CheckSeconds
 		sec
 		sbc #60
 		sta frameCounter
 		inc secondsCounter
 		
-	checkSeconds:
+	_CheckSeconds:
 	lda secondsCounter
 	cmp #60
-	bmi checkMinutes
+	bmi _CheckMinutes
 		sec
 		sbc #60
 		sta secondsCounter
 		inc minutesCounter
 		
-	checkMinutes:
+	_CheckMinutes:
 	lda minutesCounter
 	cmp #60
-	bmi endUpdateTimeCounters
+	bmi _EndUpdateTimeCounters
 		sec
 		sbc #60
 		sta minutesCounter
 		inc hoursCounter
 	
-	endUpdateTimeCounters:
+	_EndUpdateTimeCounters:
 	rts 
 	
-updateTextBlinkFlag:
+UpdateTextBlinkFlag:
 	lda frameCounter
-	beq handleTextBlinkFlag
-	jmp endUpdateTextBlinkFlag
+	beq _HandleTextBlinkFlag
+		jmp _EndUpdateTextBlinkFlag
 	
-	handleTextBlinkFlag:
+	_HandleTextBlinkFlag:
 	lda #TITLE_FLAG_TEXTBLINK
 	and titleFlags
-	bne clearTextBlinkFlag
+	bne _ClearTextBlinkFlag
 		; setTextBlinkFlag:
 		inc titleFlags
 		inc titleFlags
-		jmp endUpdateTextBlinkFlag
+		jmp _EndUpdateTextBlinkFlag
 		
-	clearTextBlinkFlag:
-	lda #TITLE_FLAGS_NO_TEXTBLINK
+	_ClearTextBlinkFlag:
+	lda #TITLE_FLAG_NO_TEXTBLINK
 	and titleFlags
 	sta titleFlags
 	
-	endUpdateTextBlinkFlag:
+	_EndUpdateTextBlinkFlag:
 	rts 
 	
-drawBlinkText:
+DrawBlinkText:
 	lda #TITLE_FLAG_TEXTBLINK
 	and titleFlags
-	bne showBlinkText
+	bne _ShowBlinkText
 		; hideBlinkText:
 		lda PPUSTATUS
 		lda #>TITLE_PUSHSTART_NAMETABLE_START
@@ -96,27 +102,28 @@ drawBlinkText:
 		lda #<TITLE_PUSHSTART_NAMETABLE_START
 		sta PPUADDR
 		ldx #$00
-		hideBlinkTextLoop:
+		_loop_HideBlinkText:
 			lda #$00
 			sta PPUDATA
 			inx
-			cpx #TITLE_PUSHSTART_NAMETABLE_LENGTH
-			bne hideBlinkTextLoop
-		jmp endBlinkText
+			cpx #TITLE_PUSHSTART_NAMETABLE_DATA_LENGTH
+			bne _loop_HideBlinkText
+			
+		jmp _EndBlinkText
 		
-	showBlinkText:
+	_ShowBlinkText:
 	lda PPUSTATUS
 	lda #>TITLE_PUSHSTART_NAMETABLE_START
 	sta PPUADDR
 	lda #<TITLE_PUSHSTART_NAMETABLE_START
 	sta PPUADDR
 	ldx #$00
-	showBlinkTextLoop:
-		lda title_pushstart_text, x
+	_loop_ShowBlinkText:
+		lda _data_titlePushstartText, x
 		sta PPUDATA
 		inx
-		cpx #TITLE_PUSHSTART_NAMETABLE_LENGTH
-		bne showBlinkTextLoop
+		cpx #TITLE_PUSHSTART_NAMETABLE_DATA_LENGTH
+		bne _loop_ShowBlinkText
 		
-	endBlinkText:
+	_EndBlinkText:
 	rts 

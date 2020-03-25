@@ -3,17 +3,17 @@
 .include "nes_consts.h"
 
 ; title_subs.s
-.import drawBlinkText
-
+.import DrawBlinkText
 ; title_bss.s
-.import titleScrollY, titleFlags, mainLoopSleeping
+.import titleScrollY, titleFlags
 
-; main.s
-.export title_nmi
+.export TitleNMI
 
-title_nmi:
+TITLE_END_SCROLL_POS = $00
+
+TitleNMI:
 	ldy titleScrollY
-	beq skip_title_scroll
+	beq _SkipTitleScroll
 		dey
 		sty titleScrollY
 		lda #TITLE_END_SCROLL_POS
@@ -21,19 +21,19 @@ title_nmi:
 		sty PPUSCROLL
 		lda #PPUCTRL_NMI_ON
 		sta PPUCTRL
-		jmp end_title_nmi
+		jmp _EndTitleNMI
 	
-	skip_title_scroll:
+	_SkipTitleScroll:
 	lda titleFlags
 	ora #TITLE_FLAG_ENDSCROLL
 	sta titleFlags
-	jsr drawBlinkText
+	jsr DrawBlinkText
 ; fixScroll:
 	lda titleScrollY
 	sta PPUSCROLL
 	sty PPUSCROLL
 	lda #PPUCTRL_NMI_ON
 	sta PPUCTRL
-end_title_nmi:
+_EndTitleNMI:
 	rts
 	

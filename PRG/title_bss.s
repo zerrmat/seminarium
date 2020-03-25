@@ -17,7 +17,7 @@ hoursCounter: .res 1
 ; 4 - 
 ; 3 -
 ; 2 -  
-; 1 - "Push Start" text: 1 - shown, 0 - hidden
+; 1 - "Push Start" text: 1 shown, 0 hidden
 ; 0 - end of scrolling
 titleFlags: .res 1
 mainLoopSleeping: .res 1

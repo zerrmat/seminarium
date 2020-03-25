@@ -1,24 +1,24 @@
 .include "title_consts.h"
 
 ; title_subs.s
-.import updateFrameCounters, updateTimeCounters, updateTextBlinkFlag
+.import UpdateFrameCounters, UpdateTimeCounters, UpdateTextBlinkFlag
 
 ; title_bss.s
-.import mainLoopSleeping, titleFlags
+.import titleFlags
 
-.export title_main
+.export TitleMain
 
-title_main:
+TitleMain:
 	; mainLoopStart:
 	lda titleFlags
 	and #TITLE_FLAG_ENDSCROLL
-	bne handlePostScrollFrame
-		jmp end_title_loop
+	bne _HandlePostScrollFrame
+		jmp _EndTitleMain
 	
-	handlePostScrollFrame:
-	jsr updateFrameCounters
-	jsr updateTimeCounters
-	jsr updateTextBlinkFlag
-end_title_loop:
+	_HandlePostScrollFrame:
+	jsr UpdateFrameCounters
+	jsr UpdateTimeCounters
+	jsr UpdateTextBlinkFlag
+_EndTitleMain:
 	rts
 
