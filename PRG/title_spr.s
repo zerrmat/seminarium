@@ -1,4 +1,8 @@
 .include "registers.h"
+
+.export set_sprites
+
+set_sprites:
 	lda #$00
 	sta OAM
 	lda #$01
@@ -13,3 +17,5 @@
 	sta OAMADDR
 	lda #>OAM
 	sta OAMDMA
+	rts
+	

@@ -6,19 +6,19 @@
 ; title_bss.s
 .import mainLoopSleeping, titleFlags
 
-forever:
-    inc mainLoopSleeping
-@loop:
-	lda mainLoopSleeping
-	bne @loop
+.export title_main
+
+title_main:
 	; mainLoopStart:
 	lda titleFlags
 	and #TITLE_FLAG_ENDSCROLL
 	bne handlePostScrollFrame
-	jmp endMainLoop
-handlePostScrollFrame:
+		jmp end_title_loop
+	
+	handlePostScrollFrame:
 	jsr updateFrameCounters
 	jsr updateTimeCounters
 	jsr updateTextBlinkFlag
-endMainLoop:
-    jmp forever
+end_title_loop:
+	rts
+

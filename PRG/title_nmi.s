@@ -8,27 +8,22 @@
 ; title_bss.s
 .import titleScrollY, titleFlags, mainLoopSleeping
 
-.export nmi
+; main.s
+.export title_nmi
 
-nmi:
-	pha         ; back up registers (important)
-    txa
-    pha
-    tya
-    pha
-	
+title_nmi:
 	ldy titleScrollY
 	beq skip_title_scroll
+		dey
+		sty titleScrollY
+		lda #TITLE_END_SCROLL_POS
+		sta PPUSCROLL
+		sty PPUSCROLL
+		lda #PPUCTRL_NMI_ON
+		sta PPUCTRL
+		jmp end_title_nmi
 	
-	dey
-	sty titleScrollY
-	lda #TITLE_END_SCROLL_POS
-	sta PPUSCROLL
-	sty PPUSCROLL
-	lda #PPUCTRL_NMI_ON
-	sta PPUCTRL
-	jmp endNMI
-skip_title_scroll:
+	skip_title_scroll:
 	lda titleFlags
 	ora #TITLE_FLAG_ENDSCROLL
 	sta titleFlags
@@ -39,15 +34,6 @@ skip_title_scroll:
 	sty PPUSCROLL
 	lda #PPUCTRL_NMI_ON
 	sta PPUCTRL
-	
-endNMI:
-	lda #$00
-	sta mainLoopSleeping
-	
-	pla            ; restore regs and exit
-    tay
-    pla
-    tax
-    pla
-	rti
+end_title_nmi:
+	rts
 	

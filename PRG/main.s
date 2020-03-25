@@ -10,29 +10,33 @@
 ; Detect console region
 ; http://forums.nesdev.com/viewtopic.php?p=163258#p163258
 
-.include "romheader.s"
+.include "nes_consts.h"
+.include "registers.h"
 
-.import nmi
+.import detect_region	; console_region.s
+.import title_nmi	; title_nmi.s
+.import title_main	; title_loop.s
+.import mainLoopSleeping	; title_bss.s
+.import set_title_palette	; title_pal.s
+.import set_backgrounds	; title_bgr.s
+.import set_sprites	; title_spr.s
+.import init_title_state	; title_state.s
+.import play_sound	; title_snd.s
+.import warmup_start	; warmup.s
 
-.segment "STARTUP" ; avoids warning
-
-.segment "VECTORS"
-    .word nmi, reset, irq
+.export warmup_end
 
 .segment "CODE"
-.include "warmup.s"
-	
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; now the machine setup is done
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	
-.include "consoleregion.s"
-
-.include "title_pal.s"
-.include "title_bgr.s"
-.include "title_spr.s"
-.include "title_state.s"
-.include "title_snd.s"
+INT_reset:
+	jmp warmup_start
+	warmup_end:
+	jsr detect_region
+	jsr set_title_palette
+	jsr set_backgrounds
+	jsr set_sprites
+	jsr init_title_state
+		
+	jsr play_sound
 
 	; Set PPU
 	lda	#(PPUMASK_SPR_ON | PPUMASK_BGR_ON | PPUMASK_SPR_LEFT8_ON | PPUMASK_BGR_LEFT8_ON)
@@ -40,9 +44,37 @@
 	lda #PPUCTRL_NMI_ON	; NMI on
 	sta PPUCTRL
 
-; Main loop synchronization with VBlank: https://wiki.nesdev.com/w/index.php/The_frame_and_NMIs
-; "Take Full Advantage of NMI" section
-.include "title_loop.s"
+	; Main loop synchronization with VBlank: https://wiki.nesdev.com/w/index.php/The_frame_and_NMIs
+	; "Take Full Advantage of NMI" section		
+	main_loop:
+		inc mainLoopSleeping
+		sleep_loop:
+			lda mainLoopSleeping
+			bne sleep_loop
+		
+		jsr title_main
+		jmp main_loop
 	
-irq:
+INT_nmi:
+	pha         ; back up registers (important)
+    txa
+    pha
+    tya
+    pha
+
+	jsr title_nmi
+	
+	lda #$00
+	sta mainLoopSleeping
+	
+	pla            ; restore regs and exit
+    tay
+    pla
+    tax
+    pla
 	rti
+INT_irq:
+	rti
+	
+.segment "VECTORS"
+    .word INT_nmi, INT_reset, INT_irq

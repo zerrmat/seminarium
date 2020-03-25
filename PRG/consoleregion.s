@@ -2,6 +2,8 @@
 
 .import machineRegion
 
+.export detect_region
+
 ;;; BUT because of a hardware oversight, we might have missed a vblank flag.
 ;;;  so we need to both check for 1Vbl and 2Vbl
 ;;; VBlank flag is modified each $9B0 cycles (in hex)
@@ -11,24 +13,30 @@
 
 ;;; Original code: http://forums.nesdev.com/viewtopic.php?p=163258#p163258
 
-vblankwait3:
-	inx
-	bne @noincy
-	iny
-@noincy:
-	bit PPUSTATUS
-	bpl vblankwait3
-
+detect_region:
+	vblankwait3_loop:
+		inx
+		bne noincy
+			iny
+		
+		noincy:
+		bit PPUSTATUS
+		bpl vblankwait3_loop
+	
 	tya
 	cmp #$C
-	bcc @nodiv2
-	lsr
-@nodiv2:
+	bcc nodiv2
+		lsr
+		
+	nodiv2:
 	clc
 	adc #<-9
 	cmp #3
-	bcc @noclip3
-	lda #3
-@noclip3:
+	bcc noclip3
+		lda #3
+
+	noclip3:
 ;;; Right now, A contains 0, 1, 2, 3 for NTSC, PAL, Dendy, Bad
 	sta machineRegion
+	rts
+	

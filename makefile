@@ -15,8 +15,8 @@ CA65 = ${BIN_DIR}/ca65.exe
 LD65 = ${BIN_DIR}/ld65.exe
 
 TARGET = main title_zp title_bss registers consoleregion romheader title_bgr \
-		title_loop title_nmi title_pal title_snd title_spr title_state \
-		title_subs title_data
+		title_main title_nmi title_pal title_snd title_spr title_state \
+		title_subs title_data warmup
 OBJ = $(patsubst %, ${OBJ_DIR}/%.o, ${TARGET})
 SRCNAMES = $(patsubst %, ${SRC_DIR}/%.s, ${TARGET})
 
@@ -35,9 +35,11 @@ COMPILATION_STRING = ${GREEN_COLOR}[${COMPILATION_FILENAME}]${NO_COLOR} Compilin
 COMPILATION_FAILED = ${RED_COLOR}[$@.s] ca65 failed, error $$?${NO_COLOR}
 COMPILATION_SUCCESS = ${GREEN_COLOR}ROM successfully assembled!${NO_COLOR}
 LINKING_FAILED = ${RED_COLOR}ld65 failed, error $$?${NO_COLOR}
+LINKING_STRING = Linking files...
 	
 make: ${OBJ}
 #@echo OBJ: ${OBJ}
+	@echo -e "${LINKING_STRING}"
 	@${LD65} -t nes --cfg-path ${CFG_DIR} --dbgfile ${DBG_FILE} -o ${ROM_DIR}/${ROM_NAME} $^ || (echo -e "${LINKING_FAILED}"; exit 2)
 	@echo -e "${COMPILATION_SUCCESS}"
 	
@@ -53,7 +55,7 @@ clean:
 	rm ${OBJ_DIR}/title_bgr.o
 	rm ${OBJ_DIR}/title_bss.o
 	rm ${OBJ_DIR}/title_data.o
-	rm ${OBJ_DIR}/title_loop.o
+	rm ${OBJ_DIR}/title_main.o
 	rm ${OBJ_DIR}/title_nmi.o
 	rm ${OBJ_DIR}/title_pal.o
 	rm ${OBJ_DIR}/title_snd.o
@@ -68,7 +70,7 @@ clean:
 	rm ${OBJ_DIR}/title_bgr.o.lst
 	rm ${OBJ_DIR}/title_bss.o.lst
 	rm ${OBJ_DIR}/title_data.o.lst
-	rm ${OBJ_DIR}/title_loop.o.lst
+	rm ${OBJ_DIR}/title_main.o.lst
 	rm ${OBJ_DIR}/title_nmi.o.lst
 	rm ${OBJ_DIR}/title_pal.o.lst
 	rm ${OBJ_DIR}/title_snd.o.lst
