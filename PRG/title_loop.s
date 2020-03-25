@@ -1,6 +1,10 @@
-.include "title_bss.h"
 .include "title_consts.h"
-.include "title_subs.h"
+
+; title_subs.s
+.import updateFrameCounters, updateTimeCounters, updateTextBlinkFlag
+
+; title_bss.s
+.import mainLoopSleeping, titleFlags
 
 forever:
     inc mainLoopSleeping

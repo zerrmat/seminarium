@@ -1,8 +1,12 @@
 .include "title_consts.h"
-.include "title_bss.h"
 .include "registers.h"
-.include "title_subs.h"
 .include "nes_consts.h"
+
+; title_subs.s
+.import drawBlinkText
+
+; title_bss.s
+.import titleScrollY, titleFlags, mainLoopSleeping
 
 .export nmi
 

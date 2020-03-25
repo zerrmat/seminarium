@@ -1,6 +1,7 @@
 .include "registers.h"
 .include "nes_consts.h"
-.include "title_data.h"
+
+.import title_palette
 
 ;; Set title palette
 	lda	PPUSTATUS		; Read PPU status to reset PPU address

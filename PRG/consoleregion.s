@@ -1,5 +1,6 @@
-.include "title_bss.h"
 .include "registers.h"
+
+.import machineRegion
 
 ;;; BUT because of a hardware oversight, we might have missed a vblank flag.
 ;;;  so we need to both check for 1Vbl and 2Vbl

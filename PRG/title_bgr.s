@@ -1,7 +1,9 @@
-.include "title_zp.h"
 .include "registers.h"
 .include "nes_consts.h"
-.include "title_data.h"
+
+; title_zp.s
+.importzp nametable_lo, nametable_hi
+.import title_nametable, title_nametable_2
 
 	lda PPUSTATUS
 	lda #>NAMETABLE_0_ADDR

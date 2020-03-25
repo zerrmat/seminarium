@@ -43,7 +43,7 @@ make: ${OBJ}
 	
 ${OBJ_DIR}/%.o: ${SRC_DIR}/%.s 
 	@echo -e "${COMPILATION_STRING}"
-	@${CA65} -W2 -g -l $@.lst -o $@ $< || (echo -e "${COMPILATION_FAILED}"; exit 1)
+	@${CA65} -W1 -g -l $@.lst -o $@ $< || (echo -e "${COMPILATION_FAILED}"; exit 1)
 	
 clean:
 	rm ${OBJ_DIR}/consoleregion.o

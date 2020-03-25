@@ -1,11 +1,18 @@
 .include "title_consts.h"
-.include "title_bss.h"
 .include "nes_consts.h"
-.include "title_data.h"
 .include "registers.h"
+
+; title_data.s
+.import title_pushstart_text
+
+; title_bss.s
+.import machineRegion, frameCounter, secondsCounter, minutesCounter, hoursCounter
+.import titleFlags, regionFixFrameCounter
 
 .export updateFrameCounters, updateTimeCounters, updateTextBlinkFlag
 .export drawBlinkText
+
+
 
 updateFrameCounters:
 	inc frameCounter
