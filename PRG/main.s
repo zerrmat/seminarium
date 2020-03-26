@@ -10,7 +10,7 @@
 ; Detect console region
 ; http://forums.nesdev.com/viewtopic.php?p=163258#p163258
 
-.include "consts.h"
+.include "prg_consts.h"
 .include "nes_consts.h"
 .include "registers.h"
 
@@ -24,6 +24,7 @@
 .import InitTitleState	; title_state.s
 .import PlaySound	; title_snd.s
 .import WarmupStart	; warmup.s
+.import ReadController	; prg_subs.s
 
 .export WarmupEnd
 
@@ -56,6 +57,7 @@ _INT_Reset:
 			and #PROGRAM_FLAGS_MAIN_LOOP_IS_ACTIVE
 			bne _loop_Sleep
 		
+		jsr ReadController
 		jsr TitleMain
 		jmp _loop_Main
 	
