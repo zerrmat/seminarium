@@ -1,4 +1,4 @@
-.segment "BSS"
+.segment "TITLEBSS"
 .export machineRegion, titleScrollY, frameCounter, regionFixFrameCounter
 .export secondsCounter, minutesCounter, hoursCounter, titleFlags
 .export mainLoopSleeping

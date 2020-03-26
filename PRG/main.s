@@ -10,13 +10,14 @@
 ; Detect console region
 ; http://forums.nesdev.com/viewtopic.php?p=163258#p163258
 
+.include "consts.h"
 .include "nes_consts.h"
 .include "registers.h"
 
 .import DetectRegion	; console_region.s
 .import TitleNMI	; title_nmi.s
 .import TitleMain	; title_loop.s
-.import mainLoopSleeping	; title_bss.s
+.import programFlags	; title_bss.s
 .import SetTitlePalette	; title_pal.s
 .import SetBackgrounds	; title_bgr.s
 .import SetSprites	; title_spr.s
@@ -47,9 +48,12 @@ _INT_Reset:
 	; Main loop synchronization with VBlank: https://wiki.nesdev.com/w/index.php/The_frame_and_NMIs
 	; "Take Full Advantage of NMI" section		
 	_loop_Main:
-		inc mainLoopSleeping
+		lda programFlags
+		ora #PROGRAM_FLAGS_MAIN_LOOP_SET_SLEEP
+		sta programFlags
 		_loop_Sleep:
-			lda mainLoopSleeping
+			lda programFlags
+			and #PROGRAM_FLAGS_MAIN_LOOP_IS_ACTIVE
 			bne _loop_Sleep
 		
 		jsr TitleMain
@@ -64,8 +68,9 @@ _INT_NMI:
 
 	jsr TitleNMI
 	
-	lda #$00
-	sta mainLoopSleeping
+	lda programFlags
+	and #PROGRAM_FLAGS_MAIN_LOOP_SET_ACTIVE
+	sta programFlags
 	
 	pla            ; restore regs and exit
     tay
