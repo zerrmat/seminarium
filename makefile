@@ -60,6 +60,7 @@ clean:
 	rm ${OBJ_DIR}/init_subs.o
 	rm ${OBJ_DIR}/prg_bss.o
 	rm ${OBJ_DIR}/prg_subs.o
+	
 	rm ${OBJ_DIR}/main.o.lst
 	rm ${OBJ_DIR}/registers.o.lst
 	rm ${OBJ_DIR}/romheader.o.lst
