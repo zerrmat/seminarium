@@ -10,7 +10,7 @@
 ; Detect console region
 ; http://forums.nesdev.com/viewtopic.php?p=163258#p163258
 
-.include "consts.h"
+.include "prg_consts.h"
 .include "nes_consts.h"
 .include "registers.h"
 
