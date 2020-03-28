@@ -21,4 +21,3 @@ TitleMain:
 	jsr UpdateTextBlinkFlag
 _EndTitleMain:
 	rts
-
