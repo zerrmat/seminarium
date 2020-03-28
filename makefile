@@ -15,7 +15,7 @@ CA65 = ${BIN_DIR}/ca65.exe
 LD65 = ${BIN_DIR}/ld65.exe
 
 TARGET = main prg_zp title_bss registers romheader title_main title_nmi \
-		title_subs title_data warmup init_subs prg_bss prg_subs
+		title_subs title_data warmup init_subs prg_bss prg_subs map_data
 OBJ = $(patsubst %, ${OBJ_DIR}/%.o, ${TARGET})
 SRCNAMES = $(patsubst %, ${SRC_DIR}/%.s, ${TARGET})
 
@@ -60,6 +60,7 @@ clean:
 	rm ${OBJ_DIR}/init_subs.o
 	rm ${OBJ_DIR}/prg_bss.o
 	rm ${OBJ_DIR}/prg_subs.o
+	rm ${OBJ_DIR}/map_data.o
 	
 	rm ${OBJ_DIR}/main.o.lst
 	rm ${OBJ_DIR}/registers.o.lst
@@ -74,6 +75,7 @@ clean:
 	rm ${OBJ_DIR}/init_subs.o.lst
 	rm ${OBJ_DIR}/prg_bss.o.lst
 	rm ${OBJ_DIR}/prg_subs.o.lst
+	rm ${OBJ_DIR}/map_data.o.lst
 	rm ${DBG_FILE}
 	rm ./demo.nes
 	

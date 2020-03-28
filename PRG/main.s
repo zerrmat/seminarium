@@ -29,6 +29,7 @@
 .import ReadController, SetBackground	; prg_subs.s
 ; title_data.s
 .import _data_titleNametable, _data_titleNametable2
+.import _data_mapNametable	; map_data.s
 
 .export WarmupEnd
 
@@ -94,7 +95,7 @@ _INT_NMI:
     tya
     pha
 
-	jsr TitleNMI
+	jsr ExecuteNMI
 	
 	lda programFlags
 	and #PROGRAM_FLAGS_MAIN_LOOP_SET_ACTIVE
@@ -121,6 +122,24 @@ CheckTitleStartButton:
 				lda programFlags
 				ora #PROGRAM_FLAGS_SET_MAP_MODE
 				sta programFlags
+				; set new background
+				lda #PPUCTRL_RENDERING_OFF
+				sta PPUCTRL
+				lda #PPUMASK_RENDERING_OFF
+				sta PPUMASK
+				lda #<(_data_mapNametable)
+				pha
+				lda #>(_data_mapNametable)
+				pha
+				lda #<NAMETABLE_0_ADDR
+				pha
+				lda #>NAMETABLE_0_ADDR
+				pha
+				jsr SetBackground
+				lda	#(PPUMASK_SPR_ON | PPUMASK_BGR_ON | PPUMASK_SPR_LEFT8_ON | PPUMASK_BGR_LEFT8_ON)
+				sta	PPUMASK
+				lda #PPUCTRL_NMI_ON	; NMI on
+				sta PPUCTRL
 				
 	_SkipProgramModeChange:	
 	rts
@@ -128,10 +147,19 @@ CheckTitleStartButton:
 ExecuteGameLoop:
 	lda programFlags
 	and #PROGRAM_FLAGS_IS_TITLE_MODE
-	bne _Skip
+	bne @_Skip
 		jsr TitleMain
 		
-	_Skip:
+	@_Skip:
+	rts
+	
+ExecuteNMI:
+	lda programFlags
+	and #PROGRAM_FLAGS_IS_TITLE_MODE
+	bne @_Skip
+		jsr TitleNMI
+	
+	@_Skip:
 	rts
 	
 .segment "VECTORS"
