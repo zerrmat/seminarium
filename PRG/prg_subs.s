@@ -1,7 +1,7 @@
 .include "nes_consts.h"
 .include "registers.h"
 
-; title_zp.s
+; prg_zp.s
 .importzp nametableLo, nametableHi, retAddrLo, retAddrHi
 
 .import JOY1	; registers.s
@@ -31,7 +31,7 @@ ReadController:
 ; - High byte nametable data address
 ; - Low byte nametable data address
 SetBackground:
-	pla 
+	pla 			; preserve return address
 	sta retAddrLo
 	pla
 	sta retAddrHi
@@ -61,7 +61,7 @@ SetBackground:
 		cpx #>NAMETABLE_LENGTH
 		bne _loop_Outer
 
-	lda retAddrHi
+	lda retAddrHi	; "pop" return address
 	pha
 	lda retAddrLo
 	pha

@@ -14,7 +14,7 @@ LST_DIR = ./bin/lst
 CA65 = ${BIN_DIR}/ca65.exe
 LD65 = ${BIN_DIR}/ld65.exe
 
-TARGET = main title_zp title_bss registers romheader title_main title_nmi \
+TARGET = main prg_zp title_bss registers romheader title_main title_nmi \
 		title_subs title_data warmup init_subs prg_bss prg_subs
 OBJ = $(patsubst %, ${OBJ_DIR}/%.o, ${TARGET})
 SRCNAMES = $(patsubst %, ${SRC_DIR}/%.s, ${TARGET})
@@ -55,7 +55,7 @@ clean:
 	rm ${OBJ_DIR}/title_main.o
 	rm ${OBJ_DIR}/title_nmi.o
 	rm ${OBJ_DIR}/title_subs.o
-	rm ${OBJ_DIR}/title_zp.o
+	rm ${OBJ_DIR}/prg_zp.o
 	rm ${OBJ_DIR}/warmup.o
 	rm ${OBJ_DIR}/init_subs.o
 	rm ${OBJ_DIR}/prg_bss.o
@@ -69,7 +69,7 @@ clean:
 	rm ${OBJ_DIR}/title_main.o.lst
 	rm ${OBJ_DIR}/title_nmi.o.lst
 	rm ${OBJ_DIR}/title_subs.o.lst
-	rm ${OBJ_DIR}/title_zp.o.lst
+	rm ${OBJ_DIR}/prg_zp.o.lst
 	rm ${OBJ_DIR}/warmup.o.lst
 	rm ${OBJ_DIR}/init_subs.o.lst
 	rm ${OBJ_DIR}/prg_bss.o.lst
