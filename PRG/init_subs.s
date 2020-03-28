@@ -2,15 +2,13 @@
 .include "nes_consts.h"
 .include "title_consts.h"
 
-; title_zp.s
-.importzp nametableLo, nametableHi
 ; title_bss.s
 .import titleScrollY, machineRegion
 ; title_data.s
 .import _data_titlePalette, _data_titleNametable, _data_titleNametable2
 
 .export InitTitleState, SetSprites, PlaySound, DetectRegion
-.export SetTitlePalette, SetBackgrounds
+.export SetTitlePalette
 
 TITLE_START_SCROLL_POS = $F0
 
@@ -96,58 +94,5 @@ SetTitlePalette:
 		cpx #PPU_PALETTES_SIZE ; Loop $20 times (up to $3F20)
 		bne	_loop_Palette
 
-	rts
-
-SetBackgrounds:
-	lda PPUSTATUS
-	lda #>NAMETABLE_0_ADDR
-	sta PPUADDR
-	lda #<NAMETABLE_0_ADDR
-	sta PPUADDR
-	
-	lda #<(_data_titleNametable)
-	sta nametableLo
-	lda #>(_data_titleNametable)
-	sta nametableHi
-	ldx #$00
-	ldy #$00
-	_loop_Outer:
-		_loop_Inner:
-			lda (nametableLo), y
-			sta PPUDATA
-			iny
-			cpy #<NAMETABLE_LENGTH
-			bne _loop_Inner
-		
-		inc nametableHi	
-		inx
-		cpx #>NAMETABLE_LENGTH
-		bne _loop_Outer
-		
-;;; second
-	lda PPUSTATUS
-	lda #>NAMETABLE_1_ADDR
-	sta PPUADDR
-	lda #<NAMETABLE_1_ADDR
-	sta PPUADDR
-	
-	lda #<(_data_titleNametable2)
-	sta nametableLo
-	lda #>(_data_titleNametable2)
-	sta nametableHi
-	ldx #$00
-	ldy #$00
-	_loop_Outer2:
-		_loop_Inner2:
-			lda (nametableLo), y
-			sta PPUDATA
-			iny
-			cpy #<NAMETABLE_LENGTH
-			bne _loop_Inner2
-			
-		inc nametableHi	
-		inx
-		cpx #>NAMETABLE_LENGTH
-		bne _loop_Outer2
 	rts
 	

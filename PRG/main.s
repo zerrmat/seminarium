@@ -11,6 +11,7 @@
 ; http://forums.nesdev.com/viewtopic.php?p=163258#p163258
 
 .include "prg_consts.h"
+; NAMETABLE_0_ADDR, NAMETABLE_1_ADDR
 .include "nes_consts.h"
 .include "title_consts.h"
 .include "registers.h"
@@ -21,12 +22,13 @@
 ; title_bss.s
 .import programFlags, buttons, titleScrollY, titleFlags
 .import SetTitlePalette	; title_pal.s
-.import SetBackgrounds	; title_bgr.s
 .import SetSprites	; title_spr.s
 .import InitTitleState	; title_state.s
 .import PlaySound	; title_snd.s
 .import WarmupStart	; warmup.s
-.import ReadController	; prg_subs.s
+.import ReadController, SetBackground	; prg_subs.s
+; title_data.s
+.import _data_titleNametable, _data_titleNametable2
 
 .export WarmupEnd
 
@@ -36,7 +38,27 @@ _INT_Reset:
 	WarmupEnd:
 	jsr DetectRegion
 	jsr SetTitlePalette
-	jsr SetBackgrounds
+	
+	lda #<(_data_titleNametable)
+	pha 
+	lda #>(_data_titleNametable)
+	pha
+	lda #<NAMETABLE_0_ADDR
+	pha
+	lda #>NAMETABLE_0_ADDR
+	pha
+	jsr SetBackground
+	
+	lda #<(_data_titleNametable2)
+	pha 
+	lda #>(_data_titleNametable2)
+	pha
+	lda #<NAMETABLE_1_ADDR
+	pha
+	lda #>NAMETABLE_1_ADDR
+	pha
+	jsr SetBackground
+	
 	jsr SetSprites
 	jsr InitTitleState
 		
