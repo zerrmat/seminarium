@@ -12,12 +12,14 @@
 
 .include "prg_consts.h"
 .include "nes_consts.h"
+.include "title_consts.h"
 .include "registers.h"
 
 .import DetectRegion	; console_region.s
 .import TitleNMI	; title_nmi.s
 .import TitleMain	; title_loop.s
-.import programFlags	; title_bss.s
+; title_bss.s
+.import programFlags, buttons, titleScrollY, titleFlags
 .import SetTitlePalette	; title_pal.s
 .import SetBackgrounds	; title_bgr.s
 .import SetSprites	; title_spr.s
@@ -58,7 +60,9 @@ _INT_Reset:
 			bne _loop_Sleep
 		
 		jsr ReadController
-		jsr TitleMain
+		jsr CheckTitleStartButton
+
+		jsr ExecuteGameLoop
 		jmp _loop_Main
 	
 _INT_NMI:
@@ -81,6 +85,32 @@ _INT_NMI:
     pla
 _INT_IRQ:
 	rti
+
+CheckTitleStartButton:
+	lda titleFlags
+	and #TITLE_FLAG_ENDSCROLL
+	beq _SkipProgramModeChange
+		lda programFlags
+		and #PROGRAM_FLAGS_IS_TITLE_MODE
+		bne _SkipProgramModeChange
+			lda buttons
+			and #BUTTONS_START
+			beq _SkipProgramModeChange
+				lda programFlags
+				ora #PROGRAM_FLAGS_SET_MAP_MODE
+				sta programFlags
+				
+	_SkipProgramModeChange:	
+	rts
+
+ExecuteGameLoop:
+	lda programFlags
+	and #PROGRAM_FLAGS_IS_TITLE_MODE
+	bne _Skip
+		jsr TitleMain
+		
+	_Skip:
+	rts
 	
 .segment "VECTORS"
-    .word _INT_NMI, _INT_Reset, _INT_IRQ
+    .word _INT_NMI, _INT_Reset, _INT_IRQ	
