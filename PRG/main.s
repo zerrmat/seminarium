@@ -26,10 +26,9 @@
 .import InitTitleState	; title_state.s
 .import PlaySound	; title_snd.s
 .import WarmupStart	; warmup.s
-.import ReadController, SetBackground	; prg_subs.s
-; title_data.s
-.import _data_titleNametable, _data_titleNametable2
-.import _data_mapNametable	; map_data.s
+.import ReadController	; prg_subs.s
+.import SetTitleBackgrounds	; title_subs.s
+.import SetMapBackground	; map_subs.s
 
 .export WarmupEnd
 
@@ -39,26 +38,7 @@ _INT_Reset:
 	WarmupEnd:
 	jsr DetectRegion
 	jsr SetTitlePalette
-	
-	lda #<(_data_titleNametable)
-	pha 
-	lda #>(_data_titleNametable)
-	pha
-	lda #<NAMETABLE_0_ADDR
-	pha
-	lda #>NAMETABLE_0_ADDR
-	pha
-	jsr SetBackground
-	
-	lda #<(_data_titleNametable2)
-	pha 
-	lda #>(_data_titleNametable2)
-	pha
-	lda #<NAMETABLE_1_ADDR
-	pha
-	lda #>NAMETABLE_1_ADDR
-	pha
-	jsr SetBackground
+	jsr SetTitleBackgrounds
 	
 	jsr SetSprites
 	jsr InitTitleState
@@ -123,23 +103,7 @@ CheckTitleStartButton:
 				ora #PROGRAM_FLAGS_SET_MAP_MODE
 				sta programFlags
 				; set new background
-				lda #PPUCTRL_RENDERING_OFF
-				sta PPUCTRL
-				lda #PPUMASK_RENDERING_OFF
-				sta PPUMASK
-				lda #<(_data_mapNametable)
-				pha
-				lda #>(_data_mapNametable)
-				pha
-				lda #<NAMETABLE_0_ADDR
-				pha
-				lda #>NAMETABLE_0_ADDR
-				pha
-				jsr SetBackground
-				lda	#(PPUMASK_SPR_ON | PPUMASK_BGR_ON | PPUMASK_SPR_LEFT8_ON | PPUMASK_BGR_LEFT8_ON)
-				sta	PPUMASK
-				lda #PPUCTRL_NMI_ON	; NMI on
-				sta PPUCTRL
+				jsr SetMapBackground
 				
 	_SkipProgramModeChange:	
 	rts

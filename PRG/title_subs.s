@@ -9,8 +9,14 @@
 .import machineRegion, frameCounter, secondsCounter, minutesCounter, hoursCounter
 .import titleFlags, regionFixFrameCounter
 
+; title_data.s
+.import _data_titleNametable, _data_titleNametable2
+
+; prg_subs.s
+.import SetBackground
+
 .export UpdateFrameCounters, UpdateTimeCounters, UpdateTextBlinkFlag
-.export DrawBlinkText
+.export DrawBlinkText, SetTitleBackgrounds
 
 TITLE_FLAG_TEXTBLINK = %00000010
 TITLE_FLAG_NO_TEXTBLINK = %11111101
@@ -127,3 +133,26 @@ DrawBlinkText:
 		
 	_EndBlinkText:
 	rts 
+	
+SetTitleBackgrounds:
+	lda #<(_data_titleNametable)
+	pha 
+	lda #>(_data_titleNametable)
+	pha
+	lda #<NAMETABLE_0_ADDR
+	pha
+	lda #>NAMETABLE_0_ADDR
+	pha
+	jsr SetBackground
+	
+	lda #<(_data_titleNametable2)
+	pha 
+	lda #>(_data_titleNametable2)
+	pha
+	lda #<NAMETABLE_1_ADDR
+	pha
+	lda #>NAMETABLE_1_ADDR
+	pha
+	jsr SetBackground
+	rts
+	
