@@ -16,19 +16,20 @@
 .include "title_consts.h"
 .include "registers.h"
 
-.import DetectRegion	; console_region.s
 .import TitleNMI	; title_nmi.s
 .import TitleMain	; title_loop.s
 ; title_bss.s
 .import programFlags, buttons, titleScrollY, titleFlags
-.import SetTitlePalette	; title_pal.s
-.import SetSprites	; title_spr.s
-.import InitTitleState	; title_state.s
-.import PlaySound	; title_snd.s
+; init_subs.s
+.import SetTitlePalette, SetSprites, InitTitleState, PlaySound, DetectRegion
 .import WarmupStart	; warmup.s
-.import ReadController	; prg_subs.s
+.import ReadController, SetFullPalette	; prg_subs.s
 .import SetTitleBackgrounds	; title_subs.s
 .import SetMapBackground	; map_subs.s
+
+; tmpppppppppppppppppppppppp
+.importzp paletteLo, paletteHi
+.import _data_titlePalette	; title_data.s
 
 .export WarmupEnd
 
@@ -37,7 +38,13 @@ _INT_Reset:
 	jmp WarmupStart
 	WarmupEnd:
 	jsr DetectRegion
-	jsr SetTitlePalette
+	
+	lda #<(_data_titlePalette)
+	sta paletteLo
+	lda #>(_data_titlePalette)
+	sta paletteHi
+	jsr SetFullPalette
+	
 	jsr SetTitleBackgrounds
 	
 	jsr SetSprites

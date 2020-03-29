@@ -2,12 +2,12 @@
 .include "registers.h"
 
 ; prg_zp.s
-.importzp nametableLo, nametableHi, retAddrLo, retAddrHi
+.importzp nametableLo, nametableHi, retAddrLo, retAddrHi, paletteLo, paletteHi
 
 .import JOY1	; registers.s
 .import buttons	; prg_bss.s
 
-.export ReadController, SetBackground
+.export ReadController, SetBackground, SetFullPalette
 
 BUTTONS_COUNT = $08
 
@@ -65,5 +65,24 @@ SetBackground:
 	pha
 	lda retAddrLo
 	pha
+	rts
+	
+; Arguments: none
+; Before function load address to paletteLo and paletteHi
+SetFullPalette:
+	lda	PPUSTATUS		; Read PPU status to reset PPU address
+	lda	#>BGR_PALETTE_PPU_ADDR		; Set PPU address to BG palette RAM ($3F00)
+	sta	PPUADDR
+	lda	#<BGR_PALETTE_PPU_ADDR
+	sta PPUADDR
+
+	ldy	#$00		
+	_loop_Palette:
+		lda (paletteLo), y
+		sta	PPUDATA
+		iny
+		cpy #PPU_PALETTES_SIZE ; Loop $20 times (up to $3F20)
+		bne	_loop_Palette
+
 	rts
 	

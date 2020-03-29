@@ -1,8 +1,9 @@
 .include "registers.h"
 .include "nes_consts.h"
 
-.import _data_mapNametable	; map_data.s
-.import SetBackground	; prg_subs.s
+.importzp paletteLo, paletteHi	; prg_zp.s
+.import _data_mapNametable, _data_mapPalette	; map_data.s
+.import SetBackground, SetFullPalette	; prg_subs.s
 
 .export SetMapBackground
 
@@ -22,9 +23,18 @@ SetMapBackground:
 	pha
 	jsr SetBackground
 	
+	lda #<(_data_mapPalette)
+	sta paletteLo
+	lda #>(_data_mapPalette)
+	sta paletteHi
+	jsr SetFullPalette
+	
 	lda	#(PPUMASK_SPR_ON | PPUMASK_BGR_ON | PPUMASK_SPR_LEFT8_ON | PPUMASK_BGR_LEFT8_ON)
 	sta	PPUMASK
-	lda #PPUCTRL_NMI_ON	; NMI on
+	lda #(PPUCTRL_NMI_ON | PPUCTRL_BGR_PATTERNTABLE_1)
 	sta PPUCTRL
+	lda #0
+	sta PPUSCROLL
+	sta PPUSCROLL
 	rts
 	
