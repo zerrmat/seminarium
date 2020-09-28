@@ -1,5 +1,5 @@
 .segment "BSS"
-.export programFlags, buttons
+.export programFlags, buttons, machineRegion
 
 ; bits:
 ; 7 -
@@ -21,3 +21,12 @@ programFlags: .res 1
 ; 1 - Left
 ; 0 - Right
 buttons: .res 1
+; bits:
+; 7 - 
+; 6 -
+; 5 -
+; 4 - 
+; 3 -
+; 2 -
+; 1 and 0 - 00: NTSC, 01: PAL, 10: Dendy, 11: Unknown
+machineRegion: .res 1

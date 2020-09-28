@@ -1,8 +1,7 @@
 .segment "TITLEBSS"
-.export machineRegion, titleScrollY, frameCounter, regionFixFrameCounter
+.export titleScrollY, frameCounter, regionFixFrameCounter
 .export secondsCounter, minutesCounter, hoursCounter, titleFlags
 
-machineRegion: .res 1
 titleScrollY: .res 1
 frameCounter: .res 1
 regionFixFrameCounter: .res 1

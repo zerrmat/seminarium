@@ -2,8 +2,10 @@
 .include "nes_consts.h"
 .include "title_consts.h"
 
+; prg_bss.s
+.import machineRegion
 ; title_bss.s
-.import titleScrollY, machineRegion
+.import titleScrollY
 ; title_data.s
 .import _data_titlePalette, _data_titleNametable, _data_titleNametable2
 
@@ -74,7 +76,7 @@ DetectRegion:
 		lda #3
 
 	_NoClip3:
-;;; Right now, A contains 0, 1, 2, 3 for NTSC, PAL, Dendy, Bad
+;;; Right now, A contains 0, 1, 2, 3 for NTSC, PAL, Dendy, Unknown
 	sta machineRegion
 	rts
 	
