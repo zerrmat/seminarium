@@ -11,25 +11,25 @@
 ; http://forums.nesdev.com/viewtopic.php?p=163258#p163258
 
 .include "prg_consts.h"
-; NAMETABLE_0_ADDR, NAMETABLE_1_ADDR
 .include "nes_consts.h"
 .include "title_consts.h"
 .include "registers.h"
 
-.import TitleNMI	; title_nmi.s
-.import TitleMain	; title_loop.s
-; title_bss.s
-.import programFlags, buttons, titleScrollY, titleFlags
-; init_subs.s
-.import SetTitlePalette, SetSprites, InitTitleState, PlaySound, DetectRegion
-.import WarmupStart	; warmup.s
+.import TitleNMI						; title_nmi.s
+.import TitleMain						; title_main.s
+.import programFlags, buttons			; prg_bss.s
+.import titleScrollY, titleFlags		; title_bss.s
+.import WarmupStart						; warmup.s
 .import ReadController, SetFullPalette	; prg_subs.s
-.import SetTitleBackgrounds	; title_subs.s
-.import SetMapBackground	; map_subs.s
+.import SetTitleBackgrounds				; title_subs.s
+.import SetMapBackground				; map_subs.s
+
+; init_subs.s
+.import InitTitleState, SetSprites, PlaySound, DetectRegion
 
 ; tmpppppppppppppppppppppppp
-.importzp paletteLo, paletteHi
-.import _data_titlePalette	; title_data.s
+.importzp paletteLo, paletteHi	; prg_zp.s
+.import _data_titlePalette		; title_data.s
 
 .export WarmupEnd
 
@@ -55,7 +55,7 @@ _INT_Reset:
 	; Set PPU
 	lda	#(PPUMASK_SPR_ON | PPUMASK_BGR_ON | PPUMASK_SPR_LEFT8_ON | PPUMASK_BGR_LEFT8_ON)
 	sta	PPUMASK
-	lda #PPUCTRL_NMI_ON	; NMI on
+	lda #PPUCTRL_NMI_ON
 	sta PPUCTRL
 
 	; Main loop synchronization with VBlank: https://wiki.nesdev.com/w/index.php/The_frame_and_NMIs
@@ -97,19 +97,18 @@ _INT_IRQ:
 	rti
 
 CheckTitleStartButton:
-	lda titleFlags
-	and #TITLE_FLAG_ENDSCROLL
-	beq _SkipProgramModeChange
-		lda programFlags
-		and #PROGRAM_FLAGS_IS_TITLE_MODE
-		bne _SkipProgramModeChange
+	lda programFlags
+	and #PROGRAM_FLAGS_IS_TITLE_MODE
+	bne _SkipProgramModeChange
+		lda titleFlags
+		and #TITLE_FLAG_ENDSCROLL
+		beq _SkipProgramModeChange
 			lda buttons
 			and #BUTTONS_START
 			beq _SkipProgramModeChange
 				lda programFlags
 				ora #PROGRAM_FLAGS_SET_MAP_MODE
 				sta programFlags
-				; set new background
 				jsr SetMapBackground
 				
 	_SkipProgramModeChange:	

@@ -1,0 +1,3 @@
+Uwagi:
+- Skok między trybami:
+Natychmiast po wciśnięciu startu (w tej samej klatce) gra przechodzi z ekranu głównego do mapy świata; na tą chwilę nie ma ona napisanej logiki wykonywanej co klatkę

@@ -15,8 +15,8 @@ MAP_DIR = ${BIN_DIR}
 CA65 = ${BIN_DIR}/ca65.exe
 LD65 = ${BIN_DIR}/ld65.exe
 
-TARGET = main prg_zp title_bss registers romheader title_main title_nmi \
-		title_subs title_data warmup init_subs prg_bss prg_subs map_data \
+TARGET = main prg_zp title_bss prg_bss registers romheader title_main \
+		title_nmi title_subs title_data warmup init_subs prg_subs map_data \
 		map_subs
 OBJ = $(patsubst %, ${OBJ_DIR}/%.o, ${TARGET})
 SRCNAMES = $(patsubst %, ${SRC_DIR}/%.s, ${TARGET})

@@ -5,9 +5,12 @@
 ; title_data.s
 .import _data_titlePushstartText
 
+; prg_bss.s
+.import machineRegion, frameCounter, secondsCounter, minutesCounter
+.import hoursCounter, regionFixFrameCounter
+
 ; title_bss.s
-.import machineRegion, frameCounter, secondsCounter, minutesCounter, hoursCounter
-.import titleFlags, regionFixFrameCounter
+.import titleFlags
 
 ; title_data.s
 .import _data_titleNametable, _data_titleNametable2
