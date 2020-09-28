@@ -5,7 +5,7 @@ _data_testSprite:
 	.byte $00, $01, $00, $00
 
 _data_titlePalette:
-	.incbin "Palettes/title_palette.pal"
+	.incbin "Palettes/titlepalette.pal"
 	;.byte $21,$20,$10,$00,$21,$01,$21,$31,$21,$06,$16,$26,$21,$09,$19,$29	; BGR
 	;.byte $21,$30,$10,$30,$21,$01,$21,$31,$21,$06,$16,$26,$21,$09,$19,$29	; SPR
 

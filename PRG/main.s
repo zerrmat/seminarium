@@ -11,22 +11,25 @@
 ; http://forums.nesdev.com/viewtopic.php?p=163258#p163258
 
 .include "prg_consts.h"
+; NAMETABLE_0_ADDR, NAMETABLE_1_ADDR
 .include "nes_consts.h"
 .include "title_consts.h"
 .include "registers.h"
 
-.import DetectRegion	; console_region.s
 .import TitleNMI	; title_nmi.s
 .import TitleMain	; title_loop.s
 ; title_bss.s
 .import programFlags, buttons, titleScrollY, titleFlags
-.import SetTitlePalette	; title_pal.s
-.import SetBackgrounds	; title_bgr.s
-.import SetSprites	; title_spr.s
-.import InitTitleState	; title_state.s
-.import PlaySound	; title_snd.s
+; init_subs.s
+.import SetTitlePalette, SetSprites, InitTitleState, PlaySound, DetectRegion
 .import WarmupStart	; warmup.s
-.import ReadController	; prg_subs.s
+.import ReadController, SetFullPalette	; prg_subs.s
+.import SetTitleBackgrounds	; title_subs.s
+.import SetMapBackground	; map_subs.s
+
+; tmpppppppppppppppppppppppp
+.importzp paletteLo, paletteHi
+.import _data_titlePalette	; title_data.s
 
 .export WarmupEnd
 
@@ -35,8 +38,15 @@ _INT_Reset:
 	jmp WarmupStart
 	WarmupEnd:
 	jsr DetectRegion
-	jsr SetTitlePalette
-	jsr SetBackgrounds
+	
+	lda #<(_data_titlePalette)
+	sta paletteLo
+	lda #>(_data_titlePalette)
+	sta paletteHi
+	jsr SetFullPalette
+	
+	jsr SetTitleBackgrounds
+	
 	jsr SetSprites
 	jsr InitTitleState
 		
@@ -72,7 +82,7 @@ _INT_NMI:
     tya
     pha
 
-	jsr TitleNMI
+	jsr ExecuteNMI
 	
 	lda programFlags
 	and #PROGRAM_FLAGS_MAIN_LOOP_SET_ACTIVE
@@ -99,6 +109,8 @@ CheckTitleStartButton:
 				lda programFlags
 				ora #PROGRAM_FLAGS_SET_MAP_MODE
 				sta programFlags
+				; set new background
+				jsr SetMapBackground
 				
 	_SkipProgramModeChange:	
 	rts
@@ -106,10 +118,19 @@ CheckTitleStartButton:
 ExecuteGameLoop:
 	lda programFlags
 	and #PROGRAM_FLAGS_IS_TITLE_MODE
-	bne _Skip
+	bne @_Skip
 		jsr TitleMain
 		
-	_Skip:
+	@_Skip:
+	rts
+	
+ExecuteNMI:
+	lda programFlags
+	and #PROGRAM_FLAGS_IS_TITLE_MODE
+	bne @_Skip
+		jsr TitleNMI
+	
+	@_Skip:
 	rts
 	
 .segment "VECTORS"

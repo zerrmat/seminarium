@@ -10,20 +10,24 @@ ROM_DIR = .
 DBG_DIR = ${BIN_DIR}
 CFG_DIR = ${BIN_DIR}
 LST_DIR = ./bin/lst
+MAP_DIR = ${BIN_DIR}
 
 CA65 = ${BIN_DIR}/ca65.exe
 LD65 = ${BIN_DIR}/ld65.exe
 
-TARGET = main title_zp title_bss registers romheader title_main title_nmi \
-		title_subs title_data warmup init_subs prg_bss prg_subs
+TARGET = main prg_zp title_bss registers romheader title_main title_nmi \
+		title_subs title_data warmup init_subs prg_bss prg_subs map_data \
+		map_subs
 OBJ = $(patsubst %, ${OBJ_DIR}/%.o, ${TARGET})
 SRCNAMES = $(patsubst %, ${SRC_DIR}/%.s, ${TARGET})
 
 PRG_NAME = demo
 ROM_NAME = ${PRG_NAME}.nes
 DBG_NAME = ${PRG_NAME}.dbg
+MAP_NAME = ${PRG_NAME}_map.txt
 
 DBG_FILE = ${DBG_DIR}/${DBG_NAME}
+MAP_FILE = ${MAP_DIR}/${MAP_NAME}
 
 NO_COLOR = \033[0m
 RED_COLOR = \033[31;01m
@@ -39,7 +43,7 @@ LINKING_STRING = Linking files...
 make: ${OBJ}
 #@echo OBJ: ${OBJ}
 	@echo -e "${LINKING_STRING}"
-	@${LD65} -t nes --cfg-path ${CFG_DIR} --dbgfile ${DBG_FILE} -o ${ROM_DIR}/${ROM_NAME} $^ || (echo -e "${LINKING_FAILED}"; exit 2)
+	@${LD65} -t nes --cfg-path ${CFG_DIR} --mapfile ${MAP_FILE} --dbgfile ${DBG_FILE} -o ${ROM_DIR}/${ROM_NAME} $^ || (echo -e "${LINKING_FAILED}"; exit 2)
 	@echo -e "${COMPILATION_SUCCESS}"
 	
 ${OBJ_DIR}/%.o: ${SRC_DIR}/%.s 
@@ -55,11 +59,13 @@ clean:
 	rm ${OBJ_DIR}/title_main.o
 	rm ${OBJ_DIR}/title_nmi.o
 	rm ${OBJ_DIR}/title_subs.o
-	rm ${OBJ_DIR}/title_zp.o
+	rm ${OBJ_DIR}/prg_zp.o
 	rm ${OBJ_DIR}/warmup.o
 	rm ${OBJ_DIR}/init_subs.o
 	rm ${OBJ_DIR}/prg_bss.o
 	rm ${OBJ_DIR}/prg_subs.o
+	rm ${OBJ_DIR}/map_data.o
+	rm ${OBJ_DIR}/map_subs.o
 	
 	rm ${OBJ_DIR}/main.o.lst
 	rm ${OBJ_DIR}/registers.o.lst
@@ -69,12 +75,15 @@ clean:
 	rm ${OBJ_DIR}/title_main.o.lst
 	rm ${OBJ_DIR}/title_nmi.o.lst
 	rm ${OBJ_DIR}/title_subs.o.lst
-	rm ${OBJ_DIR}/title_zp.o.lst
+	rm ${OBJ_DIR}/prg_zp.o.lst
 	rm ${OBJ_DIR}/warmup.o.lst
 	rm ${OBJ_DIR}/init_subs.o.lst
 	rm ${OBJ_DIR}/prg_bss.o.lst
 	rm ${OBJ_DIR}/prg_subs.o.lst
+	rm ${OBJ_DIR}/map_data.o.lst
+	rm ${OBJ_DIR}/map_subs.o.lst
 	rm ${DBG_FILE}
+	rm ${MAP_FILE}
 	rm ./demo.nes
 	
 # Silent make execution: https://www.gnu.org/software/make/manual/html_node/Echoing.html

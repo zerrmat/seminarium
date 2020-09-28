@@ -2,15 +2,12 @@
 .include "nes_consts.h"
 .include "title_consts.h"
 
-; title_zp.s
-.importzp nametableLo, nametableHi
 ; title_bss.s
 .import titleScrollY, machineRegion
 ; title_data.s
 .import _data_titlePalette, _data_titleNametable, _data_titleNametable2
 
 .export InitTitleState, SetSprites, PlaySound, DetectRegion
-.export SetTitlePalette, SetBackgrounds
 
 TITLE_START_SCROLL_POS = $F0
 
@@ -79,75 +76,5 @@ DetectRegion:
 	_NoClip3:
 ;;; Right now, A contains 0, 1, 2, 3 for NTSC, PAL, Dendy, Bad
 	sta machineRegion
-	rts
-
-SetTitlePalette:
-	lda	PPUSTATUS		; Read PPU status to reset PPU address
-	lda	#>BGR_PALETTE_PPU_ADDR		; Set PPU address to BG palette RAM ($3F00)
-	sta	PPUADDR
-	lda	#<BGR_PALETTE_PPU_ADDR
-	sta PPUADDR
-
-	ldx	#$00		
-	_loop_Palette:
-		lda _data_titlePalette, x
-		sta	PPUDATA
-		inx
-		cpx #PPU_PALETTES_SIZE ; Loop $20 times (up to $3F20)
-		bne	_loop_Palette
-
-	rts
-
-SetBackgrounds:
-	lda PPUSTATUS
-	lda #>NAMETABLE_0_ADDR
-	sta PPUADDR
-	lda #<NAMETABLE_0_ADDR
-	sta PPUADDR
-	
-	lda #<(_data_titleNametable)
-	sta nametableLo
-	lda #>(_data_titleNametable)
-	sta nametableHi
-	ldx #$00
-	ldy #$00
-	_loop_Outer:
-		_loop_Inner:
-			lda (nametableLo), y
-			sta PPUDATA
-			iny
-			cpy #<NAMETABLE_LENGTH
-			bne _loop_Inner
-		
-		inc nametableHi	
-		inx
-		cpx #>NAMETABLE_LENGTH
-		bne _loop_Outer
-		
-;;; second
-	lda PPUSTATUS
-	lda #>NAMETABLE_1_ADDR
-	sta PPUADDR
-	lda #<NAMETABLE_1_ADDR
-	sta PPUADDR
-	
-	lda #<(_data_titleNametable2)
-	sta nametableLo
-	lda #>(_data_titleNametable2)
-	sta nametableHi
-	ldx #$00
-	ldy #$00
-	_loop_Outer2:
-		_loop_Inner2:
-			lda (nametableLo), y
-			sta PPUDATA
-			iny
-			cpy #<NAMETABLE_LENGTH
-			bne _loop_Inner2
-			
-		inc nametableHi	
-		inx
-		cpx #>NAMETABLE_LENGTH
-		bne _loop_Outer2
 	rts
 	
