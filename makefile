@@ -17,7 +17,7 @@ LD65 = ${BIN_DIR}/ld65.exe
 
 TARGET = main prg_zp title_bss prg_bss registers romheader title_main \
 		title_nmi title_subs title_data warmup init_subs prg_subs map_data \
-		map_subs
+		map_subs map_main map_nmi map_bss
 OBJ = $(patsubst %, ${OBJ_DIR}/%.o, ${TARGET})
 SRCNAMES = $(patsubst %, ${SRC_DIR}/%.s, ${TARGET})
 
@@ -66,6 +66,9 @@ clean:
 	rm ${OBJ_DIR}/prg_subs.o
 	rm ${OBJ_DIR}/map_data.o
 	rm ${OBJ_DIR}/map_subs.o
+	rm ${OBJ_DIR}/map_main.o
+	rm ${OBJ_DIR}/map_nmi.o
+	rm ${OBJ_DIR}/map_bss.o
 	
 	rm ${OBJ_DIR}/main.o.lst
 	rm ${OBJ_DIR}/registers.o.lst
@@ -82,6 +85,9 @@ clean:
 	rm ${OBJ_DIR}/prg_subs.o.lst
 	rm ${OBJ_DIR}/map_data.o.lst
 	rm ${OBJ_DIR}/map_subs.o.lst
+	rm ${OBJ_DIR}/map_main.o.lst
+	rm ${OBJ_DIR}/map_nmi.o.lst
+	rm ${OBJ_DIR}/map_bss.o.lst
 	rm ${DBG_FILE}
 	rm ${MAP_FILE}
 	rm ./demo.nes

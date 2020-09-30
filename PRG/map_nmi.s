@@ -1,0 +1,5 @@
+.export MapNMI
+
+MapNMI:
+	rts
+	

@@ -21,6 +21,8 @@
 
 .import TitleNMI						; title_nmi.s
 .import TitleMain						; title_main.s
+.import MapNMI
+.import MapMain
 .import programFlags, buttons			; prg_bss.s
 .import titleScrollY, titleFlags		; title_bss.s
 .import WarmupStart						; warmup.s
@@ -98,9 +100,9 @@ CheckModeChange:
 	lda programFlags
 	and #PROGRAM_FLAGS_IS_TITLE_MODE
 	bne _SkipTitleModeChange
-		lda titleFlags
-		and #TITLE_FLAG_ENDSCROLL
-		beq _SkipTitleModeChange
+		;lda titleFlags
+		;and #TITLE_FLAG_ENDSCROLL
+		;beq _SkipTitleModeChange
 			lda buttons
 			and #BUTTONS_START
 			beq _SkipTitleModeChange
@@ -118,19 +120,23 @@ ExecuteGameLoop:
 	
 	lda programFlags
 	and #PROGRAM_FLAGS_IS_TITLE_MODE
-	bne @_Skip	
+	bne @_Skip1	
 		jsr TitleMain
 		
-	@_Skip:
+	@_Skip1:
+	; TODO: other modes
+	jsr MapMain
 	rts
 	
 ExecuteNMI:
 	lda programFlags
 	and #PROGRAM_FLAGS_IS_TITLE_MODE
-	bne @_Skip
+	bne @_Skip1
 		jsr TitleNMI
 	
-	@_Skip:
+	@_Skip1:
+	; TODO: other modes
+	jsr MapNMI
 	rts
 	
 .segment "VECTORS"

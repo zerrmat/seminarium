@@ -1,0 +1,4 @@
+.export MapMain
+
+MapMain:
+	rts
