@@ -6,8 +6,6 @@ _data_testSprite:
 
 _data_titlePalette:
 	.incbin "Palettes/titlepalette.pal"
-	;.byte $21,$20,$10,$00,$21,$01,$21,$31,$21,$06,$16,$26,$21,$09,$19,$29	; BGR
-	;.byte $21,$30,$10,$30,$21,$01,$21,$31,$21,$06,$16,$26,$21,$09,$19,$29	; SPR
 
 _data_titleNametable:
 	.incbin "Nametables/titlescreen.nam"

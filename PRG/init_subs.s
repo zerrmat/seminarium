@@ -2,10 +2,8 @@
 .include "nes_consts.h"
 .include "title_consts.h"
 
-; prg_bss.s
-.import machineRegion
-; title_bss.s
-.import titleScrollY
+.import machineRegion	; prg_bss.s
+.import titleScrollY	; title_bss.s
 ; title_data.s
 .import _data_titlePalette, _data_titleNametable, _data_titleNametable2
 

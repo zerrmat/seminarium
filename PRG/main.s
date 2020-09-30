@@ -15,6 +15,10 @@
 .include "title_consts.h"
 .include "registers.h"
 
+; tmpppppppppppppppppppppppp
+.importzp paletteLo, paletteHi	; prg_zp.s
+.import _data_titlePalette		; title_data.s
+
 .import TitleNMI						; title_nmi.s
 .import TitleMain						; title_main.s
 .import programFlags, buttons			; prg_bss.s
@@ -23,13 +27,8 @@
 .import ReadController, SetFullPalette	; prg_subs.s
 .import SetTitleBackgrounds				; title_subs.s
 .import SetMapBackground				; map_subs.s
-
 ; init_subs.s
 .import InitTitleState, SetSprites, PlaySound, DetectRegion
-
-; tmpppppppppppppppppppppppp
-.importzp paletteLo, paletteHi	; prg_zp.s
-.import _data_titlePalette		; title_data.s
 
 .export WarmupEnd
 
@@ -47,7 +46,6 @@ _INT_Reset:
 	
 	jsr SetTitleBackgrounds
 	
-	jsr SetSprites
 	jsr InitTitleState
 		
 	jsr PlaySound
@@ -68,20 +66,19 @@ _INT_Reset:
 			lda programFlags
 			and #PROGRAM_FLAGS_MAIN_LOOP_IS_ACTIVE
 			bne _loop_Sleep
-		
-		jsr ReadController
-		jsr CheckTitleStartButton
 
 		jsr ExecuteGameLoop
 		jmp _loop_Main
 	
 _INT_NMI:
-	pha         ; back up registers (important)
+	php	; back up registers (important)
+	pha
     txa
     pha
     tya
     pha
 
+	jsr SetSprites
 	jsr ExecuteNMI
 	
 	lda programFlags
@@ -93,31 +90,35 @@ _INT_NMI:
     pla
     tax
     pla
+	plp
 _INT_IRQ:
 	rti
 
-CheckTitleStartButton:
+CheckModeChange:
 	lda programFlags
 	and #PROGRAM_FLAGS_IS_TITLE_MODE
-	bne _SkipProgramModeChange
+	bne _SkipTitleModeChange
 		lda titleFlags
 		and #TITLE_FLAG_ENDSCROLL
-		beq _SkipProgramModeChange
+		beq _SkipTitleModeChange
 			lda buttons
 			and #BUTTONS_START
-			beq _SkipProgramModeChange
+			beq _SkipTitleModeChange
 				lda programFlags
 				ora #PROGRAM_FLAGS_SET_MAP_MODE
 				sta programFlags
 				jsr SetMapBackground
 				
-	_SkipProgramModeChange:	
+	_SkipTitleModeChange:	
 	rts
 
 ExecuteGameLoop:
+	jsr ReadController
+	jsr CheckModeChange
+	
 	lda programFlags
 	and #PROGRAM_FLAGS_IS_TITLE_MODE
-	bne @_Skip
+	bne @_Skip	
 		jsr TitleMain
 		
 	@_Skip:

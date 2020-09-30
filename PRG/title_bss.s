@@ -10,5 +10,5 @@ titleScrollY: .res 1
 ; 3 -
 ; 2 -  
 ; 1 - "Push Start" text: 1 shown, 0 hidden
-; 0 - end of scrolling
+; 0 - 1: end of scrolling, 0: scroll in progress
 titleFlags: .res 1
