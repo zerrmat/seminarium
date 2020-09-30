@@ -18,21 +18,28 @@
 ; tmpppppppppppppppppppppppp
 .importzp paletteLo, paletteHi	; prg_zp.s
 .import _data_titlePalette		; title_data.s
+.import _data_mapPalette, _data_mapLevelsPos		; map_data.s
 
 .import TitleNMI						; title_nmi.s
 .import TitleMain						; title_main.s
 .import MapNMI
 .import MapMain
-.import programFlags, buttons			; prg_bss.s
 .import titleScrollY, titleFlags		; title_bss.s
 .import WarmupStart						; warmup.s
 .import ReadController, SetFullPalette	; prg_subs.s
 .import SetTitleBackgrounds				; title_subs.s
 .import SetMapBackground				; map_subs.s
+; map_bss.s
+.import mapFlags, selectedLevel, levelBlinkFrameCounter
+; prg_bss.s
+.import programFlags, buttons, frameCounter, regionFixFrameCounter
+.import secondsCounter, minutesCounter, hoursCounter
 ; init_subs.s
 .import InitTitleState, SetSprites, PlaySound, DetectRegion
 
 .export WarmupEnd
+
+MAP_LEVELS_COUNT = $0C
 
 .segment "CODE"
 _INT_Reset:
@@ -80,7 +87,6 @@ _INT_NMI:
     tya
     pha
 
-	jsr SetSprites
 	jsr ExecuteNMI
 	
 	lda programFlags
@@ -111,6 +117,20 @@ CheckModeChange:
 				sta programFlags
 				jsr SetMapBackground
 				
+				lda #$00
+				sta mapFlags
+				sta selectedLevel
+				sta levelBlinkFrameCounter
+				sta frameCounter
+				sta regionFixFrameCounter
+				sta secondsCounter
+				sta minutesCounter
+				sta hoursCounter
+				
+				lda programFlags
+				ora #%00000100
+				sta programFlags
+				
 	_SkipTitleModeChange:	
 	rts
 
@@ -122,10 +142,13 @@ ExecuteGameLoop:
 	and #PROGRAM_FLAGS_IS_TITLE_MODE
 	bne @_Skip1	
 		jsr TitleMain
+		jmp @_End
 		
 	@_Skip1:
 	; TODO: other modes
-	jsr MapMain
+		jsr MapMain
+	
+	@_End:
 	rts
 	
 ExecuteNMI:
@@ -133,10 +156,28 @@ ExecuteNMI:
 	and #PROGRAM_FLAGS_IS_TITLE_MODE
 	bne @_Skip1
 		jsr TitleNMI
-	
+		jmp End
+		
 	@_Skip1:
+		lda programFlags
+		and #%00000100
+		beq Ignore
+		lda programFlags
+		and #%11111011
+		sta programFlags
+		ldy #$00
+		_loop_InitLevels:
+			lda _data_mapLevelsPos, y
+			sta OAM, y
+			iny
+			cpy #MAP_LEVELS_COUNT
+			bne _loop_InitLevels
+			
 	; TODO: other modes
-	jsr MapNMI
+	Ignore:
+		jsr MapNMI
+	
+	End:
 	rts
 	
 .segment "VECTORS"

@@ -8,7 +8,7 @@
 ; 5 -
 ; 4 -
 ; 3 -
-; 2 - 
+; 2 - Mode change: 1 in progress, 0 not in progress
 ; 1 - Program mode: 0 title mode, 1 map mode
 ; 0 - Main program loop and NMI synchronization: 1 main loop sleeps, 0 main loop is active
 programFlags: .res 1

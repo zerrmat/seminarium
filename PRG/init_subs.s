@@ -17,20 +17,20 @@ InitTitleState:
 	sta titleScrollY
 
 SetSprites:
-	lda #$00
-	sta OAM + OAM_SPR_OFFSET_X
-	lda #TEST_SPR_TILE_NO
-	sta OAM + OAM_SPR_OFFSET_TILE
-	lda #(OAM_SPR_PAL_0 | OAM_SPR_FRONT_BGR)
-	sta OAM + OAM_SPR_OFFSET_ATTRS
-	lda #$00
-	sta OAM + OAM_SPR_OFFSET_Y
+	;lda #$00
+	;sta OAM + OAM_SPR_OFFSET_X
+	;lda #TEST_SPR_TILE_NO
+	;sta OAM + OAM_SPR_OFFSET_TILE
+	;lda #(OAM_SPR_PAL_0 | OAM_SPR_FRONT_BGR)
+	;sta OAM + OAM_SPR_OFFSET_ATTRS
+	;lda #$00
+	;sta OAM + OAM_SPR_OFFSET_Y
 	
 	; Set RAM region $0200 as SPRRAM
-	lda #<OAM
-	sta OAMADDR
-	lda #>OAM
-	sta OAMDMA
+	;lda #<OAM
+	;sta OAMADDR
+	;lda #>OAM
+	;sta OAMDMA
 	rts
 
 PlaySound:
