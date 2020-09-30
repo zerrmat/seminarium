@@ -9,7 +9,6 @@
 .export TitleMain
 
 TitleMain:
-	; mainLoopStart:
 	lda titleFlags
 	and #TITLE_FLAG_ENDSCROLL
 	bne _HandlePostScrollFrame

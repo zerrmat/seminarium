@@ -67,11 +67,12 @@ SetBackground:
 	pha
 	rts
 	
-; Arguments: none
-; Before function load address to paletteLo and paletteHi
+; Arguments (RAM): 
+; - paletteLo - lower byte of palette data to write
+; - paletteHi - higher byte of palette data to write
 SetFullPalette:
-	lda	PPUSTATUS		; Read PPU status to reset PPU address
-	lda	#>BGR_PALETTE_PPU_ADDR		; Set PPU address to BG palette RAM ($3F00)
+	lda	PPUSTATUS				; Read PPU status to reset PPU address
+	lda	#>BGR_PALETTE_PPU_ADDR	; Set PPU address to BG palette RAM ($3F00)
 	sta	PPUADDR
 	lda	#<BGR_PALETTE_PPU_ADDR
 	sta PPUADDR
@@ -81,7 +82,7 @@ SetFullPalette:
 		lda (paletteLo), y
 		sta	PPUDATA
 		iny
-		cpy #PPU_PALETTES_SIZE ; Loop $20 times (up to $3F20)
+		cpy #PPU_PALETTES_SIZE 	; Loop $20 times (up to $3F20)
 		bne	_loop_Palette
 
 	rts

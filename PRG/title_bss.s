@@ -1,7 +1,6 @@
 .segment "TITLEBSS"
 .export titleScrollY, titleFlags
 
-titleScrollY: .res 1
 ; bits:
 ; 7 - 
 ; 6 - 
@@ -9,6 +8,8 @@ titleScrollY: .res 1
 ; 4 - 
 ; 3 -
 ; 2 -  
-; 1 - "Push Start" text: 1 shown, 0 hidden
+; 1 - 1: "Push start" text shown, 0: "Push start" text hidden
 ; 0 - 1: end of scrolling, 0: scroll in progress
 titleFlags: .res 1
+
+titleScrollY: .res 1

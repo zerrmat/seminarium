@@ -10,6 +10,7 @@
 .export InitTitleState, SetSprites, PlaySound, DetectRegion
 
 TITLE_START_SCROLL_POS = $F0
+TEST_SPR_TILE_NO = $01
 
 InitTitleState:
 	lda #TITLE_START_SCROLL_POS
@@ -17,13 +18,13 @@ InitTitleState:
 
 SetSprites:
 	lda #$00
-	sta OAM
-	lda #$01
-	sta OAM + $01
-	lda #%00000000
-	sta OAM + $02
+	sta OAM + OAM_SPR_OFFSET_X
+	lda #TEST_SPR_TILE_NO
+	sta OAM + OAM_SPR_OFFSET_TILE
+	lda #(OAM_SPR_PAL_0 | OAM_SPR_FRONT_BGR)
+	sta OAM + OAM_SPR_OFFSET_ATTRS
 	lda #$00
-	sta OAM + $03
+	sta OAM + OAM_SPR_OFFSET_Y
 	
 	; Set RAM region $0200 as SPRRAM
 	lda #<OAM

@@ -1,9 +1,9 @@
 .include "registers.h"
 .include "nes_consts.h"
 
-.importzp paletteLo, paletteHi	; prg_zp.s
+.importzp paletteLo, paletteHi					; prg_zp.s
 .import _data_mapNametable, _data_mapPalette	; map_data.s
-.import SetBackground, SetFullPalette	; prg_subs.s
+.import SetBackground, SetFullPalette			; prg_subs.s
 
 .export SetMapBackground
 

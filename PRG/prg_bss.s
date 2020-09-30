@@ -30,9 +30,10 @@ buttons: .res 1
 ; 3 -
 ; 2 -
 ; 1 and 0 - 00: NTSC, 01: PAL, 10: Dendy, 11: Unknown
-machineRegion: .res 1
-frameCounter: .res 1
-regionFixFrameCounter: .res 1
-secondsCounter: .res 1
-minutesCounter: .res 1
-hoursCounter: .res 1
+machineRegion: 			.res 1
+
+frameCounter: 			.res 1
+regionFixFrameCounter: 	.res 1
+secondsCounter: 		.res 1
+minutesCounter: 		.res 1
+hoursCounter: 			.res 1

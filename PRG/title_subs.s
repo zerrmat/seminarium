@@ -6,8 +6,8 @@
 .import _data_titlePushstartText
 
 ; prg_bss.s
-.import machineRegion, frameCounter, secondsCounter, minutesCounter
-.import hoursCounter, regionFixFrameCounter
+.import machineRegion, frameCounter, regionFixFrameCounter, secondsCounter
+.import minutesCounter, hoursCounter
 
 ; title_bss.s
 .import titleFlags
@@ -20,9 +20,6 @@
 
 .export UpdateFrameCounters, UpdateTimeCounters, UpdateTextBlinkFlag
 .export DrawBlinkText, SetTitleBackgrounds
-
-TITLE_FLAG_TEXTBLINK = %00000010
-TITLE_FLAG_NO_TEXTBLINK = %11111101
 
 TITLE_PUSHSTART_NAMETABLE_START = $2107
 TITLE_PUSHSTART_NAMETABLE_DATA_LENGTH = $11
@@ -101,16 +98,17 @@ UpdateTextBlinkFlag:
 	rts 
 	
 DrawBlinkText:
+	lda PPUSTATUS
+	lda #>TITLE_PUSHSTART_NAMETABLE_START
+	sta PPUADDR
+	lda #<TITLE_PUSHSTART_NAMETABLE_START
+	sta PPUADDR
+	ldx #$00
+	
 	lda #TITLE_FLAG_TEXTBLINK
 	and titleFlags
-	bne _ShowBlinkText
+	bne _loop_ShowBlinkText
 		; hideBlinkText:
-		lda PPUSTATUS
-		lda #>TITLE_PUSHSTART_NAMETABLE_START
-		sta PPUADDR
-		lda #<TITLE_PUSHSTART_NAMETABLE_START
-		sta PPUADDR
-		ldx #$00
 		_loop_HideBlinkText:
 			lda #$00
 			sta PPUDATA
@@ -120,13 +118,6 @@ DrawBlinkText:
 			
 		jmp _EndBlinkText
 		
-	_ShowBlinkText:
-	lda PPUSTATUS
-	lda #>TITLE_PUSHSTART_NAMETABLE_START
-	sta PPUADDR
-	lda #<TITLE_PUSHSTART_NAMETABLE_START
-	sta PPUADDR
-	ldx #$00
 	_loop_ShowBlinkText:
 		lda _data_titlePushstartText, x
 		sta PPUDATA

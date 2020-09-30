@@ -7,21 +7,21 @@
 APU_FRAME_IRQ_OFF = %01000000
 
 WarmupStart:
-	sei			; disable IRQs
-	cld			; disable decimal mode
+	sei						; disable IRQs
+	cld						; disable decimal mode
 	ldx	#APU_FRAME_IRQ_OFF
-	stx	APU_FRAME	; dsiable APU frame IRQ
-	ldx	#$ff		; Set up stack
-	txs			;  .
-	inx			; now X = 0
-	stx	PPUCTRL		; disable NMI
-	stx	PPUMASK		; disable rendering
-	stx	DMC_FREQ	; disable DMC IRQs
+	stx	APU_FRAME			; disable APU frame IRQ
+	ldx	#$ff				; Set up stack
+	txs
+	inx						; now X = 0
+	stx	PPUCTRL				; disable NMI
+	stx	PPUMASK				; disable rendering
+	stx	DMC_FREQ			; disable DMC IRQs
 
 	;; first wait for vblank to make sure PPU is ready
 	_loop_VBlankWait1:
 		bit	PPUSTATUS
-		bpl	_loop_VBlankWait1	; at this point, about 27384 cycles have passed
+		bpl	_loop_VBlankWait1	; at this point, about 27384 cycles (NTSC) have passed
 
 	_ClearMemoryLoop:
 		lda	#$00
