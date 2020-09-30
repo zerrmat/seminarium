@@ -2,7 +2,7 @@
 .include "map_consts.h"
 .include "nes_consts.h"
 
-.import mapFlags, levelBlinkFrameCounter	; map_bss.s
+.import mapFlags, selectedLevel, levelBlinkFrameCounter	; map_bss.s	
 ; title_subs.s
 .import UpdateFrameCounters, UpdateTimeCounters
 
@@ -23,8 +23,27 @@ MapMain:
 		sbc #LEVEL_BLINK_FRAMES
 		sta levelBlinkFrameCounter
 		
-		lda #(OAM_SPR_PAL_2 | OAM_SPR_FRONT_BGR)
-		sta $0202
+		lda mapFlags
+		and #MAP_FLAGS_LEVEL_BLINK
+		bne _Blink1
+			;_Blink0:
+			lda mapFlags
+			ora #MAP_FLAGS_SET_BLINK_1
+			sta mapFlags
+			ldx #(OAM_SPR_PAL_2 | OAM_SPR_FRONT_BGR)
+			jmp _EndBlinkUpdate
+		_Blink1:
+			lda mapFlags
+			and #MAP_FLAGS_SET_BLINK_0
+			sta mapFlags
+			ldx #(OAM_SPR_PAL_1 | OAM_SPR_FRONT_BGR)
+		_EndBlinkUpdate:
+		lda selectedLevel
+		asl a
+		asl a
+		tay
+		txa
+		sta $0202, y
 		; lda PPUSTATUS
 		; lda #>PAL_ADDR
 		; sta PPUADDR
