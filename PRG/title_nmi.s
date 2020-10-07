@@ -12,6 +12,11 @@
 TITLE_END_SCROLL_POS = $00
 
 TitleNMI:
+	lda #<OAM
+	sta OAMADDR
+	lda #>OAM
+	sta OAMDMA
+
 	ldy titleScrollY
 	beq _SkipTitleScroll
 		dey

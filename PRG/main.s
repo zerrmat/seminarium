@@ -87,6 +87,11 @@ _INT_NMI:
     tya
     pha
 
+	; reset sprite data in PPU
+	lda #<OAM
+	sta OAMADDR
+	lda #>OAM
+	sta OAMDMA
 	jsr ExecuteNMI
 	
 	lda programFlags
@@ -117,15 +122,17 @@ CheckModeChange:
 				sta programFlags
 				jsr SetMapBackground
 				
-				lda #$00
-				sta mapFlags
-				sta selectedLevel
-				sta levelBlinkFrameCounter
-				sta frameCounter
-				sta regionFixFrameCounter
-				sta secondsCounter
-				sta minutesCounter
-				sta hoursCounter
+				ldx #$00
+				stx mapFlags
+				stx selectedLevel
+				stx frameCounter
+				stx regionFixFrameCounter
+				stx secondsCounter
+				stx minutesCounter
+				stx hoursCounter
+				inx
+				inx
+				stx levelBlinkFrameCounter
 				
 				lda programFlags
 				ora #%00000100
