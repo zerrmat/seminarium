@@ -39,7 +39,7 @@
 
 .export WarmupEnd
 
-MAP_LEVELS_COUNT = $0C
+MAP_LEVELS_COUNT = $18
 
 .segment "CODE"
 _INT_Reset:
@@ -87,11 +87,6 @@ _INT_NMI:
     tya
     pha
 
-	; reset sprite data in PPU
-	lda #<OAM
-	sta OAMADDR
-	lda #>OAM
-	sta OAMDMA
 	jsr ExecuteNMI
 	
 	lda programFlags
