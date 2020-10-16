@@ -1,0 +1,393 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 2.9.7380 64-bit) (preloaded format=pdflatex 2020.3.30)  16 OCT 2020 14:57
+entering extended mode
+**./pracainz.tex
+(pracainz.tex
+LaTeX2e <2020-02-02> patch level 5
+L3 programming layer <2020-03-06>
+("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\article.cls"
+Document Class: article 2019/12/20 v1.4l Standard LaTeX document class
+("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\size12.clo"
+File: size12.clo 2019/12/20 v1.4l Standard LaTeX file (size option)
+)
+\c@part=\count167
+\c@section=\count168
+\c@subsection=\count169
+\c@subsubsection=\count170
+\c@paragraph=\count171
+\c@subparagraph=\count172
+\c@figure=\count173
+\c@table=\count174
+\abovecaptionskip=\skip47
+\belowcaptionskip=\skip48
+\bibindent=\dimen134
+)
+("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/polski\polski.sty"
+Package: polski 2017/05/04 v1.3.4 Polish language package
+
+   Switching to Polish text encoding and Polish maths fonts.
+("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\ot4enc.def"
+File: ot4enc.def 2020/02/11 v2.0o Standard LaTeX file
+Now handling font encoding OT4 ...
+... no UTF-8 mapping file for font encoding OT4
+)
+LaTeX Font Info:    Trying to load font information for OT4+cmr on input line 3
+60.
+
+("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/polski\ot4cmr.fd"
+File: ot4cmr.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
+)
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/cmr/bx/n --> OT4/cmr/bx/n on input line 360.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
+(Font)                  OT1/cmss/m/n --> OT4/cmss/m/n on input line 360.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/cmr/m/it --> OT4/cmr/m/it on input line 360.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
+(Font)                  OT1/cmtt/m/n --> OT4/cmtt/m/n on input line 360.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
+(Font)                  OT1/cmss/bx/n --> OT4/cmss/bx/n on input line 360.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/cmr/bx/it --> OT4/cmr/bx/it on input line 360.
+LaTeX Font Info:    Encoding `OT1' has changed to `OT4' for symbol font
+(Font)              `operators' in the math version `normal' on input line 360.
+
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/cmr/m/n --> OT4/cmr/m/n on input line 360.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `normal'
+(Font)                  OML/cmm/m/it --> OML/plm/m/it on input line 360.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
+(Font)                  OMS/cmsy/m/n --> OMS/plsy/m/n on input line 360.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
+(Font)                  OMX/cmex/m/n --> OMX/plex/m/n on input line 360.
+LaTeX Font Info:    Encoding `OT1' has changed to `OT4' for symbol font
+(Font)              `operators' in the math version `bold' on input line 360.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT4/cmr/bx/n on input line 360.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
+(Font)                  OML/cmm/b/it --> OML/plm/b/it on input line 360.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
+(Font)                  OMS/cmsy/b/n --> OMS/plsy/b/n on input line 360.
+)
+("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\inputenc.sty"
+Package: inputenc 2018/08/11 v1.3c Input encoding file
+\inpenc@prehook=\toks15
+\inpenc@posthook=\toks16
+
+("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\cp1250.def"
+File: cp1250.def 2018/08/11 v1.3c Input encoding file
+))
+("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\graphicx.sty
+"
+Package: graphicx 2019/11/30 v1.2a Enhanced LaTeX Graphics (DPC,SPQR)
+ ("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\keyval.sty"
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks17
+)
+("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\graphics.sty
+"
+Package: graphics 2019/11/30 v1.4a Standard LaTeX Graphics (DPC,SPQR)
+ ("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\trig.sty"
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics-cfg\graphics
+.cfg"
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 105.
+
+("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics-def\pdftex.d
+ef"
+File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen135
+\Gin@req@width=\dimen136
+) ("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/float\float.sty"
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count175
+\float@exts=\toks18
+\float@box=\box45
+\@float@everytoks=\toks19
+\@floatcapt=\box46
+)
+("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/l3backend\l3backend-p
+dfmode.def"
+File: l3backend-pdfmode.def 2020-03-12 L3 backend support: PDF mode
+\l__kernel_color_stack_int=\count176
+\l__pdf_internal_box=\box47
+) (pracainz.aux)
+\openout1 = `pracainz.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OT4/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+
+("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/context/base/mkii\supp-pdf.
+mkii"
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count177
+\scratchdimen=\dimen137
+\scratchbox=\box48
+\nofMPsegments=\count178
+\nofMParguments=\count179
+\everyMPshowfont=\toks20
+\MPscratchCnt=\count180
+\MPscratchDim=\dimen138
+\MPnumerator=\count181
+\makeMPintoPDFobject=\count182
+\everyMPtoPDFconversion=\toks21
+)
+("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/epstopdf-pkg\epstopdf
+-base.sty"
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+)
+<./img/Nintendo-Famicom-Console-Set-FL.jpg, id=1, 1454.43375pt x 776.9025pt>
+File: ./img/Nintendo-Famicom-Console-Set-FL.jpg Graphic file (type jpg)
+<use ./img/Nintendo-Famicom-Console-Set-FL.jpg>
+Package pdftex.def Info: ./img/Nintendo-Famicom-Console-Set-FL.jpg  used on inp
+ut line 14.
+(pdftex.def)             Requested size: 195.0pt x 104.15417pt.
+LaTeX Font Info:    Trying to load font information for OML+plm on input line 1
+6.
+
+("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/polski\omlplm.fd"
+File: omlplm.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
+)
+LaTeX Font Info:    Trying to load font information for OMS+plsy on input line 
+16.
+
+("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/polski\omsplsy.fd"
+File: omsplsy.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
+)
+LaTeX Font Info:    Trying to load font information for OMX+plex on input line 
+16.
+
+("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/polski\omxplex.fd"
+File: omxplex.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
+)
+LaTeX Font Info:    External font `plex10' loaded for size
+(Font)              <12> on input line 16.
+LaTeX Font Info:    External font `plex10' loaded for size
+(Font)              <8> on input line 16.
+LaTeX Font Info:    External font `plex10' loaded for size
+(Font)              <6> on input line 16.
+<./img/NES-Console-Set.jpg, id=2, 5320.87875pt x 2791.42876pt>
+File: ./img/NES-Console-Set.jpg Graphic file (type jpg)
+<use ./img/NES-Console-Set.jpg>
+Package pdftex.def Info: ./img/NES-Console-Set.jpg  used on input line 19.
+(pdftex.def)             Requested size: 195.0pt x 102.26752pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 20--20
+[]\OT4/cmr/m/n/12 Rysunek 2: Nin-ten-do En-ter-ta-in-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 20--20
+\OT4/cmr/m/n/12 ment Sys-tem NES-001 wraz z
+ []
+
+
+Overfull \hbox (2.61108pt too wide) in paragraph at lines 13--22
+[]$[]$  $[]$ 
+ []
+
+<./img/New_Famicom.jpg, id=3, 803.0pt x 602.25pt>
+File: ./img/New_Famicom.jpg Graphic file (type jpg)
+<use ./img/New_Famicom.jpg>
+Package pdftex.def Info: ./img/New_Famicom.jpg  used on input line 27.
+(pdftex.def)             Requested size: 195.0pt x 146.25221pt.
+<./img/NES-101-Console-Set.jpg, id=4, 1180.41pt x 638.385pt>
+File: ./img/NES-101-Console-Set.jpg Graphic file (type jpg)
+<use ./img/NES-101-Console-Set.jpg>
+Package pdftex.def Info: ./img/NES-101-Console-Set.jpg  used on input line 32.
+(pdftex.def)             Requested size: 195.0pt x 105.4556pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 33--33
+[]\OT4/cmr/m/n/12 Rysunek 4: Nin-ten-do En-ter-ta-in-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 33--33
+\OT4/cmr/m/n/12 ment Sys-tem NES-101 wraz z
+ []
+
+
+Overfull \hbox (2.61108pt too wide) in paragraph at lines 26--35
+[]$[]$  $[]$ 
+ []
+
+[1
+
+{C:/Users/Ja/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map} <./img/Nintendo
+-Famicom-Console-Set-FL.jpg> <./img/NES-Console-Set.jpg> <./img/New_Famicom.jpg
+> <./img/NES-101-Console-Set.jpg>]
+<./img/415J8GUp-KL--52577.1589699928.jpg, id=11, 1284.8pt x 1284.8pt>
+File: ./img/415J8GUp-KL--52577.1589699928.jpg Graphic file (type jpg)
+<use ./img/415J8GUp-KL--52577.1589699928.jpg>
+Package pdftex.def Info: ./img/415J8GUp-KL--52577.1589699928.jpg  used on input
+ line 48.
+(pdftex.def)             Requested size: 195.0pt x 194.9858pt.
+<./img/DY-656-400.jpg, id=12, 1606.0pt x 1204.5pt>
+File: ./img/DY-656-400.jpg Graphic file (type jpg)
+<use ./img/DY-656-400.jpg>
+Package pdftex.def Info: ./img/DY-656-400.jpg  used on input line 53.
+(pdftex.def)             Requested size: 195.0pt x 146.24303pt.
+
+Overfull \hbox (2.61108pt too wide) in paragraph at lines 47--56
+[]$[]$  $[]$ 
+ []
+
+[2]
+<./img/glk_2004.jpg, id=17, 501.875pt x 210.7875pt>
+File: ./img/glk_2004.jpg Graphic file (type jpg)
+<use ./img/glk_2004.jpg>
+Package pdftex.def Info: ./img/glk_2004.jpg  used on input line 60.
+(pdftex.def)             Requested size: 195.0pt x 81.90123pt.
+
+Underfull \hbox (badness 1077) in paragraph at lines 61--61
+[]\OT4/cmr/m/n/12 Rysunek 7: GLK-2004 - po-pu-lar-na
+ []
+
+<./img/gameaxe_1.jpg, id=18, 642.4pt x 481.8pt>
+File: ./img/gameaxe_1.jpg Graphic file (type jpg)
+<use ./img/gameaxe_1.jpg>
+Package pdftex.def Info: ./img/gameaxe_1.jpg  used on input line 65.
+(pdftex.def)             Requested size: 195.0pt x 146.24669pt.
+
+Overfull \hbox (2.61108pt too wide) in paragraph at lines 59--68
+[]$[]$  $[]$ 
+ []
+
+<./img/RetroUSB-AVS-Console-wController-FL.jpg, id=19, 1318.9275pt x 632.3625pt
+>
+File: ./img/RetroUSB-AVS-Console-wController-FL.jpg Graphic file (type jpg)
+<use ./img/RetroUSB-AVS-Console-wController-FL.jpg>
+Package pdftex.def Info: ./img/RetroUSB-AVS-Console-wController-FL.jpg  used on
+ input line 74.
+(pdftex.def)             Requested size: 195.0pt x 93.48976pt.
+<./img/ret5bk--54484.1567795736.1280.1280.jpg, id=20, 602.25pt x 602.25pt>
+File: ./img/ret5bk--54484.1567795736.1280.1280.jpg Graphic file (type jpg)
+<use ./img/ret5bk--54484.1567795736.1280.1280.jpg>
+Package pdftex.def Info: ./img/ret5bk--54484.1567795736.1280.1280.jpg  used on 
+input line 79.
+(pdftex.def)             Requested size: 195.0pt x 195.00294pt.
+
+Underfull \hbox (badness 1028) in paragraph at lines 80--80
+[]\OT4/cmr/m/n/12 Rysunek 10: Hy-per-kin Re-troN 5 -
+ []
+
+
+Overfull \hbox (2.61108pt too wide) in paragraph at lines 73--82
+[]$[]$  $[]$ 
+ []
+
+[3 <./img/415J8GUp-KL--52577.1589699928.jpg> <./img/DY-656-400.jpg> <./img/glk_
+2004.jpg> <./img/gameaxe_1.jpg>]
+<./img/61iW8vUHOJL.-AC-SL1500-.jpg, id=24, 1371.1225pt x 1329.96875pt>
+File: ./img/61iW8vUHOJL.-AC-SL1500-.jpg Graphic file (type jpg)
+<use ./img/61iW8vUHOJL.-AC-SL1500-.jpg>
+Package pdftex.def Info: ./img/61iW8vUHOJL.-AC-SL1500-.jpg  used on input line 
+87.
+(pdftex.def)             Requested size: 195.0pt x 189.13693pt.
+ [4 <./img/RetroUSB-AVS-Console-wController-FL.jpg> <./img/ret5bk--54484.156779
+5736.1280.1280.jpg> <./img/61iW8vUHOJL.-AC-SL1500-.jpg>]
+Overfull \hbox (1.6154pt too wide) in paragraph at lines 105--106
+[]\OT4/cmr/m/n/12 Ukªad gra-ficz-ny (PPU): Ri-coh 2C02, o±mio-bi-to-wy ukªad op
+ra-co-wa-ny przez
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 111--112
+[]\OT4/cmr/m/n/12 https://upload.wikimedia.org/wikipedia/commons/0/06/Nintendo-
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 112--113
+[]\OT4/cmr/m/n/12 https://upload.wikimedia.org/wikipedia/commons/8/82/NES-Conso
+le-
+ []
+
+
+Overfull \hbox (16.62439pt too wide) in paragraph at lines 114--115
+[]\OT4/cmr/m/n/12 https://upload.wikimedia.org/wikipedia/commons/f/f1/New[]Fami
+com.jpg 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--117
+[]\OT4/cmr/m/n/12 https://upload.wikimedia.org/wikipedia/commons/e/e0/NES-101-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 118--119
+[]\OT4/cmr/m/n/12 https://levelupvideogames.com/used-messiah-generation-nex-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 122--123
+[]\OT4/cmr/m/n/12 https://arhn.eu/2018/04/historia-pegasusa-z-klawiatura-glk-20
+04-et-
+ []
+
+[5]
+Underfull \hbox (badness 10000) in paragraph at lines 126--127
+[]\OT4/cmr/m/n/12 https://upload.wikimedia.org/wikipedia/commons/7/7a/RetroUSB-
+
+ []
+
+
+Overfull \hbox (239.83261pt too wide) in paragraph at lines 128--129
+[]\OT4/cmr/m/n/12 https://cdn10.bigcommerce.com/s-2l8ru96d/products/223/images/
+1135/ret5bk[][]54484.1567795736.1280.1280.jpg?c=2 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 130--131
+[]\OT4/cmr/m/n/12 https://www.amazon.com/Controllers-Children-Birthday-Childhoo
+d-
+ []
+
+
+Overfull \hbox (41.06412pt too wide) in paragraph at lines 134--135
+[]\OT4/cmr/m/n/12 https://en.wikipedia.org/wiki/Nintendo[]Entertainment[]System
+[]hardware[]clone 
+ []
+
+[6] (pracainz.aux) ) 
+Here is how much of TeX's memory you used:
+ 1575 strings out of 480894
+ 24877 string characters out of 2899588
+ 257408 words of memory out of 3000000
+ 17460 multiletter control sequences out of 15000+200000
+ 538200 words of font info for 39 fonts, out of 3000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 30i,8n,27p,594b,282s stack positions out of 5000i,500n,10000p,200000b,50000s
+{C:/Users/Ja/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dv
+ips/pl/plit.enc}{C:/Users/Ja/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/
+cm-super/cm-super-ts1.enc}{C:/Users/Ja/AppData/Local/Programs/MiKTeX 2.9/fonts/
+enc/dvips/pl/plrm.enc}<C:/Users/Ja/AppData/Local/Programs/MiKTeX 2.9/fonts/type
+1/public/pl/plbx12.pfb><C:/Users/Ja/AppData/Local/Programs/MiKTeX 2.9/fonts/typ
+e1/public/pl/plr12.pfb><C:/Users/Ja/AppData/Local/Programs/MiKTeX 2.9/fonts/typ
+e1/public/pl/plti12.pfb><C:/Users/Ja/AppData/Local/Programs/MiKTeX 2.9/fonts/ty
+pe1/public/cm-super/sfrm1200.pfb>
+Output written on pracainz.pdf (6 pages, 9892199 bytes).
+PDF statistics:
+ 51 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 56 words of extra memory for PDF output out of 10000 (max. 10000000)
+
