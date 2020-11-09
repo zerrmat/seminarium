@@ -214,13 +214,20 @@ W tej sekcji omówiê krok po kroku jak powstawa³ mój w³asny projekt programu na p
 
 \setcounter{subsection}{-1}
 \subsection{Absolutne minimum}
-Kod w pe³ni inicjuj¹cy konsolê jest doœæ rozbudowany, zatem warto zacz¹æ od czegoœ ³atwiejszego... Niech bêdzie to coœ, co poka¿e ¿e jakkolwiek panujemy nad maszyn¹ - zmiana wartoœci pojedynczej komórki pamiêci to rozs¹dny pomys³. Kod ustalaj¹cy wartoœæ pierwszej komórki RAM na wartoœæ 16 (w systemie szestnastkowym) bêdzie wygl¹da³ nastêpuj¹co:
+Kod w pe³ni inicjuj¹cy konsolê jest doœæ rozbudowany, zatem warto zacz¹æ od czegoœ ³atwiejszego... Niech bêdzie to coœ, co poka¿e ¿e jakkolwiek panujemy nad maszyn¹ - zmiana wartoœci pojedynczej komórki pamiêci to rozs¹dny pomys³. Stwórzmy plik Ÿród³owy, nazwijmy go \textit{main.s}. Kod ustalaj¹cy wartoœæ pierwszej komórki RAM na wartoœæ 16 (w systemie szestnastkowym) bêdzie wygl¹da³ nastêpuj¹co:
 \begin{verbatim}
 lda #$16
 sta $0000
 \end{verbatim}
-Mnemonik \textit{lda} ma wiele odmian - ta zastosowana powy¿ej wczytuje konkretn¹ wartoœæ do wbudowanego w CPU rejestru - akumulatora. Symbol \textit{#$} oznacza w³aœnie konkretn¹ wartoœæ liczbow¹ zapisan¹ szesnastkowo.
-Mnemonik \textit{sta} kopiuje wartoœæ z akumulatora pod lokacjê podan¹ jako operand; tutaj jest to pierwsza komórka pamiêci RAM (= o adresie $0000). 
+Mnemonik \textit{lda} ma wiele odmian - ta zastosowana powy¿ej wczytuje konkretn¹ wartoœæ do wbudowanego w CPU rejestru - akumulatora. Symbol \textit{\#\$} oznacza w³aœnie konkretn¹ wartoœæ liczbow¹ zapisan¹ szesnastkowo.
+Mnemonik \textit{sta} kopiuje wartoœæ z akumulatora pod lokacjê podan¹ jako operand; tutaj jest to pierwsza komórka pamiêci RAM (= o adresie \$0000). 
+
+Warto zrobiæ jeszcze jedn¹ rzecz - dopisaæ za powy¿szymi poleceniami pêtlê nieskoñczon¹:
+\begin{verbatim}
+Stop:
+	jmp Stop
+\end{verbatim}
+Trzeba pamiêtaæ o tym i¿ pod naszym programem nie ma ¿adnego systemu operacyjnego czy innego œrodowiska wykonywalnego, zanim nie ma mowy o zakoñczeniu wykonania programu - bez tej pêtli CPU interpretowa³by kolejne bajty jako kod, cokolwiek by tam by³o i wykona³ je.
 
 Jednak¿e jest to o wiele za ma³o ¿eby nawet emulator zrobi³ to, co oczekujemy.
 Pierwsza sprawa jest zwi¹zana z ogólnie przyjêtym formatem pliku reprezentuj¹cym ROM programu na platformê NES. Taki plik ma szesnastobajtowy nag³ówek opisuj¹cy szczegó³y programu. Nag³ówek jest potrzebny emulatorom oraz flashcartom do przygotowania adekwatnego œrodowiska uruchomieniowego.
@@ -240,11 +247,11 @@ Kolejny bajt to znak koñca linii.
 Po wy¿ej opisanych czterech bajtach programy mog¹ rozpoznaæ i¿ maj¹ do czynienia z plikiem w formacie *.NES.
 Bajt pi¹ty to iloœæ 16KB stron pamiêci przeznaczonych na kod wykonywalny. Dwa banki wype³niaj¹ ca³¹ przestrzeñ adresow¹ konsoli.
 Kolejny bajt to iloœæ 16KB stron pamiêci przeznaczonych na grafikê. W tym momencie nie potrzebujemy ¿adnej grafiki zatem ustawiamy bajt na zero. W³aœciwie wartoœæ zero ma inny efekt a my skorzystamy z efektu ubocznego tego ale jest to na razie nieistotne - uzyskamy po¿¹dany efekt.
-Bajty 7 - 10 to flagi - na tê chwilê interesuj¹ nas tylko i wy³¹cznie bajty odpowiadaj¹ce za \cite{mapper}Mapper. Mapper 0 jest "podstawowy" przez co odpowiedni do prostych programów, zatem go ustawimy. Warto wspomnieæ o tym, jak formowany jest numer mappera: cztery górny bajty pochodz¹ z czterech górnych bajtów bajta ósmego w nag³ówku, cztery dolne bajty pochodz¹ z czterech górnych bajtów bajta siódmego w nag³ówku. (TODO: obrazek lepszy)
+Bajty 7 - 10 to flagi - na tê chwilê interesuj¹ nas tylko i wy³¹cznie bajty odpowiadaj¹ce za \nameref{mapper}. Mapper 0 jest "podstawowy" przez co odpowiedni do prostych programów, zatem go ustawimy. Warto wspomnieæ o tym, jak formowany jest numer mappera: cztery górny bajty pochodz¹ z czterech górnych bajtów bajta ósmego w nag³ówku, cztery dolne bajty pochodz¹ z czterech górnych bajtów bajta siódmego w nag³ówku. (TODO: obrazek lepszy)
 Funkcjonalnoœæ bajtów 9 oraz 10 nie interesuje nas w tej chwili, mo¿na je ustawiæ na 0 i zapomnieæ o ich istnieniu
 Bajty 11 - 15 to dope³nienie nag³ówka. Wartoœci mog¹ byæ dowolne, zwyjczajowo s¹ to zera.
 
-Druga sprawa ma zwi¹zek z architektur¹ konsoli. Zawsze po uruchomieniu / zresetowaniu konsoli, pierwsz¹ rzecz¹ jak¹ robi procesor to skok bezwzglêdny do adresu uformowanego z bajtów pod adresami $FFFC (górny bajt) i $FFFD (dolny bajt). W tym celu modyfikujemy kod w nastêpuj¹cy sposób:
+Druga sprawa ma zwi¹zek z architektur¹ konsoli. Zawsze po uruchomieniu / zresetowaniu konsoli, pierwsz¹ rzecz¹ jak¹ robi procesor to skok bezwzglêdny do adresu uformowanego z bajtów pod adresami \$FFFC (górny bajt) i \$FFFD (dolny bajt). W tym celu modyfikujemy kod w nastêpuj¹cy sposób:
 \begin{verbatim}
 _INT_Reset:
 	lda #$16
@@ -253,15 +260,15 @@ _INT_Reset:
 .word _INT_Reset
 \end{verbatim}
 \textit{.word} to dyrektywa asemblera dzia³aj¹ca jak \textit(.byte), tyle ¿e podajemy wartoœci dwubajtowe zamiast jednobajtowych.
-\textit{_INT_Reset} to etykieta, zostanie ona zamieniona na konkretny adres przez linker. Dwukropek definiuje etykietê; sam¹ nazwê etykiety traktuje siê jak konkretn¹ wartoœæ szesnastobitow¹. Nadal zostaje problem powiedzenia kompilatorowi oraz linkerowi ¿e ma wstawiæ adres wyznaczony przez etykietê \textit{_INT_Reset} dok³adnie pod adres $FFFC w ROM. Inna sprawa to wskazanie kompilatorowi / linkerowi i¿ nag³ówek nie jest czêœci¹ kodu lecz ma siê znaleŸæ na pocz¹tku pliku reprezentuj¹cego ROM. Oba problemy rozwi¹¿e dyrektywa asemblera \textit{.segment}. Ukoñczony pierwszy program bêdzie wygl¹da³ nastêpuj¹co:
+\textit{\_INT\_Reset} to etykieta, zostanie ona zamieniona na konkretny adres przez linker. Dwukropek definiuje etykietê; sam¹ nazwê etykiety traktuje siê jak konkretn¹ wartoœæ szesnastobitow¹. Nadal zostaje problem powiedzenia kompilatorowi oraz linkerowi ¿e ma wstawiæ adres wyznaczony przez etykietê \textit{\_INT\_Reset} dok³adnie pod adres \$FFFC w ROM. Inna sprawa to wskazanie kompilatorowi / linkerowi i¿ nag³ówek nie jest czêœci¹ kodu lecz ma siê znaleŸæ na pocz¹tku pliku reprezentuj¹cego ROM. Oba problemy rozwi¹¿e dyrektywa asemblera \textit{.segment}. Ukoñczony pierwszy program bêdzie wygl¹da³ nastêpuj¹co:
 \begin{verbatim}
 .segment "HEADER"
-.byte "NES"		; Wartoœæ magiczna
-.byte $1A		; Wartoœæ koñca linii
-.byte 2			; 2 banki * 16 KB (32 KB) - kod Ÿród³owy (PRG)
-.byte 0 		; 0 banków * 8 KB (0 KB) - grafika (CHR)
-.byte %00000000 ; mapper 0 (NROM) [bity 0-3] (cztery dolne bity wartoœci)
-.byte %00000000 ; mapper 0 (NROM) [bity 0-3] (cztery górne bity wartoœci)
+.byte "NES"
+.byte $1A
+.byte 2
+.byte 0
+.byte %00000000
+.byte %00000000
 .byte 0, 0
 .byte 0, 0, 0, 0, 0, 0
 
@@ -273,7 +280,7 @@ _INT_Reset:
 .segment "VECTORS"
 .word _INT_Reset
 \end{verbatim}
-\textit{.segment} to dyrektywa mówi¹ca "poni¿sza treœæ nale¿y do bloku danych zdefiniowanego w pliku konfiguracyjnym linkera podanego jako argument dyrektywy". Na tê chwilê brzmi to niezrozumiale, bo jeszcze nawet nie wspomina³em czym jest plik konfiguracyjny linkera. Jest to plik ze wskazówkami jak ma byæ przeprowadzony proces linkowania plików obiektowych. Do pakietu CC65 jest do³¹czony przyk³adowy plik dla platformy NES jednak¿e wymaga wielu zmian by byc w zgodzie z dobrymi praktykami przyjêtymi przez spo³ecznoœæ wspó³czeœnie programuj¹c¹ na tê konsolê, zatem nic nam po nim i trzeba samemu rozgryŸæ jak stworzyæ w³asny. W naszym przypadku plik bêdzie mia³ nastêpuj¹c¹ treœæ:
+\textit{.segment} to dyrektywa mówi¹ca "poni¿sza treœæ nale¿y do bloku danych zdefiniowanego w pliku konfiguracyjnym linkera podanego jako argument dyrektywy". Na tê chwilê brzmi to niezrozumiale, bo jeszcze nawet nie wspomina³em czym jest plik konfiguracyjny linkera. Jest to plik ze wskazówkami jak ma byæ przeprowadzony proces linkowania plików obiektowych. Do pakietu CC65 jest do³¹czony przyk³adowy plik dla platformy NES jednak¿e wymaga wielu zmian by byc w zgodzie z dobrymi praktykami przyjêtymi przez spo³ecznoœæ wspó³czeœnie programuj¹c¹ na tê konsolê, zatem nic nam po nim i trzeba samemu rozgryŸæ jak stworzyæ w³asny. Stwórzmy nowy plik, nazwijmy go \textit{nes.cfg}. W naszym przypadku plik bêdzie mia³ nastêpuj¹c¹ treœæ:
 \begin{verbatim}
 MEMORY {
     RAM:    	start = $0000,  size = $0800, type = rw, file = "";
@@ -284,16 +291,86 @@ MEMORY {
 SEGMENTS {
     BSS:      load = RAM, type = bss;
     HEADER:   load = HDR, type = ro;
-    CODE:     load = PRG, type = ro,  start = $9000;
+    CODE:     load = PRG, type = ro,  start = $8000;
     VECTORS:  load = PRG, type = ro,  start = $FFFC;
 }
 \end{verbatim}
-/textit{MEMORY} oraz /textit{SEGMENTS} wyznaczaj¹ grupy zasad steruj¹cych linkerem. Etykiety w sekcji /textit{SEGMENTS} opisuj¹ dwie rzeczy - mapê pamiêci w programie NES za pomoc¹ atrybutu \textt{start} oraz determinuje kolejnoœæ danych w pliku wynikowym dla etykiet z atrybutem /textit{type} o wartoœci \textit{ro}. Kolejnoœæ etykiet mówi jak zostan¹ ustawione dane w pliku wynikowym wyznaczone przez atrybut \textit{load}. Wartoœci tam podane odpowiadaj¹ etykietom zdefiniowanych w sekcji \textit{MEMORY}. Ka¿da wpis definiuje wielkoœæ obszaru, typ dostêpu (odczyt / zapis), w jakim pliku wynikowym siê znajdzie obszar, opcjonalne wype³nienie wartoœciami.
-Podsumowuj¹c: \textit{SEGMENTS} ustala "gdzie", \textit{MEMORY} ustala "jak". 
+/textit{MEMORY} oraz /textit{SEGMENTS} wyznaczaj¹ grupy zasad steruj¹cych linkerem. Etykiety w sekcji /textit{SEGMENTS} opisuj¹ dwie rzeczy - mapê pamiêci w programie NES za pomoc¹ atrybutu \textit{start} oraz determinuje kolejnoœæ danych w pliku wynikowym dla etykiet z atrybutem /textit{type} o wartoœci \textit{ro}. Kolejnoœæ etykiet mówi jak zostan¹ ustawione dane w pliku wynikowym wyznaczone przez atrybut \textit{load}. Wartoœci tam podane odpowiadaj¹ etykietom zdefiniowanych w sekcji \textit{MEMORY}. Ka¿da wpis definiuje wielkoœæ obszaru, typ dostêpu (odczyt / zapis), w jakim pliku wynikowym siê znajdzie obszar, opcjonalne wype³nienie wartoœciami.
+Podsumowuj¹c: \textit{SEGMENTS} odnosi siê do reprezentacji programu na konsoli, \textit{MEMORY} odnosi siê do reprezentacji danych w pliku ROM.
+
+Proszê zwróciæ uwagê, ¿e nazwy segmentów u¿yte w pliku Ÿród³owym programu pokrywaj¹ siê z etykietami w sekcji \textit{SEGMENTS} w pliku konfiguracyjnym.
+Z tego dla pliku ROM i¿:
+\begin{itemize}
+\item na pocz¹tku pliku pojawi siê szesnastobajtowy nag³ówek,
+\item nastêpne szesnaœcie kilobajtów zajm¹ dane spod segmentu \textit{CODE}, pozosta³a wolna przestrzeñ zostanie wype³niona zerami
+\item potem to, co jest pod segmentem \textit{VECTORS} pos³u¿y linkerowi do nadpisania ostatnich 4 bajty segmentu \textit{CODE} (\$8000 - \$FFFC = \$04)
+\end{itemize}
+
+A dla konsoli wynika ¿e:
+\begin{itemize}
+\item to co znajduje siê za dyrektyw¹ \textit{CODE} w pliku Ÿród³owym zostanie zamapowane na obszar $8000 - $FFFF na konsoli NES,
+\item to co znajduje siê za dyrektyw¹ \textit{VECTORS} w pliku Ÿród³owym zostanie zamapowane na obszar $FFFC - $FFFF na konsoli NES, czêœciowo nadpisuj¹c segment \textit{CODE}; jest to jak najbardziej po¿¹dane.
+\end{itemize}
+
+Zanim potwierdzimy powy¿sze s³owa, potrzebujemy stworzyæ wynikowy plik ROM. Umieszczamy pliki ca65.exe oraz ld65.exe w tym folderze co nasz kod Ÿród³owy oraz plik konfiguracyjny. Najpierw kompilacja:
+\begin{verbatim}
+ca65 -o main.o main.s
+\end{verbatim}
+Argument \textit{-o} pozwala ustaliæ wynikow¹ nazwê pliku obiektowego. Na koñcu podajemy listê plików Ÿród³owych.
+Nastêpnie czas na linkowanie:
+\begin{verbatim}
+ld65 -t nes -o main.nes main.o
+\end{verbatim}
+Argument \textit{-t} ustala nazwê pliku, pod któr¹ linker znajdzie konfiguracjê. Co wa¿ne, plik musi mieæ rozszerzenie *.cfg którego nie podajemy w powy¿szym poleceniu. Argument \textit{-o} ustala nazwê wynikow¹ pliku ROM. Na koñcu jest lista plików obiektowych.
+
+Zobaczmy jak te dwa narzêdzia stworzy³y plik ROM. Do tego trzeba pos³u¿yæ siê oprogramowaniem zwanym hexedytorem:
+\begin{figure}[H]
+	\includegraphics[width=\textwidth]{project1}
+	\caption{Podgl¹d pliku ROM w programie HxD.}
+\end{figure}
+Kompilator inaczej zakodowa³ instrukcjê \textit{sta} - zwi¹zane jest to z tak zwanym \nameref{zeropage} i nie ma wp³ywu na poprawnoœæ programu.
+
+Teraz uruchommy ROM w \nameref{emulator}. Przywita nas jednokolorowy ekran. Aby sprawdziæ czy komórka pamiêci zawiera po¿¹dan¹ wartoœæ, musimy wybraæ z menu \textit{Debug} opcjê \textit{Memory Tools} i upewniæ siê, ¿e w dropdownie \textit{View} mamy wybran¹ opcjê \textit{CPU Memory}:
+\begin{figure}[H]
+	\includegraphics[width=\textwidth]{project2}
+	\caption{Podgl¹d RAM w emulatorze Mesen.}
+\end{figure}
+Faktycznie, jest tam wartoœæ szesnaœcie heksadecymalnie, zatem wszystko dzia³a jak powinno.
+Jest to dobry przyk³ad na naukê obs³ugi debuggera. Zatem w oknie g³ównym Mesena wybieramy z menu \textit{Debug} opcjê \textit{Debugger}. Okno debuggera mo¿e przyt³oczyæ ogromem informacji, na pocz¹tek skupimy siê na podgl¹dzie kodu. Postawmy breakpoint na adresie \$8000 (pocz¹tek kodu) klikaj¹c LPM na lewo od numeru adresu. Nastêpnie wyci¹gamy na wierzch okno z podgl¹dem RAM aby widzieæ nasz¹ zmienian¹ komórkê pamiêci a nastêpnie z menu debuggera wybieramy \textit{Debug} opcjê \textit{Reset}. Debugger sfokusuje siê na adresie \$8000, co oznaczone jest ¿ó³tym t³em oraz ¿ó³t¹ strza³k¹ wskazuj¹c¹ kolejn¹ instrukcjê do wykonania. Jednak¿e jest pewien problem - w pamiêci ju¿ jest ustawiona wartoœæ \$16. Otó¿ NES nie czyœci pamiêci podczas resetu - program sam musi o to zadbaæ.
+\begin{figure}[H]
+	\includegraphics[width=\textwidth]{project3}
+	\caption{Debugger w emulatorze Mesen.}
+\end{figure}
+Mimo tego przeœledŸmy wykonanie krok po kroku. W tym celu kilka razy kliknijmy przycisk \textit{Step Into}. Otó¿ po wykonaniu instrukcji \textit{sta} komórka w podgl¹dzie RAM podœwietli³a siê na czerwono - tak w³aœnie Mesen pokazuje, i¿ na danej komórce pamiêci odby³ siê zapis. Po dotarciu do instrukcji \textit{jmp} program "stoi" na instrukcji tak jak chcieliœmy pisz¹c pêtlê nieskoñczon¹.
+
+WprowadŸmy poprawkê ustawiaj¹c¹ wartoœæ na zero tu¿ po resecie, segment \textit{CODE} bêdzie wygl¹da³ nastêpuj¹co:
+\begin{verbatim}
+_INT_Reset:
+	lda #$00
+	sta $0000
+	lda #$16
+	sta $0000
+Stop:
+	jmp Stop
+\end{verbatim}
+
+Skompilujmy a nastêpnie podejrzyjmy w debuggerze jak ta wersja kodu siê wykonuje. Je¿eli nie wy³¹czyliœmy emulatora to breakpoint nadal bêdzie postawiony w po¿¹danym miejscu. Potrzebujemy przejœæ programu dwukrotnie - pierwsze przejœcie ustali wartoœæ w RAM na /$16, a w drugim zobaczymy dwukrotne ustawianie wartoœci - najpierw na zero, potem ponownie na $16.
+Warto równie¿ popatrzeæ na sekcjê \textit{CPU Status} na prawo od naszego kodu w debuggerze a dok³adniej pole \textit{A} - to jest w³aœnie rejestr procesora, akumulator.
+
+Za nami bardzo d³ugie wprowadzenie a w³aœciwie nic wielkiego nie zaprogramowaliœmy. S¹ to solidne fundamenty do dalszego kodowania, bez nich prêdzej czy póŸniej wychodz¹ braki tej podstawowej wiedzy, niezrozumienie bardziej skomplikowanych zagadnieñ. Narzêdzia deweloperskie emulatora to równie¿ potê¿na rzecz któr¹ warto wykorzystywaæ przy ka¿dej napotkanej w¹tpliwoœci / problemie, pozwalaj¹ zajrzeæ do "czarnej skrzynki" jak¹ niejako jest NES daj¹c podgl¹d na procesy zachodz¹ce w uk³adach scalonych nawet w mikroskali jak¹ jest pojedyncza instrukcja procesora.
+
+\subsection{W³aœciwe "Hello World"}
+NES to konsola maj¹ca wiele pu³apek czyhaj¹cych na programistê któremu brakuje wiedzy technicznej na temat tego sprzêtu. Poni¿ej omówiê program który w pe³ni poprawnie zainicjalizuje konsolê do dzia³ania. Jest on wspólnym opracowaniem wielu ludzi wspó³czeœnie zajmuj¹cych siê t¹ tematyk¹ (TODO: Odpowiedni link).
+
+
+
 
 
 \section{Informacje o platformie}
 \label{info}
+
+\subsection{Zero Page}
+\label{zeropage}
 
 \subsection{Mapper}
 \label{mapper}
@@ -314,6 +391,15 @@ CA65 jest czêœci¹ wiêkszego pakietu zwanego CC65. Jest on zbiorem narzêdzi do ko
 W przypadku NES jêzyk C stanowi problem wydajnoœciowy, gdy¿ plik wynikowy który powstaje po kompilacji kodu w C jest znacznie wolniejszy ni¿ odpowiednik asemblerowy; warto pamiêtaæ i¿ ta konsola jest wielokrotnie mniej wydajna ni¿ wspó³czesne sprzêty. St¹d moja decyzja o pisaniu kodu tylko i wy³¹cznie w asemblerze.
 
 (UWAGI: zestaw kompilator plus linker zas³uguje na wiêksze wyró¿nienie od ni¿ej opisanych programów pomocniczych do grafiki czy muzyki; do przemyœlenia miejsce w dokumencie)
+
+\subsection{Mesen}
+\label{emulator}
+Emulator znacz¹co wspiera proces tworzenia oprogramowania pod NES, gdy¿ zawiera wiele narzêdzi pozwalaj¹cych na zbadanie zachowania naszego programu. Aby mieæ dostêp do narzêdzi deweloperskich, musimy w menu \textit{Options -> Preferences} zaznaczyæ checkbox "Enable developer mode". Od tej pory w menu jest widoczna nowa pozycja - \textit{debug}.
+
+\begin{figure}[H]
+	\includegraphics[width=\textwidth]{emulator1}
+	\caption{Prze³¹cznik opcji deweloperskich w emulatorze Mesen.}
+\end{figure}
 
 \subsection{NES Screen Tool}
 \begin{figure}[H]

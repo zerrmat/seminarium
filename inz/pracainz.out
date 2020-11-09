@@ -4,11 +4,14 @@
 \BOOKMARK [2][-]{subsection.2.2}{Rejestry kontrolujace APU}{section.2}% 4
 \BOOKMARK [1][-]{section.3}{Projekt}{}% 5
 \BOOKMARK [2][-]{subsection.3.0}{Absolutne minimum}{section.3}% 6
-\BOOKMARK [2][-]{subsection.3.1}{Mapper}{section.3}% 7
-\BOOKMARK [2][-]{subsection.3.2}{Pattern Table}{section.3}% 8
-\BOOKMARK [2][-]{subsection.3.3}{Nametable}{section.3}% 9
-\BOOKMARK [2][-]{subsection.3.4}{Paleta barw}{section.3}% 10
-\BOOKMARK [1][-]{section.4}{Narzedzia}{}% 11
-\BOOKMARK [2][-]{subsection.4.1}{CA65}{section.4}% 12
-\BOOKMARK [2][-]{subsection.4.2}{NES Screen Tool}{section.4}% 13
-\BOOKMARK [2][-]{subsection.4.3}{FamiTracker}{section.4}% 14
+\BOOKMARK [1][-]{section.4}{Informacje o platformie}{}% 7
+\BOOKMARK [2][-]{subsection.4.1}{Zero Page}{section.4}% 8
+\BOOKMARK [2][-]{subsection.4.2}{Mapper}{section.4}% 9
+\BOOKMARK [2][-]{subsection.4.3}{Pattern Table}{section.4}% 10
+\BOOKMARK [2][-]{subsection.4.4}{Nametable}{section.4}% 11
+\BOOKMARK [2][-]{subsection.4.5}{Paleta barw}{section.4}% 12
+\BOOKMARK [1][-]{section.5}{Narzedzia}{}% 13
+\BOOKMARK [2][-]{subsection.5.1}{CA65}{section.5}% 14
+\BOOKMARK [2][-]{subsection.5.2}{Mesen}{section.5}% 15
+\BOOKMARK [2][-]{subsection.5.3}{NES Screen Tool}{section.5}% 16
+\BOOKMARK [2][-]{subsection.5.4}{FamiTracker}{section.5}% 17
