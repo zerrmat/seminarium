@@ -206,7 +206,94 @@ Adres {hex} & Nazwa \\ \hline
 \end{tabular}
 \end{table}
 Nazwy te zosta³y zaczerpniête z biblioteki audio do NES / Famicom - FamiTone2 \cite{famitone2}. U¿ywam ich równie¿ w kodzie Ÿród³owym programu oraz w tym dokumencie.
-(TODO: omówienie kazdego rejestru, jeszcze nie kodowa³em tego to nie znam szczegó³ów programowych)
+(TODO: omówienie ka¿dego rejestru, jeszcze nie kodowa³em tego to nie znam szczegó³ów programowych)
+
+\section{Projekt}
+\label{project}
+W tej sekcji omówiê krok po kroku jak powstawa³ mój w³asny projekt programu na platformê NES. Zacznê od pojedynczych, prostych czynnoœci a¿ po pewnego rodzaju pe³noprawny szkielet takiego projektu zgodny z dobrymi praktykami programowania NES. Nastêpnie zostan¹ omówione krytyczne fragmenty kodu z punktu widzenia ca³ego projektu oraz w³asne rozwi¹zania czêsto spotykanych zagadnieñ.
+
+\setcounter{subsection}{-1}
+\subsection{Absolutne minimum}
+Kod w pe³ni inicjuj¹cy konsolê jest doœæ rozbudowany, zatem warto zacz¹æ od czegoœ ³atwiejszego... Niech bêdzie to coœ, co poka¿e ¿e jakkolwiek panujemy nad maszyn¹ - zmiana wartoœci pojedynczej komórki pamiêci to rozs¹dny pomys³. Kod ustalaj¹cy wartoœæ pierwszej komórki RAM na wartoœæ 16 (w systemie szestnastkowym) bêdzie wygl¹da³ nastêpuj¹co:
+\begin{verbatim}
+lda #$16
+sta $0000
+\end{verbatim}
+Mnemonik \textit{lda} ma wiele odmian - ta zastosowana powy¿ej wczytuje konkretn¹ wartoœæ do wbudowanego w CPU rejestru - akumulatora. Symbol \textit{#$} oznacza w³aœnie konkretn¹ wartoœæ liczbow¹ zapisan¹ szesnastkowo.
+Mnemonik \textit{sta} kopiuje wartoœæ z akumulatora pod lokacjê podan¹ jako operand; tutaj jest to pierwsza komórka pamiêci RAM (= o adresie $0000). 
+
+Jednak¿e jest to o wiele za ma³o ¿eby nawet emulator zrobi³ to, co oczekujemy.
+Pierwsza sprawa jest zwi¹zana z ogólnie przyjêtym formatem pliku reprezentuj¹cym ROM programu na platformê NES. Taki plik ma szesnastobajtowy nag³ówek opisuj¹cy szczegó³y programu. Nag³ówek jest potrzebny emulatorom oraz flashcartom do przygotowania adekwatnego œrodowiska uruchomieniowego.
+W naszym przypadku nag³ówek bêdzie wygl¹da³ nastêpuj¹co:
+\begin{verbatim}
+.byte "NES"
+.byte $1A
+.byte 2
+.byte 0
+.byte %00000000
+.byte %00000000
+.byte 0, 0
+.byte 0, 0, 0, 0, 0, 0
+\end{verbatim}
+Pierwsze trzy bajty ("NES") to magiczna wartoœæ.
+Kolejny bajt to znak koñca linii.
+Po wy¿ej opisanych czterech bajtach programy mog¹ rozpoznaæ i¿ maj¹ do czynienia z plikiem w formacie *.NES.
+Bajt pi¹ty to iloœæ 16KB stron pamiêci przeznaczonych na kod wykonywalny. Dwa banki wype³niaj¹ ca³¹ przestrzeñ adresow¹ konsoli.
+Kolejny bajt to iloœæ 16KB stron pamiêci przeznaczonych na grafikê. W tym momencie nie potrzebujemy ¿adnej grafiki zatem ustawiamy bajt na zero. W³aœciwie wartoœæ zero ma inny efekt a my skorzystamy z efektu ubocznego tego ale jest to na razie nieistotne - uzyskamy po¿¹dany efekt.
+Bajty 7 - 10 to flagi - na tê chwilê interesuj¹ nas tylko i wy³¹cznie bajty odpowiadaj¹ce za \cite{mapper}Mapper. Mapper 0 jest "podstawowy" przez co odpowiedni do prostych programów, zatem go ustawimy. Warto wspomnieæ o tym, jak formowany jest numer mappera: cztery górny bajty pochodz¹ z czterech górnych bajtów bajta ósmego w nag³ówku, cztery dolne bajty pochodz¹ z czterech górnych bajtów bajta siódmego w nag³ówku. (TODO: obrazek lepszy)
+Funkcjonalnoœæ bajtów 9 oraz 10 nie interesuje nas w tej chwili, mo¿na je ustawiæ na 0 i zapomnieæ o ich istnieniu
+Bajty 11 - 15 to dope³nienie nag³ówka. Wartoœci mog¹ byæ dowolne, zwyjczajowo s¹ to zera.
+
+Druga sprawa ma zwi¹zek z architektur¹ konsoli. Zawsze po uruchomieniu / zresetowaniu konsoli, pierwsz¹ rzecz¹ jak¹ robi procesor to skok bezwzglêdny do adresu uformowanego z bajtów pod adresami $FFFC (górny bajt) i $FFFD (dolny bajt). W tym celu modyfikujemy kod w nastêpuj¹cy sposób:
+\begin{verbatim}
+_INT_Reset:
+	lda #$16
+	sta $0000
+
+.word _INT_Reset
+\end{verbatim}
+\textit{.word} to dyrektywa asemblera dzia³aj¹ca jak \textit(.byte), tyle ¿e podajemy wartoœci dwubajtowe zamiast jednobajtowych.
+\textit{_INT_Reset} to etykieta, zostanie ona zamieniona na konkretny adres przez linker. Dwukropek definiuje etykietê; sam¹ nazwê etykiety traktuje siê jak konkretn¹ wartoœæ szesnastobitow¹. Nadal zostaje problem powiedzenia kompilatorowi oraz linkerowi ¿e ma wstawiæ adres wyznaczony przez etykietê \textit{_INT_Reset} dok³adnie pod adres $FFFC w ROM. Inna sprawa to wskazanie kompilatorowi / linkerowi i¿ nag³ówek nie jest czêœci¹ kodu lecz ma siê znaleŸæ na pocz¹tku pliku reprezentuj¹cego ROM. Oba problemy rozwi¹¿e dyrektywa asemblera \textit{.segment}. Ukoñczony pierwszy program bêdzie wygl¹da³ nastêpuj¹co:
+\begin{verbatim}
+.segment "HEADER"
+.byte "NES"		; Wartoœæ magiczna
+.byte $1A		; Wartoœæ koñca linii
+.byte 2			; 2 banki * 16 KB (32 KB) - kod Ÿród³owy (PRG)
+.byte 0 		; 0 banków * 8 KB (0 KB) - grafika (CHR)
+.byte %00000000 ; mapper 0 (NROM) [bity 0-3] (cztery dolne bity wartoœci)
+.byte %00000000 ; mapper 0 (NROM) [bity 0-3] (cztery górne bity wartoœci)
+.byte 0, 0
+.byte 0, 0, 0, 0, 0, 0
+
+.segment "CODE"
+_INT_Reset:
+	lda #$16
+	sta $0000
+
+.segment "VECTORS"
+.word _INT_Reset
+\end{verbatim}
+\textit{.segment} to dyrektywa mówi¹ca "poni¿sza treœæ nale¿y do bloku danych zdefiniowanego w pliku konfiguracyjnym linkera podanego jako argument dyrektywy". Na tê chwilê brzmi to niezrozumiale, bo jeszcze nawet nie wspomina³em czym jest plik konfiguracyjny linkera. Jest to plik ze wskazówkami jak ma byæ przeprowadzony proces linkowania plików obiektowych. Do pakietu CC65 jest do³¹czony przyk³adowy plik dla platformy NES jednak¿e wymaga wielu zmian by byc w zgodzie z dobrymi praktykami przyjêtymi przez spo³ecznoœæ wspó³czeœnie programuj¹c¹ na tê konsolê, zatem nic nam po nim i trzeba samemu rozgryŸæ jak stworzyæ w³asny. W naszym przypadku plik bêdzie mia³ nastêpuj¹c¹ treœæ:
+\begin{verbatim}
+MEMORY {
+    RAM:    	start = $0000,  size = $0800, type = rw, file = "";
+    HDR:    	start = $0000,  size = $0010, type = ro, file = %O, fill = yes, fillval = $00;
+    PRG:    	start = $8000,  size = $8000, type = ro, file = %O, fill = yes, fillval = $00;
+}
+
+SEGMENTS {
+    BSS:      load = RAM, type = bss;
+    HEADER:   load = HDR, type = ro;
+    CODE:     load = PRG, type = ro,  start = $9000;
+    VECTORS:  load = PRG, type = ro,  start = $FFFC;
+}
+\end{verbatim}
+/textit{MEMORY} oraz /textit{SEGMENTS} wyznaczaj¹ grupy zasad steruj¹cych linkerem. Etykiety w sekcji /textit{SEGMENTS} opisuj¹ dwie rzeczy - mapê pamiêci w programie NES za pomoc¹ atrybutu \textt{start} oraz determinuje kolejnoœæ danych w pliku wynikowym dla etykiet z atrybutem /textit{type} o wartoœci \textit{ro}. Kolejnoœæ etykiet mówi jak zostan¹ ustawione dane w pliku wynikowym wyznaczone przez atrybut \textit{load}. Wartoœci tam podane odpowiadaj¹ etykietom zdefiniowanych w sekcji \textit{MEMORY}. Ka¿da wpis definiuje wielkoœæ obszaru, typ dostêpu (odczyt / zapis), w jakim pliku wynikowym siê znajdzie obszar, opcjonalne wype³nienie wartoœciami.
+Podsumowuj¹c: \textit{SEGMENTS} ustala "gdzie", \textit{MEMORY} ustala "jak". 
+
+
+\section{Informacje o platformie}
+\label{info}
 
 \subsection{Mapper}
 \label{mapper}
@@ -222,6 +309,10 @@ Nazwy te zosta³y zaczerpniête z biblioteki audio do NES / Famicom - FamiTone2 \c
 
 \section{Narzêdzia}
 \subsection{CA65}
+Strona projektu: https://cc65.github.io/
+CA65 jest czêœci¹ wiêkszego pakietu zwanego CC65. Jest on zbiorem narzêdzi do kompilacji kodu napisanego w jêzyku C na sprzêty z procesorem MOS 6502. Za to CA65 jest asemblerem pod ten sam procesor.
+W przypadku NES jêzyk C stanowi problem wydajnoœciowy, gdy¿ plik wynikowy który powstaje po kompilacji kodu w C jest znacznie wolniejszy ni¿ odpowiednik asemblerowy; warto pamiêtaæ i¿ ta konsola jest wielokrotnie mniej wydajna ni¿ wspó³czesne sprzêty. St¹d moja decyzja o pisaniu kodu tylko i wy³¹cznie w asemblerze.
+
 (UWAGI: zestaw kompilator plus linker zas³uguje na wiêksze wyró¿nienie od ni¿ej opisanych programów pomocniczych do grafiki czy muzyki; do przemyœlenia miejsce w dokumencie)
 
 \subsection{NES Screen Tool}
