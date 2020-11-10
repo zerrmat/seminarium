@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 2.9.7380 64-bit) (preloaded format=pdflatex 2020.3.30)  9 NOV 2020 20:01
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 2.9.7380 64-bit) (preloaded format=pdflatex 2020.3.30)  10 NOV 2020 18:24
 entering extended mode
 **./pracainz.tex
 (pracainz.tex
@@ -262,6 +262,9 @@ File: l3backend-pdfmode.def 2020-03-12 L3 backend support: PDF mode
 
 LaTeX Warning: Label `fig:figure3' multiply defined.
 
+
+LaTeX Warning: Label `fig:figure3' multiply defined.
+
 )
 \openout1 = `pracainz.aux'.
 
@@ -327,26 +330,15 @@ LaTeX Info: Redefining \nameref on input line 10.
 \@outlinefile=\write3
 \openout3 = `pracainz.out'.
 
-
-
-LaTeX Warning: Citation `wikiNES' on page 1 undefined on input line 13.
-
-<./img/Nintendo-Famicom-Console-Set-FL.jpg, id=67, 1454.43375pt x 776.9025pt>
+<./img/Nintendo-Famicom-Console-Set-FL.jpg, id=132, 1454.43375pt x 776.9025pt>
 File: ./img/Nintendo-Famicom-Console-Set-FL.jpg Graphic file (type jpg)
 <use ./img/Nintendo-Famicom-Console-Set-FL.jpg>
 Package pdftex.def Info: ./img/Nintendo-Famicom-Console-Set-FL.jpg  used on inp
 ut line 16.
 (pdftex.def)             Requested size: 195.0pt x 104.15417pt.
-
-LaTeX Warning: Citation `IMG-NintendoFamicomConsoleSetFL' on page 1 undefined o
-n input line 17.
-
-
-LaTeX Warning: Citation `IMG-NintendoFamicomConsoleSetFL' on page 1 undefined o
-n input line 17.
-
 LaTeX Font Info:    Trying to load font information for OML+plm on input line 1
 8.
+
 ("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/polski\omlplm.fd"
 File: omlplm.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
 )
@@ -368,20 +360,11 @@ LaTeX Font Info:    External font `plex10' loaded for size
 (Font)              <8> on input line 18.
 LaTeX Font Info:    External font `plex10' loaded for size
 (Font)              <6> on input line 18.
-<./img/NES-Console-Set.jpg, id=68, 5320.87875pt x 2791.42876pt>
+<./img/NES-Console-Set.jpg, id=135, 5320.87875pt x 2791.42876pt>
 File: ./img/NES-Console-Set.jpg Graphic file (type jpg)
 <use ./img/NES-Console-Set.jpg>
 Package pdftex.def Info: ./img/NES-Console-Set.jpg  used on input line 21.
 (pdftex.def)             Requested size: 195.0pt x 102.26752pt.
-
-
-LaTeX Warning: Citation `IMG-NESConsoleSet' on page 1 undefined on input line 2
-2.
-
-
-LaTeX Warning: Citation `IMG-NESConsoleSet' on page 1 undefined on input line 2
-2.
-
 
 Underfull \hbox (badness 10000) in paragraph at lines 22--22
 []\OT4/cmr/m/n/12 Rysunek 2: []Nintendo En-ter-ta-in-
@@ -397,30 +380,16 @@ Overfull \hbox (2.61108pt too wide) in paragraph at lines 15--24
 []$[]$  $[]$ 
  []
 
-<./img/New_Famicom.jpg, id=69, 803.0pt x 602.25pt>
+<./img/New_Famicom.jpg, id=138, 803.0pt x 602.25pt>
 File: ./img/New_Famicom.jpg Graphic file (type jpg)
 <use ./img/New_Famicom.jpg>
 Package pdftex.def Info: ./img/New_Famicom.jpg  used on input line 29.
 (pdftex.def)             Requested size: 195.0pt x 146.25221pt.
-
-LaTeX Warning: Citation `IMG-NewFamicom' on page 1 undefined on input line 30.
-
-
-LaTeX Warning: Citation `IMG-NewFamicom' on page 1 undefined on input line 30.
-
-<./img/NES-101-Console-Set.jpg, id=70, 1180.41pt x 638.385pt>
+<./img/NES-101-Console-Set.jpg, id=141, 1180.41pt x 638.385pt>
 File: ./img/NES-101-Console-Set.jpg Graphic file (type jpg)
 <use ./img/NES-101-Console-Set.jpg>
 Package pdftex.def Info: ./img/NES-101-Console-Set.jpg  used on input line 34.
 (pdftex.def)             Requested size: 195.0pt x 105.4556pt.
-
-LaTeX Warning: Citation `IMG-NES101ConsoleSet' on page 1 undefined on input lin
-e 35.
-
-
-LaTeX Warning: Citation `IMG-NES101ConsoleSet' on page 1 undefined on input lin
-e 35.
-
 
 Underfull \hbox (badness 10000) in paragraph at lines 35--35
 []\OT4/cmr/m/n/12 Rysunek 4: []Nintendo En-ter-ta-in-
@@ -441,102 +410,56 @@ Overfull \hbox (2.61108pt too wide) in paragraph at lines 28--37
 {C:/Users/Ja/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map} <./img/Nintendo
 -Famicom-Console-Set-FL.jpg> <./img/NES-Console-Set.jpg> <./img/New_Famicom.jpg
 > <./img/NES-101-Console-Set.jpg>]
-<./img/415J8GUp-KL--52577.1589699928.jpg, id=82, 1284.8pt x 1284.8pt>
+<./img/415J8GUp-KL--52577.1589699928.jpg, id=160, 1284.8pt x 1284.8pt>
 File: ./img/415J8GUp-KL--52577.1589699928.jpg Graphic file (type jpg)
 <use ./img/415J8GUp-KL--52577.1589699928.jpg>
 Package pdftex.def Info: ./img/415J8GUp-KL--52577.1589699928.jpg  used on input
  line 50.
 (pdftex.def)             Requested size: 195.0pt x 194.9858pt.
-
-
-LaTeX Warning: Citation `IMG-GenerationNEX' on page 2 undefined on input line 5
-1.
-
-
-LaTeX Warning: Citation `IMG-GenerationNEX' on page 2 undefined on input line 5
-1.
-
-<./img/DY-656-400.jpg, id=83, 1606.0pt x 1204.5pt>
+<./img/DY-656-400.jpg, id=163, 1606.0pt x 1204.5pt>
 File: ./img/DY-656-400.jpg Graphic file (type jpg)
 <use ./img/DY-656-400.jpg>
 Package pdftex.def Info: ./img/DY-656-400.jpg  used on input line 55.
 (pdftex.def)             Requested size: 195.0pt x 146.24303pt.
-
-LaTeX Warning: Citation `IMG-DaryarDY400656' on page 2 undefined on input line 
-56.
-
-
-LaTeX Warning: Citation `IMG-DaryarDY400656' on page 2 undefined on input line 
-56.
-
 
 Overfull \hbox (2.61108pt too wide) in paragraph at lines 49--58
 []$[]$  $[]$ 
  []
 
 [2]
-<./img/glk_2004.jpg, id=89, 501.875pt x 210.7875pt>
+<./img/glk_2004.jpg, id=171, 501.875pt x 210.7875pt>
 File: ./img/glk_2004.jpg Graphic file (type jpg)
 <use ./img/glk_2004.jpg>
 Package pdftex.def Info: ./img/glk_2004.jpg  used on input line 62.
 (pdftex.def)             Requested size: 195.0pt x 81.90123pt.
 
-
-LaTeX Warning: Citation `IMG-GLK-2004' on page 3 undefined on input line 63.
-
-
-LaTeX Warning: Citation `IMG-GLK-2004' on page 3 undefined on input line 63.
-
-
 Underfull \hbox (badness 1077) in paragraph at lines 63--63
 []\OT4/cmr/m/n/12 Rysunek 7: []GLK-2004 - po-pu-lar-na
  []
 
-<./img/gameaxe_1.jpg, id=90, 642.4pt x 481.8pt>
+<./img/gameaxe_1.jpg, id=174, 642.4pt x 481.8pt>
 File: ./img/gameaxe_1.jpg Graphic file (type jpg)
 <use ./img/gameaxe_1.jpg>
 Package pdftex.def Info: ./img/gameaxe_1.jpg  used on input line 67.
 (pdftex.def)             Requested size: 195.0pt x 146.24669pt.
 
-LaTeX Warning: Citation `IMG-Game-Axe-Color' on page 3 undefined on input line 
-68.
-
-
-LaTeX Warning: Citation `IMG-Game-Axe-Color' on page 3 undefined on input line 
-68.
-
-
 Overfull \hbox (2.61108pt too wide) in paragraph at lines 61--70
 []$[]$  $[]$ 
  []
 
-<./img/RetroUSB-AVS-Console-wController-FL.jpg, id=91, 1318.9275pt x 632.3625pt
->
+<./img/RetroUSB-AVS-Console-wController-FL.jpg, id=177, 1318.9275pt x 632.3625p
+t>
 File: ./img/RetroUSB-AVS-Console-wController-FL.jpg Graphic file (type jpg)
 <use ./img/RetroUSB-AVS-Console-wController-FL.jpg>
 Package pdftex.def Info: ./img/RetroUSB-AVS-Console-wController-FL.jpg  used on
  input line 76.
 (pdftex.def)             Requested size: 195.0pt x 93.48976pt.
-
-LaTeX Warning: Citation `IMG-RetroUSBAVS' on page 3 undefined on input line 77.
-
-
-
-LaTeX Warning: Citation `IMG-RetroUSBAVS' on page 3 undefined on input line 77.
-
-
-<./img/ret5bk--54484.1567795736.1280.1280.jpg, id=92, 602.25pt x 602.25pt>
+<./img/ret5bk--54484.1567795736.1280.1280.jpg, id=180, 602.25pt x 602.25pt>
 File: ./img/ret5bk--54484.1567795736.1280.1280.jpg Graphic file (type jpg)
 <use ./img/ret5bk--54484.1567795736.1280.1280.jpg>
 Package pdftex.def Info: ./img/ret5bk--54484.1567795736.1280.1280.jpg  used on 
 input line 81.
 (pdftex.def)             Requested size: 195.0pt x 195.00294pt.
-
-LaTeX Warning: Citation `IMG-RetroN5' on page 3 undefined on input line 82.
-
-
-LaTeX Warning: Citation `IMG-RetroN5' on page 3 undefined on input line 82.
-
 
 Underfull \hbox (badness 1028) in paragraph at lines 82--82
 []\OT4/cmr/m/n/12 Rysunek 10: []Hyperkin Re-troN 5 -
@@ -549,288 +472,240 @@ Overfull \hbox (2.61108pt too wide) in paragraph at lines 75--84
 
 [3 <./img/415J8GUp-KL--52577.1589699928.jpg> <./img/DY-656-400.jpg> <./img/glk_
 2004.jpg> <./img/gameaxe_1.jpg>]
-<./img/61iW8vUHOJL.-AC-SL1500-.jpg, id=101, 1371.1225pt x 1329.96875pt>
+<./img/61iW8vUHOJL.-AC-SL1500-.jpg, id=195, 1371.1225pt x 1329.96875pt>
 File: ./img/61iW8vUHOJL.-AC-SL1500-.jpg Graphic file (type jpg)
 <use ./img/61iW8vUHOJL.-AC-SL1500-.jpg>
 Package pdftex.def Info: ./img/61iW8vUHOJL.-AC-SL1500-.jpg  used on input line 
 89.
 (pdftex.def)             Requested size: 195.0pt x 189.13693pt.
-
-
-LaTeX Warning: Citation `IMG-620Games' on page 4 undefined on input line 90.
-
-
-LaTeX Warning: Citation `IMG-620Games' on page 4 undefined on input line 90.
-
-
-LaTeX Warning: Citation `wikiNESClones' on page 4 undefined on input line 94.
-
-[4 <./img/RetroUSB-AVS-Console-wController-FL.jpg> <./img/ret5bk--54484.1567795
-736.1280.1280.jpg> <./img/61iW8vUHOJL.-AC-SL1500-.jpg>]
-<img/iq502.jpg, id=109, 513.92pt x 342.27875pt>
+ [4 <./img/RetroUSB-AVS-Console-wController-FL.jpg> <./img/ret5bk--54484.156779
+5736.1280.1280.jpg> <./img/61iW8vUHOJL.-AC-SL1500-.jpg>]
+<img/iq502.jpg, id=209, 513.92pt x 342.27875pt>
 File: img/iq502.jpg Graphic file (type jpg)
 <use img/iq502.jpg>
 Package pdftex.def Info: img/iq502.jpg  used on input line 98.
 (pdftex.def)             Requested size: 195.0pt x 129.87402pt.
-
-
-LaTeX Warning: Citation `IMG-mgiq502' on page 5 undefined on input line 99.
-
-
-LaTeX Warning: Citation `IMG-mgiq502' on page 5 undefined on input line 99.
-
-<./img/pegiq502.png, id=110, 770.88pt x 1027.84pt>
+<./img/pegiq502.png, id=212, 770.88pt x 1027.84pt>
 File: ./img/pegiq502.png Graphic file (type png)
 <use ./img/pegiq502.png>
 Package pdftex.def Info: ./img/pegiq502.png  used on input line 105.
 (pdftex.def)             Requested size: 195.0pt x 259.9863pt.
-
-LaTeX Warning: Citation `IMG-pegiq502' on page 5 undefined on input line 106.
-
-
-LaTeX Warning: Citation `IMG-pegiq502' on page 5 undefined on input line 106.
-
-<./img/5b6c9ad96c86cb85b53b41c2.jpg, id=111, 587.19376pt x 587.19376pt>
+<./img/5b6c9ad96c86cb85b53b41c2.jpg, id=215, 587.19376pt x 587.19376pt>
 File: ./img/5b6c9ad96c86cb85b53b41c2.jpg Graphic file (type jpg)
 <use ./img/5b6c9ad96c86cb85b53b41c2.jpg>
 Package pdftex.def Info: ./img/5b6c9ad96c86cb85b53b41c2.jpg  used on input line
  110.
 (pdftex.def)             Requested size: 195.0pt x 194.99307pt.
 
-LaTeX Warning: Citation `IMG-deniq502' on page 5 undefined on input line 111.
-
-
-LaTeX Warning: Citation `IMG-deniq502' on page 5 undefined on input line 111.
-
-
 Overfull \hbox (2.61108pt too wide) in paragraph at lines 104--113
 []$[]$  $[]$ 
  []
 
-[5 <./img/iq502.jpg> <./img/pegiq502.png> <./img/5b6c9ad96c86cb85b53b41c2.jpg>]
-
-LaTeX Warning: Citation `nesdoc' on page 6 undefined on input line 117.
-
-
+[5 <./img/iq502.jpg>]
 Overfull \hbox (86.73442pt too wide) in paragraph at lines 127--139
 [][] 
  []
 
-
-LaTeX Warning: Citation `nesmemorymap' on page 6 undefined on input line 140.
-
-
+[6 <./img/pegiq502.png> <./img/5b6c9ad96c86cb85b53b41c2.jpg>]
 Overfull \hbox (1.6154pt too wide) in paragraph at lines 142--156
 []\OT4/cmr/m/n/12 Ukªad gra-ficz-ny (PPU): Ri-coh 2C02, o±mio-bi-to-wy ukªad op
 ra-co-wa-ny przez
  []
 
-[6]
-
-LaTeX Warning: Citation `wikicpuppuregisters' on page 7 undefined on input line
- 162.
-
-
-LaTeX Warning: Citation `wikicpuapuregisters' on page 7 undefined on input line
- 183.
-
-[7]
-
-LaTeX Warning: Citation `famitone2' on page 8 undefined on input line 208.
-
-[8]
+[7] [8] [9]
 LaTeX Font Info:    Trying to load font information for OT4+cmtt on input line 
 218.
- ("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/polski\ot4cmtt.fd"
+
+("C:\Users\Ja\AppData\Local\Programs\MiKTeX 2.9\tex/latex/polski\ot4cmtt.fd"
 File: ot4cmtt.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
-) [9] [10]
-Overfull \hbox (5.2002pt too wide) in paragraph at lines 297--297
-[]    \OT4/cmtt/m/n/12 RAM:     start = $0000,  size = $0800, type = rw, file =
- "";[] 
+)
+[10] [11]
+Overfull \hbox (23.7252pt too wide) in paragraph at lines 299--299
+[]    \OT4/cmtt/m/n/12 RAM:        start = $0000,  size = $0800, type = rw, fil
+e = "";[] 
  []
 
 
-Overfull \hbox (171.92528pt too wide) in paragraph at lines 297--297
-[]    \OT4/cmtt/m/n/12 HDR:     start = $0000,  size = $0010, type = ro, file =
- %O, fill = yes, fillval = $00;[] 
+Overfull \hbox (190.45029pt too wide) in paragraph at lines 299--299
+[]    \OT4/cmtt/m/n/12 HDR:        start = $0000,  size = $0010, type = ro, fil
+e = %O, fill = yes, fillval = $00;[] 
  []
 
 
-Overfull \hbox (171.92528pt too wide) in paragraph at lines 297--297
-[]    \OT4/cmtt/m/n/12 PRG:     start = $8000,  size = $8000, type = ro, file =
- %O, fill = yes, fillval = $00;[] 
+Overfull \hbox (190.45029pt too wide) in paragraph at lines 299--299
+[]    \OT4/cmtt/m/n/12 PRG:        start = $8000,  size = $8000, type = ro, fil
+e = %O, fill = yes, fillval = $00;[] 
  []
 
-[11]
-<./img/project1.png, id=156, 722.7pt x 466.74374pt>
+[12]
+<./img/project1.png, id=280, 722.7pt x 466.74374pt>
 File: ./img/project1.png Graphic file (type png)
 <use ./img/project1.png>
-Package pdftex.def Info: ./img/project1.png  used on input line 328.
+Package pdftex.def Info: ./img/project1.png  used on input line 330.
 (pdftex.def)             Requested size: 390.0pt x 251.87405pt.
- [12]
-<./img/project2.png, id=166, 529.22719pt x 324.46219pt>
+ [13]
+<./img/project2.png, id=291, 529.22719pt x 324.46219pt>
 File: ./img/project2.png Graphic file (type png)
 <use ./img/project2.png>
-Package pdftex.def Info: ./img/project2.png  used on input line 335.
+Package pdftex.def Info: ./img/project2.png  used on input line 337.
 (pdftex.def)             Requested size: 390.0pt x 239.10312pt.
- [13 <./img/project1.png>]
-<./img/project3.png, id=174, 346.29375pt x 286.06876pt>
+ [14 <./img/project1.png>]
+<./img/project3.png, id=298, 346.29375pt x 286.06876pt>
 File: ./img/project3.png Graphic file (type png)
 <use ./img/project3.png>
-Package pdftex.def Info: ./img/project3.png  used on input line 341.
+Package pdftex.def Info: ./img/project3.png  used on input line 343.
 (pdftex.def)             Requested size: 390.0pt x 322.1845pt.
- [14 <./img/project2.png>] [15 <./img/project3.png>]
-<./img/emulator1.png, id=185, 386.19281pt x 368.1253pt>
+ [15 <./img/project2.png>] [16 <./img/project3.png>] [17] [18]
+Overfull \hbox (73.12523pt too wide) in paragraph at lines 408--408
+[]\OT4/cmtt/m/n/12 Chcemy wykona¢ operacj¦ \textit{bit} na warto±ci #$80 (%1000
+0000 binarnie).[] 
+ []
+
+[19] [20] [21]
+<./img/project4.png, id=335, 421.575pt x 286.06876pt>
+File: ./img/project4.png Graphic file (type png)
+<use ./img/project4.png>
+Package pdftex.def Info: ./img/project4.png  used on input line 512.
+(pdftex.def)             Requested size: 390.0pt x 264.64874pt.
+ [22]
+<./img/project5.png, id=340, 390.70969pt x 401.24907pt>
+File: ./img/project5.png Graphic file (type png)
+<use ./img/project5.png>
+Package pdftex.def Info: ./img/project5.png  used on input line 518.
+(pdftex.def)             Requested size: 390.0pt x 400.53786pt.
+ [23 <./img/project4.png>]
+<./img/project6.png, id=346, 722.7pt x 361.35pt>
+File: ./img/project6.png Graphic file (type png)
+<use ./img/project6.png>
+Package pdftex.def Info: ./img/project6.png  used on input line 525.
+(pdftex.def)             Requested size: 390.0pt x 194.99928pt.
+ [24 <./img/project5.png>]
+[25 <./img/project6.png>] [26]
+Overfull \vbox (13.7667pt too high) has occurred while \output is active []
+
+
+[27]
+<./img/emulator1.png, id=367, 386.19281pt x 368.1253pt>
 File: ./img/emulator1.png Graphic file (type png)
 <use ./img/emulator1.png>
-Package pdftex.def Info: ./img/emulator1.png  used on input line 378.
+Package pdftex.def Info: ./img/emulator1.png  used on input line 712.
 (pdftex.def)             Requested size: 390.0pt x 371.75307pt.
- [16]
-<./img/nesst.png, id=190, 616.55344pt x 466.74374pt>
+ [28]
+<./img/nesst.png, id=372, 616.55344pt x 466.74374pt>
 File: ./img/nesst.png Graphic file (type png)
 <use ./img/nesst.png>
-Package pdftex.def Info: ./img/nesst.png  used on input line 384.
+Package pdftex.def Info: ./img/nesst.png  used on input line 718.
 (pdftex.def)             Requested size: 390.0pt x 295.2466pt.
-
-
-LaTeX Warning: Citation `IMG-nesscreentooloverview' on page 17 undefined on inp
-ut line 385.
-
-[17 <./img/emulator1.png>]
-
-LaTeX Warning: Citation `nesscreentoolpage' on page 18 undefined on input line 
-389.
-
-<./img/famitracker.png, id=196, 865.2325pt x 597.23125pt>
+ [29 <./img/emulator1.png>]
+<./img/famitracker.png, id=380, 865.2325pt x 597.23125pt>
 File: ./img/famitracker.png Graphic file (type png)
 <use ./img/famitracker.png>
-Package pdftex.def Info: ./img/famitracker.png  used on input line 393.
+Package pdftex.def Info: ./img/famitracker.png  used on input line 727.
 (pdftex.def)             Requested size: 390.0pt x 269.1981pt.
-
-LaTeX Warning: Citation `IMG-famitrackeroverview' on page 18 undefined on input
- line 394.
-
-[18 <./img/nesst.png>]
-
-LaTeX Warning: Citation `wikitracker' on page 19 undefined on input line 397.
-
-
-LaTeX Warning: Citation `famitrackerpage' on page 19 undefined on input line 39
-8.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 402--403
+ [30 <./img/nesst.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 736--737
 []\OT4/cmr/m/n/12 https://upload.wikimedia.org/wikipedia/commons/0/06/Nintendo-
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 403--404
+Underfull \hbox (badness 10000) in paragraph at lines 737--738
 []\OT4/cmr/m/n/12 https://upload.wikimedia.org/wikipedia/commons/8/82/NES-Conso
 le-
  []
 
 
-Overfull \hbox (16.62439pt too wide) in paragraph at lines 405--406
+Overfull \hbox (16.62439pt too wide) in paragraph at lines 739--740
 []\OT4/cmr/m/n/12 https://upload.wikimedia.org/wikipedia/commons/f/f1/New[]Fami
 com.jpg 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 407--408
+Underfull \hbox (badness 10000) in paragraph at lines 741--742
 []\OT4/cmr/m/n/12 https://upload.wikimedia.org/wikipedia/commons/e/e0/NES-101-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 409--410
+Underfull \hbox (badness 10000) in paragraph at lines 743--744
 []\OT4/cmr/m/n/12 https://levelupvideogames.com/used-messiah-generation-nex-
  []
 
-[19 <./img/famitracker.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 413--414
+[31 <./img/famitracker.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 747--748
 []\OT4/cmr/m/n/12 https://arhn.eu/2018/04/historia-pegasusa-z-klawiatura-glk-20
 04-et-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 417--418
+Underfull \hbox (badness 10000) in paragraph at lines 751--752
 []\OT4/cmr/m/n/12 https://upload.wikimedia.org/wikipedia/commons/7/7a/RetroUSB-
 
  []
 
 
-Overfull \hbox (239.83261pt too wide) in paragraph at lines 419--420
+Overfull \hbox (239.83261pt too wide) in paragraph at lines 753--754
 []\OT4/cmr/m/n/12 https://cdn10.bigcommerce.com/s-2l8ru96d/products/223/images/
 1135/ret5bk[][]54484.1567795736.1280.1280.jpg?c=2 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 421--422
+Underfull \hbox (badness 10000) in paragraph at lines 755--756
 []\OT4/cmr/m/n/12 https://www.amazon.com/Controllers-Children-Birthday-Childhoo
 d-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 422--423
+Underfull \hbox (badness 10000) in paragraph at lines 756--757
 []\OT4/cmr/m/n/12 http://www.retrogamingmuseum.com/the-collection/micro-genius-
 nes-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 423--424
+Underfull \hbox (badness 10000) in paragraph at lines 757--758
 []\OT4/cmr/m/n/12 https://archiwum.allegro.pl/oferta/konsola-pegasus-iq-502-pad
 y-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 424--425
+Underfull \hbox (badness 10000) in paragraph at lines 758--759
 []\OT4/cmr/m/n/12 https://youla.ru/moskva/hobbi-razvlecheniya/konsoli-igry/dend
 y-
  []
 
 
-Overfull \hbox (41.06412pt too wide) in paragraph at lines 428--429
+Overfull \hbox (41.06412pt too wide) in paragraph at lines 762--763
 []\OT4/cmr/m/n/12 https://en.wikipedia.org/wiki/Nintendo[]Entertainment[]System
 []hardware[]clone 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 437--438
+Underfull \hbox (badness 10000) in paragraph at lines 771--772
 []\OT4/cmr/m/n/12 https://blog.uptodown.com/wp-content/uploads/Famitracker-
  []
 
-[20]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 441.
- [21]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 441.
+[32]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 776.
+ [33]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 776.
  (pracainz.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 441.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 441.
-
-
-Package rerunfilecheck Warning: File `pracainz.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `pracainz.out':
-(rerunfilecheck)             Before: 5C913599F0993EA4A364080C8C172B68;932
-(rerunfilecheck)             After:  30C6A8547C88D7777D5BDA0CFA22E3C2;993.
-
-LaTeX Warning: There were undefined references.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 776.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 776.
+Package rerunfilecheck Info: File `pracainz.out' has not changed.
+(rerunfilecheck)             Checksum: 97E1BF5BF678FA01F924FC31F5034F2E;2082.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 441.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 776.
  ) 
 Here is how much of TeX's memory you used:
- 5852 strings out of 480894
- 93511 string characters out of 2899588
- 352482 words of memory out of 3000000
- 21533 multiletter control sequences out of 15000+200000
- 540549 words of font info for 44 fonts, out of 3000000 for 9000
+ 5922 strings out of 480894
+ 94495 string characters out of 2899588
+ 352564 words of memory out of 3000000
+ 21572 multiletter control sequences out of 15000+200000
+ 540045 words of font info for 43 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 34i,9n,29p,815b,439s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 34i,9n,29p,942b,439s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Users/Ja/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/pl/plmi.enc}{C
 :/Users/Ja/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/pl/plms.enc}{C:/Us
 ers/Ja/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/pl/plrm.enc}{C:/Users/
@@ -846,9 +721,9 @@ Users/Ja/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/pl/plti12.pfb><C:
 /Users/Ja/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/pl/pltt12.pfb><C
 :/Users/Ja/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/cm-super/sfrm12
 00.pfb>
-Output written on pracainz.pdf (21 pages, 12301442 bytes).
+Output written on pracainz.pdf (33 pages, 12505066 bytes).
 PDF statistics:
- 298 PDF objects out of 1000 (max. 8388607)
- 86 named destinations out of 1000 (max. 500000)
- 229 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 469 PDF objects out of 1000 (max. 8388607)
+ 117 named destinations out of 1000 (max. 500000)
+ 372 words of extra memory for PDF output out of 10000 (max. 10000000)
 

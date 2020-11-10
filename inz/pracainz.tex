@@ -222,10 +222,10 @@ sta $0000
 Mnemonik \textit{lda} ma wiele odmian - ta zastosowana powy¿ej wczytuje konkretn¹ wartoœæ do wbudowanego w CPU rejestru - akumulatora. Symbol \textit{\#\$} oznacza w³aœnie konkretn¹ wartoœæ liczbow¹ zapisan¹ szesnastkowo.
 Mnemonik \textit{sta} kopiuje wartoœæ z akumulatora pod lokacjê podan¹ jako operand; tutaj jest to pierwsza komórka pamiêci RAM (= o adresie \$0000). 
 
-Warto zrobiæ jeszcze jedn¹ rzecz - dopisaæ za powy¿szymi poleceniami pêtlê nieskoñczon¹:
+Trzeba zrobiæ jeszcze jedn¹ rzecz - dopisaæ za powy¿szymi poleceniami pêtlê nieskoñczon¹:
 \begin{verbatim}
 Stop:
-	jmp Stop
+    jmp Stop
 \end{verbatim}
 Trzeba pamiêtaæ o tym i¿ pod naszym programem nie ma ¿adnego systemu operacyjnego czy innego œrodowiska wykonywalnego, zanim nie ma mowy o zakoñczeniu wykonania programu - bez tej pêtli CPU interpretowa³by kolejne bajty jako kod, cokolwiek by tam by³o i wykona³ je.
 
@@ -254,8 +254,8 @@ Bajty 11 - 15 to dope³nienie nag³ówka. Wartoœci mog¹ byæ dowolne, zwyjczajowo s¹
 Druga sprawa ma zwi¹zek z architektur¹ konsoli. Zawsze po uruchomieniu / zresetowaniu konsoli, pierwsz¹ rzecz¹ jak¹ robi procesor to skok bezwzglêdny do adresu uformowanego z bajtów pod adresami \$FFFC (górny bajt) i \$FFFD (dolny bajt). W tym celu modyfikujemy kod w nastêpuj¹cy sposób:
 \begin{verbatim}
 _INT_Reset:
-	lda #$16
-	sta $0000
+    lda #$16
+    sta $0000
 
 .word _INT_Reset
 \end{verbatim}
@@ -274,8 +274,10 @@ _INT_Reset:
 
 .segment "CODE"
 _INT_Reset:
-	lda #$16
-	sta $0000
+    lda #$16
+    sta $0000
+Stop:
+    jmp Stop
 
 .segment "VECTORS"
 .word _INT_Reset
@@ -283,9 +285,9 @@ _INT_Reset:
 \textit{.segment} to dyrektywa mówi¹ca "poni¿sza treœæ nale¿y do bloku danych zdefiniowanego w pliku konfiguracyjnym linkera podanego jako argument dyrektywy". Na tê chwilê brzmi to niezrozumiale, bo jeszcze nawet nie wspomina³em czym jest plik konfiguracyjny linkera. Jest to plik ze wskazówkami jak ma byæ przeprowadzony proces linkowania plików obiektowych. Do pakietu CC65 jest do³¹czony przyk³adowy plik dla platformy NES jednak¿e wymaga wielu zmian by byc w zgodzie z dobrymi praktykami przyjêtymi przez spo³ecznoœæ wspó³czeœnie programuj¹c¹ na tê konsolê, zatem nic nam po nim i trzeba samemu rozgryŸæ jak stworzyæ w³asny. Stwórzmy nowy plik, nazwijmy go \textit{nes.cfg}. W naszym przypadku plik bêdzie mia³ nastêpuj¹c¹ treœæ:
 \begin{verbatim}
 MEMORY {
-    RAM:    	start = $0000,  size = $0800, type = rw, file = "";
-    HDR:    	start = $0000,  size = $0010, type = ro, file = %O, fill = yes, fillval = $00;
-    PRG:    	start = $8000,  size = $8000, type = ro, file = %O, fill = yes, fillval = $00;
+    RAM:        start = $0000,  size = $0800, type = rw, file = "";
+    HDR:        start = $0000,  size = $0010, type = ro, file = %O, fill = yes, fillval = $00;
+    PRG:        start = $8000,  size = $8000, type = ro, file = %O, fill = yes, fillval = $00;
 }
 
 SEGMENTS {
@@ -325,42 +327,346 @@ Argument \textit{-t} ustala nazwê pliku, pod któr¹ linker znajdzie konfiguracjê.
 
 Zobaczmy jak te dwa narzêdzia stworzy³y plik ROM. Do tego trzeba pos³u¿yæ siê oprogramowaniem zwanym hexedytorem:
 \begin{figure}[H]
-	\includegraphics[width=\textwidth]{project1}
-	\caption{Podgl¹d pliku ROM w programie HxD.}
+    \includegraphics[width=\textwidth]{project1}
+    \caption{Podgl¹d pliku ROM w programie HxD.}
 \end{figure}
-Kompilator inaczej zakodowa³ instrukcjê \textit{sta} - zwi¹zane jest to z tak zwanym \nameref{zeropage} i nie ma wp³ywu na poprawnoœæ programu.
+Kompilator inaczej zakodowa³ instrukcjê \textit{sta} - zwi¹zane jest to z tak zwanym \nameref{zeropage} i nie ma wp³ywu na poprawnoœæ programu. Kiedy przyjrzymy siê przesuniêciom poszczególnych elementów wzglêdem pocz¹tku pliku zobaczymy, i¿ wszystko jest ustawione tak jak rozkazaliœmy linkerowi.
 
 Teraz uruchommy ROM w \nameref{emulator}. Przywita nas jednokolorowy ekran. Aby sprawdziæ czy komórka pamiêci zawiera po¿¹dan¹ wartoœæ, musimy wybraæ z menu \textit{Debug} opcjê \textit{Memory Tools} i upewniæ siê, ¿e w dropdownie \textit{View} mamy wybran¹ opcjê \textit{CPU Memory}:
 \begin{figure}[H]
-	\includegraphics[width=\textwidth]{project2}
-	\caption{Podgl¹d RAM w emulatorze Mesen.}
+    \includegraphics[width=\textwidth]{project2}
+    \caption{Podgl¹d RAM w emulatorze Mesen.}
 \end{figure}
 Faktycznie, jest tam wartoœæ szesnaœcie heksadecymalnie, zatem wszystko dzia³a jak powinno.
 Jest to dobry przyk³ad na naukê obs³ugi debuggera. Zatem w oknie g³ównym Mesena wybieramy z menu \textit{Debug} opcjê \textit{Debugger}. Okno debuggera mo¿e przyt³oczyæ ogromem informacji, na pocz¹tek skupimy siê na podgl¹dzie kodu. Postawmy breakpoint na adresie \$8000 (pocz¹tek kodu) klikaj¹c LPM na lewo od numeru adresu. Nastêpnie wyci¹gamy na wierzch okno z podgl¹dem RAM aby widzieæ nasz¹ zmienian¹ komórkê pamiêci a nastêpnie z menu debuggera wybieramy \textit{Debug} opcjê \textit{Reset}. Debugger sfokusuje siê na adresie \$8000, co oznaczone jest ¿ó³tym t³em oraz ¿ó³t¹ strza³k¹ wskazuj¹c¹ kolejn¹ instrukcjê do wykonania. Jednak¿e jest pewien problem - w pamiêci ju¿ jest ustawiona wartoœæ \$16. Otó¿ NES nie czyœci pamiêci podczas resetu - program sam musi o to zadbaæ.
 \begin{figure}[H]
-	\includegraphics[width=\textwidth]{project3}
-	\caption{Debugger w emulatorze Mesen.}
+    \includegraphics[width=\textwidth]{project3}
+    \caption{Debugger w emulatorze Mesen.}
 \end{figure}
 Mimo tego przeœledŸmy wykonanie krok po kroku. W tym celu kilka razy kliknijmy przycisk \textit{Step Into}. Otó¿ po wykonaniu instrukcji \textit{sta} komórka w podgl¹dzie RAM podœwietli³a siê na czerwono - tak w³aœnie Mesen pokazuje, i¿ na danej komórce pamiêci odby³ siê zapis. Po dotarciu do instrukcji \textit{jmp} program "stoi" na instrukcji tak jak chcieliœmy pisz¹c pêtlê nieskoñczon¹.
 
 WprowadŸmy poprawkê ustawiaj¹c¹ wartoœæ na zero tu¿ po resecie, segment \textit{CODE} bêdzie wygl¹da³ nastêpuj¹co:
 \begin{verbatim}
 _INT_Reset:
-	lda #$00
-	sta $0000
-	lda #$16
-	sta $0000
+    lda #$00
+    sta $0000
+    lda #$16
+    sta $0000
 Stop:
-	jmp Stop
+    jmp Stop
 \end{verbatim}
 
-Skompilujmy a nastêpnie podejrzyjmy w debuggerze jak ta wersja kodu siê wykonuje. Je¿eli nie wy³¹czyliœmy emulatora to breakpoint nadal bêdzie postawiony w po¿¹danym miejscu. Potrzebujemy przejœæ programu dwukrotnie - pierwsze przejœcie ustali wartoœæ w RAM na /$16, a w drugim zobaczymy dwukrotne ustawianie wartoœci - najpierw na zero, potem ponownie na $16.
+Skompilujmy a nastêpnie podejrzyjmy w debuggerze jak ta wersja kodu siê wykonuje. Je¿eli nie wy³¹czyliœmy emulatora to breakpoint nadal bêdzie postawiony w po¿¹danym miejscu. Potrzebujemy przejœæ programu dwukrotnie - pierwsze przejœcie ustali wartoœæ w RAM na \$16, a w drugim zobaczymy dwukrotne ustawianie wartoœci - najpierw na zero, potem ponownie na \$16.
 Warto równie¿ popatrzeæ na sekcjê \textit{CPU Status} na prawo od naszego kodu w debuggerze a dok³adniej pole \textit{A} - to jest w³aœnie rejestr procesora, akumulator.
 
 Za nami bardzo d³ugie wprowadzenie a w³aœciwie nic wielkiego nie zaprogramowaliœmy. S¹ to solidne fundamenty do dalszego kodowania, bez nich prêdzej czy póŸniej wychodz¹ braki tej podstawowej wiedzy, niezrozumienie bardziej skomplikowanych zagadnieñ. Narzêdzia deweloperskie emulatora to równie¿ potê¿na rzecz któr¹ warto wykorzystywaæ przy ka¿dej napotkanej w¹tpliwoœci / problemie, pozwalaj¹ zajrzeæ do "czarnej skrzynki" jak¹ niejako jest NES daj¹c podgl¹d na procesy zachodz¹ce w uk³adach scalonych nawet w mikroskali jak¹ jest pojedyncza instrukcja procesora.
 
 \subsection{W³aœciwe "Hello World"}
-NES to konsola maj¹ca wiele pu³apek czyhaj¹cych na programistê któremu brakuje wiedzy technicznej na temat tego sprzêtu. Poni¿ej omówiê program który w pe³ni poprawnie zainicjalizuje konsolê do dzia³ania. Jest on wspólnym opracowaniem wielu ludzi wspó³czeœnie zajmuj¹cych siê t¹ tematyk¹ (TODO: Odpowiedni link).
+NES to konsola maj¹ca wiele pu³apek czyhaj¹cych na programistê któremu brakuje wiedzy technicznej na temat tego sprzêtu. Poni¿ej omówiê program który w pe³ni poprawnie zainicjuje konsolê do dzia³ania. Jest on wspólnym opracowaniem wielu ludzi wspó³czeœnie zajmuj¹cych siê t¹ tematyk¹ \cite{initcode}. Jest tam trochê dzia³añ które mo¿na by pomin¹æ gdy¿ prawid³owe wartoœci mog¹ ju¿ tam byæ ustawione, jednak¿e nie musi byæ to regu³a oraz pozostawi³o by to konsolê w stanie niezdefiniowanym nara¿aj¹c na trudne w zdebuggowaniu b³êdy. Przedstawiê ten kod go w kilku fragmentach. Nadal kod bêdzie dopisywany do pliku main.s, nale¿y to robiæ na samym pocz¹tku segmentu \textit{CODE}. Oto pierwszy z nich:
+\begin{verbatim}
+reset:
+    sei
+    cld
+    ldx #$40
+    stx $4017
+    ldx #$FF
+    txs
+    inx
+    stx $2000
+    stx $2001
+    stx $4010
+\end{verbatim}
+Opkod \textit{sei} to instrukcja wy³¹czaj¹ca odnotowywanie przez CPU przerwañ niemaskowalnych. To znaczy ¿e procesor nie bêdzie reagowa³ na przerwania, dziêki czemu nie bêdzie zak³óca³ wykonania naszego kodu inicjuj¹cego. Przerwania nadal nadal siê "wewnêtrznie", cyklicznie wystêpuj¹!
+Instrukcja \textit{cld} wy³¹cza tryb dziesiêtny. Oczywiœcie wariant procesora wbudowany w NES ma wyciêty tryb dziesiêtny, jednak¿e debuggery ogólnie dzia³aj¹ce na kodzie napisanym pod MOS 6502 opieraj¹ siê na tym, i¿ ta konkretna flaga jest ustawiona.
+Nastêpnie pojawiaj¹ siê \textit{stx} oraz \textit{ldx} - odpowiedniki instrukcji \textit{sta} oraz \textit{lda} tyle ¿e dla rejestru X. Jest jeszcze analogiczna par¹ mnemoników dla rejestru Y (\textit{sty}, \textit{ldy}).
+Wartoœæ \#\$40 to w³aœciwie ustawienie bitu numer szeœæ. Ta wartoœæ jest wysy³ana pod port \$4017 CPU w celu wy³¹czenia przerwañ generowanych przez dodatkowe podzespo³y rozszerzaj¹ce mo¿liwoœci kartrid¿a.
+Nastêpnie odbywa siê inicjacja stosu - wartoœæ \$FF jest ³adowana do rejestru X, mnemonik \textit{txs} kopiuje tê wartoœæ z rejestru X do rejestru wskaŸnika stosu. Proszê zauwa¿yæ ¿e to dolna czêœæ wskaŸnika stosu - górna zostanie ustawiona póŸniej.
+W rejestrze X nadal jest wartoœæ \$FF. Instrukcja \textit{inx} inkrementuje X o jeden, zatem rejestr siê "przekrêca", ustawiaj¹c siê na wartoœæ 0. Trzy kolejne zapisy pod adresy \$2000, \$2001 oraz \$4010 to wy³¹czenie wszelkich flag którymi te trzy rejestry zarz¹dzaj¹. Najwa¿niejsze z nich to dezaktywacja \nameref{nmi} - znaczy to tyle ¿e przestanie wykonywaæ siê to przerwanie (rejestr \$2000), wy³¹czenie renderowania ekranu (\$2001), wy³¹czenie przerwania DMC którego dedykowanym zastosowaniem jest prawid³owe odgrywanie digitalizowanych próbek dŸwiêkowych (\$4010).
+
+Powy¿sze instrukcje s¹ powi¹zane z kolei krokiem - trzeba odczekaæ dwie klatki obrazu aby uk³ad graficzny ustabilizowa³ siê oraz zacz¹³ pracowaæ w pe³ni prawid³owo \nameref{ppu} (TODO: dok³adne wskazanie omówienia co tam siê dzieje). Mamy wy³¹czone \nameref{nmi} ale jest jeszcze jedna metoda na odliczenie klatek obrazu. PPU zawsze sygnalizuje moment w którym zakoñczy³ rysowanie klatki obrazu (rozpocznie wygaszanie pionowe obrazu) poprzez ustawienie najwy¿szego bitu w rejestrze flag \$2002:
+\begin{verbatim}
+vblankwit1:
+    bit $2002
+    bpl vblankwait1    
+\end{verbatim} 
+Opkod \textit{bit} ma specyficzne dzia³anie: wykonuje operacjê bitow¹ "akumulator AND operand instrukcji \textit{bit}", nastêpnie "zapomina" wynik za to ustawia flagê Z (flaga zero) jeœli wynik operacji AND by³ równy zero. Oprócz tego zawsze kopiuje bit szósty operandu do flagi V (flaga przepe³nienia), a siódmy do flagi N (flaga wartoœci ujemnej). W akumulatorze mamy w tej chwili wartoœæ zero - w jego przypadku akurat mamy gwarancjê ¿e po uruchomieniu konsoli / resecie zawsze bêdzie to wartoœæ zero a wczeœniej w kodzie nigdzie nie manipulowaliœmy tym rejestrem. Przyk³ad powinien rozjaœniæ:
+\begin{verbatim}
+W rejestrze A mamy wartoœæ zero.
+Chcemy wykonaæ operacjê \textit{bit} na wartoœci #$80 (%10000000 binarnie).
+Zatem wynik operacji:
+    bit    #$80
+bêdzie nastêpuj¹cy:
+    %00000000
+AND %10000000
+    %00000000
+a w rezultacie:
+\begin{enumerate}
+\item flaga Z zostanie ustawiona,
+\item flaga V zostanie wyzerowana,
+\item flaga N zostanie ustawiona.
+\end{enumerate}
+\end{verbatim}
+Powy¿sze omówienie instrukcji \textit{bit} to sytuacja to¿sama z t¹, gdy w³aœnie PPU da³o znak ¿e skoñczy³o rysowaæ klatkê.
+Instrukcja \textit{bpl} to jeden ze skoków warunkowych - dla \textit{bpl} skok do etykiety podanej jako operand ma miejsce, gdy flaga wartoœci ujemnej jest wyzerowana.
+Zatem program bêdzie "krêci³ siê w miejscu" dopóki flaga jest ujemna. Przestanie to robiæ gdy opkod \textit{bit} ustawi flagê N, a to siê stanie gdy PPU skoñczy rysowaæ klatkê oraz ustawi najwy¿szy bit w rejestrze \$2002. W ten sposób nale¿y rozumieæ zaprezentowany kod. Dzia³a to poprawnie tak¿e dlatego, i¿ po odczycie rejestru \$2002 najwy¿szy bit zostanie wyczyszczony, zatem nie ma mowy o sytuacji gdzie PPU ustawi³o tê flagê jakimœ cudem wczeœniej a teraz jest w trakcie rysowania kolejnej klatki.
+
+Mamy jeszcze ca³¹ klatkê obrazu do wykorzystania, zatem zróbmy coœ po¿ytecznego: czyszczenie RAM:
+\begin{verbatim}
+clear_memory:
+    lda #$00
+    sta $0000, x
+    sta $0100, x
+    sta $0200, x
+    sta $0300, x
+    sta $0400, x
+    sta $0500, x
+    sta $0600, x
+    sta $0700, x
+    inx
+    bne clear_memory
+\end{verbatim}
+Na pocz¹tek warto odnotowaæ ¿e rejestr X zawiera w tej chwili nadal wartoœæ zero. Instrukcja \textit{sta} ma kilka wariantów, powy¿szy korzysta z jednego z trybów procesora zwanego "Absolute X". Dzia³a to tak, ¿e w celu wyznaczenia adresu pod którym zmodyfikuje siê wartoœæ do konkretnego adresu w pierwszym operandzie \textit{sta} dodawana jest wartoœæ rejestru X, bêd¹cego zarazem drugim operandem. Na koñcu pêtli jest inkrementacja tego¿ rejestru oraz instrukcja \textit{bne} - kolejny skok warunkowy do etykiety podanej jako operand maj¹cy miejsce, gdy flaga Z ma wartoœæ zero. Zauwa¿my ¿e pierwsze sprawdzenie rejestru X odbywa siê gdy ma on wartoœæ jeden, zatem flaga Z nie bêdzie ustawiona dziêki czemu bêdzie mia³ skok do podanej etykiety. Tak bêdzie a¿ do momentu, gdy X siê "przekrêci" i wska¿e wartoœæ zero. W tym momencie wszystkie komórki RAM (zakres \$0000 - \$07FF) bêd¹ zawieraæ wartoœci zero. 
+Sam proces zerowania odbywa siê tak, ¿e w pierwszym kroku wyzerowane bêd¹ komórki \$0000, \$0100, \$0200, ... , \$0700. W drugim: \$0001, \$0101, \$0201, ... , \$0701. W ostatnim, dwieœcie piêædziesi¹tym szóstym kroku zerowanie odbêdzie siê pod adresami \$00FF, \$01FF, \$02FF, ... , \$07FF.
+
+Teraz czas na czekania na koniec drugiej klatki obrazu:
+\begin{verbatim}
+vblankwait2:
+    bit $2002
+    bpl vblankwait2
+\end{verbatim}
+Dzia³anie analogiczne do oczekiwania na pierwsze rozpoczêcie wygaszania obrazu.
+
+W tym momencie PPU jest ju¿ gotowe do pracy. Wykorzystajmy to wyœwietlaj¹c jednokolorowy obraz we fioletowym kolorze. Zrobimy to tak:
+\begin{verbatim}
+    lda #%01100000
+    sta $2001
+\end{verbatim}
+To co w³aœciwe ³adujemy do rejestru \$2001 to flagi ustawiaj¹ce "intensywny odcieñ" kolorów czerwonego oraz zielonego (TODO: referencja do opisu rejestru \$2001). Jest to graficzna funkcjonalnoœæ PPU, polegaj¹c¹ na tym i¿ wszystkie kolory w palecie kolorów (TODO: link) zmieniaj¹ odcieñ na bardziej czerwony, zielony, niebieski b¹dŸ dowolny miks nich. Nie bêdziemy wchodziæ w ten temat, gdy¿ jest to niemal nieu¿ywana funkcjonalnoœæ a jej praktyczne zastosowanie jest minimalne. Po prostu przyda nam siê ona do szybkiego testu czy uk³ad graficzny dzia³a poprawnie. O palecie barw bêdzie w dalszej czêœci dokumentu.
+
+Zanim skompilujemy program to mo¿emy ju¿ usun¹æ kawa³ek kodu który napisaliœmy w poprzedniej podsekcji - nie ma potrzeby oddzielnego ustawiania komórki RAM o adresie \$0000 na zero. Finalny kod wygl¹da nastêpuj¹co:
+\begin{verbatim}
+.segment "HEADER"
+.byte "NES"
+.byte $1A
+.byte 2
+.byte 0
+.byte %00000000
+.byte %00000000
+.byte 0, 0
+.byte 0, 0, 0, 0, 0, 0
+
+.segment "CODE"
+_INT_Reset:
+    sei
+    cld
+    ldx    #$40
+    stx    $4017
+    ldx    #$FF
+    txs
+    inx
+    stx    $2000
+    stx    $2001
+    stx    $4010
+    
+vblankwait1:
+    bit    $2002
+    bpl    vblankwait1    
+    
+clear_memory:
+    lda    #$00
+    sta    $0000, x
+    sta    $0100, x
+    sta    $0200, x
+    sta    $0300, x
+    sta    $0400, x
+    sta    $0500, x
+    sta    $0600, x
+    sta    $0700, x
+    inx
+    bne    clear_memory
+
+vblankwait2:
+    bit $2002
+    bpl vblankwait2    
+    
+    lda #%01100000
+    sta $2001
+    
+    lda #$16
+    sta $0000
+Stop:
+    jmp Stop
+
+.segment "VECTORS"
+.word _INT_Reset
+\end{verbatim}
+
+Nie ma potrzeby zmiany pliku konfiguracyjnego linkera. Budowê pliku ROM przeprowadzamy tymi samymi komendami co poprzednio:
+\begin{verbatim}
+ca65 -o main.o main.s
+ld65 -t nes -o main.nes main.o
+\end{verbatim}
+
+Jeœli nie wy³¹czyliœmy poprzednio breakpointu w debuggerze to po otworzeniu œwie¿o skompilowanego ROM w emulatorze wykonanie programu bêdzie wstrzymane przed pierwsz¹ instrukcj¹. W tym celu trzeba wejœæ w okno debuggera i nacisn¹æ przycisk \textit{Continue}.
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{project4}
+    \caption{Przycisk \textit{Continue} w debuggerze emulatora Mesen.}
+\end{figure}
+
+Po udanym procesie budowania naszym oczom powinien ukazaæ siê jednokolorowy, fioletowy ekran:
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{project5}
+    \caption{Wynik dotychczas napisanego kodu.}
+\end{figure}
+
+Warto poœwiêciæ chwilê podgl¹dowi w debuggerze tego, jak wykonuje siê kod w celu lepszego zrozumienia. Warte odnotowania jest, i¿ debugger u¿ywa specjalnych etykiet dla niektórych rejestrów - s¹ to zwyczajowe nazwy tych¿e. Po najechaniu na tak¹ etykietê ujrzymy szczegó³owy opis danego rejestru. Po prawej stronie okna jest lista wszystkich takich rejestrów w okienku \textit{Labels}, w³aœnie tam mo¿na równie¿ edytowaæ treœæ pokazuj¹c¹ siê w dymku. Bêdzie o tym mowa jeszcze póŸniej. 
+Druga sprawa to w sekcji \textit{PPU Status} zaznaczone s¹ checkboxy \textit{Intensify Red} oraz \textit{Intensify Green} - to w³aœnie bity które ustawiliœmy w rejestrze \$2001. Mo¿emy odznaczyæ / zaznaczyæ te pola gdy zatrzymamy wykonanie programu. Zmiany bêd¹ widoczne po ponownym uruchomieniu wykonania kodu, polecam poeksperymentowaæ.
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{project6}
+    \caption{Podgl¹d stanu flag "intensywnych odcieni" w debuggerze.}
+\end{figure}
+
+
+
+
+
+
+
+
+
+\subsection{Paleta kolorów}
+
+
+
+
+
+
+
+
+
+
+\subsection{Grafika - Sprite'y}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Grafika - T³o}
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Synchronizacja pêtli g³ównej programu z \nameref{nmi}}
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Rozpoznawanie regionu konsoli}
+
+
+
+
+
+
+
+
+
+
+\subsection{Drugi ekran z t³em, przewijanie ekranu}
+
+
+
+
+
+
+
+
+
+\subsection{Podprogramy / procedury}
+
+
+
+
+
+
+
+\subsection{Liczenie czasu}
+
+
+
+
+
+
+
+
+
+
+\subsection{Animacja grafiki}
+
+
+
+
+
+
+
+\subsection{Podzia³ projektu na pliki}
+
+
+
+
+
+
+
+
+
+
+\subsection{Obs³uga kontrolera}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Implementacja trybów programu}
+
+
+
+
 
 
 
@@ -371,6 +677,12 @@ NES to konsola maj¹ca wiele pu³apek czyhaj¹cych na programistê któremu brakuje w
 
 \subsection{Zero Page}
 \label{zeropage}
+
+\subsection{NMI}
+\label{nmi}
+
+\subsection{PPU}
+\label{ppu}
 
 \subsection{Mapper}
 \label{mapper}
@@ -397,8 +709,8 @@ W przypadku NES jêzyk C stanowi problem wydajnoœciowy, gdy¿ plik wynikowy który 
 Emulator znacz¹co wspiera proces tworzenia oprogramowania pod NES, gdy¿ zawiera wiele narzêdzi pozwalaj¹cych na zbadanie zachowania naszego programu. Aby mieæ dostêp do narzêdzi deweloperskich, musimy w menu \textit{Options -> Preferences} zaznaczyæ checkbox "Enable developer mode". Od tej pory w menu jest widoczna nowa pozycja - \textit{debug}.
 
 \begin{figure}[H]
-	\includegraphics[width=\textwidth]{emulator1}
-	\caption{Prze³¹cznik opcji deweloperskich w emulatorze Mesen.}
+    \includegraphics[width=\textwidth]{emulator1}
+    \caption{Prze³¹cznik opcji deweloperskich w emulatorze Mesen.}
 \end{figure}
 
 \subsection{NES Screen Tool}
@@ -458,6 +770,7 @@ https://en.wikipedia.org/wiki/Nintendo\_Entertainment\_System\_hardware\_clone
 \bibitem{famitrackerpage} http://famitracker.com/
 \bibitem{IMG-famitrackeroverview} https://blog.uptodown.com/wp-content/uploads/Famitracker-pianola.jpg.webp
 \bibitem{wikitracker} https://pl.wikipedia.org/wiki/Tracker\_(oprogramowanie\_muzyczne)
+\bibitem{initcode} http://wiki.nesdev.com/w/index.php/Init\_code
 \end{thebibliography}
 
 \end{document}
