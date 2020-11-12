@@ -213,182 +213,65 @@ Nazwy te zosta³y zaczerpniête z biblioteki audio do NES / Famicom - FamiTone2 \c
 W tej sekcji omówiê krok po kroku jak powstawa³ mój w³asny projekt programu na platformê NES. Zacznê od pojedynczych, prostych czynnoœci a¿ po pewnego rodzaju pe³noprawny szkielet takiego projektu zgodny z dobrymi praktykami programowania NES. Nastêpnie zostan¹ omówione krytyczne fragmenty kodu z punktu widzenia ca³ego projektu oraz w³asne rozwi¹zania czêsto spotykanych zagadnieñ.
 
 \setcounter{subsection}{-1}
-\subsection{Absolutne minimum}
-Kod w pe³ni inicjuj¹cy konsolê jest doœæ rozbudowany, zatem warto zacz¹æ od czegoœ ³atwiejszego... Niech bêdzie to coœ, co poka¿e ¿e jakkolwiek panujemy nad maszyn¹ - zmiana wartoœci pojedynczej komórki pamiêci to rozs¹dny pomys³. Stwórzmy plik Ÿród³owy, nazwijmy go \textit{main.s}. Kod ustalaj¹cy wartoœæ pierwszej komórki RAM na wartoœæ 16 (w systemie szestnastkowym) bêdzie wygl¹da³ nastêpuj¹co:
-\begin{verbatim}
-lda #$16
-sta $0000
-\end{verbatim}
-Mnemonik \textit{lda} ma wiele odmian - ta zastosowana powy¿ej wczytuje konkretn¹ wartoœæ do wbudowanego w CPU rejestru - akumulatora. Symbol \textit{\#\$} oznacza w³aœnie konkretn¹ wartoœæ liczbow¹ zapisan¹ szesnastkowo.
-Mnemonik \textit{sta} kopiuje wartoœæ z akumulatora pod lokacjê podan¹ jako operand; tutaj jest to pierwsza komórka pamiêci RAM (= o adresie \$0000). 
+\subsection{Przygotowania do projektu}
+Dotychczas mia³em minimalne doœwiadczenie z programowaniem pod NES, przerobi³em popularny kurs traktuj¹cy o tym - Nerdy Nights \cite{nerdynights}, niestety z miernym zrozumieniem nie potrafi¹c zrobiæ czegoœ swojego. Problem by³ te¿ w dialekcie asemblera u¿ytego w tym kursie (NESASM3 \cite{nesasm}) o którym niewiele dyskutuje siê w sieci a nie widzia³em sensu w nauce kolejnej odmiany asemblera jak i tak za wiele nie umiem zaprogramowaæ, przez co w nastêpstwie temat umar³ - postanowi³em ¿e mo¿e kiedyœ do tego wrócê.
 
-Trzeba zrobiæ jeszcze jedn¹ rzecz - dopisaæ za powy¿szymi poleceniami pêtlê nieskoñczon¹:
-\begin{verbatim}
-Stop:
-    jmp Stop
-\end{verbatim}
-Trzeba pamiêtaæ o tym i¿ pod naszym programem nie ma ¿adnego systemu operacyjnego czy innego œrodowiska wykonywalnego, zanim nie ma mowy o zakoñczeniu wykonania programu - bez tej pêtli CPU interpretowa³by kolejne bajty jako kod, cokolwiek by tam by³o i wykona³ je.
+Tym razem mia³em zamiar zmodyfikowaæ podejœcie do tematu. Pierwsza sprawa to dog³êbnie poznaæ mo¿liwoœci u¿ywanych narzêdzi, w bardzo zaawansowanym stopniu opanowaæ narzêdzia wbudowane w emulator po to, aby umieæ ³atwo namierzaæ b³êdy oraz móc eksperymentowaæ - robi¹c modyfikacje w kodzie a nastêpnie obserwowaæ co siê zmieni³o, jak to dzia³a.
+Kolejna rzecz to u¿yæ wiedzê programistyczn¹ zdobyt¹ od ostatniej próby nauki, ustanowiæ pewnego rodzaju dobre wzorce pisania kodu, podzieliæ projekt na pliki - poprzednio wszystko by³o w jednym, wielkim pliku Ÿród³owym. 
 
-Jednak¿e jest to o wiele za ma³o ¿eby nawet emulator zrobi³ to, co oczekujemy.
-Pierwsza sprawa jest zwi¹zana z ogólnie przyjêtym formatem pliku reprezentuj¹cym ROM programu na platformê NES. Taki plik ma szesnastobajtowy nag³ówek opisuj¹cy szczegó³y programu. Nag³ówek jest potrzebny emulatorom oraz flashcartom do przygotowania adekwatnego œrodowiska uruchomieniowego.
-W naszym przypadku nag³ówek bêdzie wygl¹da³ nastêpuj¹co:
-\begin{verbatim}
-.byte "NES"
-.byte $1A
-.byte 2
-.byte 0
-.byte %00000000
-.byte %00000000
-.byte 0, 0
-.byte 0, 0, 0, 0, 0, 0
-\end{verbatim}
-Pierwsze trzy bajty ("NES") to magiczna wartoœæ.
-Kolejny bajt to znak koñca linii.
-Po wy¿ej opisanych czterech bajtach programy mog¹ rozpoznaæ i¿ maj¹ do czynienia z plikiem w formacie *.NES.
-Bajt pi¹ty to iloœæ 16KB stron pamiêci przeznaczonych na kod wykonywalny. Dwa banki wype³niaj¹ ca³¹ przestrzeñ adresow¹ konsoli.
-Kolejny bajt to iloœæ 16KB stron pamiêci przeznaczonych na grafikê. W tym momencie nie potrzebujemy ¿adnej grafiki zatem ustawiamy bajt na zero. W³aœciwie wartoœæ zero ma inny efekt a my skorzystamy z efektu ubocznego tego ale jest to na razie nieistotne - uzyskamy po¿¹dany efekt.
-Bajty 7 - 10 to flagi - na tê chwilê interesuj¹ nas tylko i wy³¹cznie bajty odpowiadaj¹ce za \nameref{mapper}. Mapper 0 jest "podstawowy" przez co odpowiedni do prostych programów, zatem go ustawimy. Warto wspomnieæ o tym, jak formowany jest numer mappera: cztery górny bajty pochodz¹ z czterech górnych bajtów bajta ósmego w nag³ówku, cztery dolne bajty pochodz¹ z czterech górnych bajtów bajta siódmego w nag³ówku. (TODO: obrazek lepszy)
-Funkcjonalnoœæ bajtów 9 oraz 10 nie interesuje nas w tej chwili, mo¿na je ustawiæ na 0 i zapomnieæ o ich istnieniu
-Bajty 11 - 15 to dope³nienie nag³ówka. Wartoœci mog¹ byæ dowolne, zwyjczajowo s¹ to zera.
+Nastêpna sprawa - dokumentacje, Ÿród³a wiedzy i tak dalej. Najobszerniejszym Ÿród³em wiedzy na temat NES jest strona nesdev - wiki \cite{wikinesdev} oraz forum \cite{forumnesdev}. Mocno techniczne Ÿród³a wiedzy, warto nadmieniæ, nie sposób zrozumieæ wszystko tak od razu ale wtedy zawsze mia³ ratowaæ mnie emulator z narzêdziami metod¹ prób i b³êdów. Podobna uwaga tyczy siê dialektu asemblera CA65 którego mia³em zamiar u¿ywaæ, dokumentacja projektu jest minimalna i ogólna. O tej decyzji zadecydowa³a jego popularnoœæ, mo¿liwe najszybsze uzyskania pomocy w razie problemów.
 
-Druga sprawa ma zwi¹zek z architektur¹ konsoli. Zawsze po uruchomieniu / zresetowaniu konsoli, pierwsz¹ rzecz¹ jak¹ robi procesor to skok bezwzglêdny do adresu uformowanego z bajtów pod adresami \$FFFC (górny bajt) i \$FFFD (dolny bajt). W tym celu modyfikujemy kod w nastêpuj¹cy sposób:
-\begin{verbatim}
-_INT_Reset:
-    lda #$16
-    sta $0000
+Generalnie mia³o byæ mo¿liwie najprofesjonalniej.
 
-.word _INT_Reset
-\end{verbatim}
-\textit{.word} to dyrektywa asemblera dzia³aj¹ca jak \textit(.byte), tyle ¿e podajemy wartoœci dwubajtowe zamiast jednobajtowych.
-\textit{\_INT\_Reset} to etykieta, zostanie ona zamieniona na konkretny adres przez linker. Dwukropek definiuje etykietê; sam¹ nazwê etykiety traktuje siê jak konkretn¹ wartoœæ szesnastobitow¹. Nadal zostaje problem powiedzenia kompilatorowi oraz linkerowi ¿e ma wstawiæ adres wyznaczony przez etykietê \textit{\_INT\_Reset} dok³adnie pod adres \$FFFC w ROM. Inna sprawa to wskazanie kompilatorowi / linkerowi i¿ nag³ówek nie jest czêœci¹ kodu lecz ma siê znaleŸæ na pocz¹tku pliku reprezentuj¹cego ROM. Oba problemy rozwi¹¿e dyrektywa asemblera \textit{.segment}. Ukoñczony pierwszy program bêdzie wygl¹da³ nastêpuj¹co:
-\begin{verbatim}
-.segment "HEADER"
-.byte "NES"
-.byte $1A
-.byte 2
-.byte 0
-.byte %00000000
-.byte %00000000
-.byte 0, 0
-.byte 0, 0, 0, 0, 0, 0
-
-.segment "CODE"
-_INT_Reset:
-    lda #$16
-    sta $0000
-Stop:
-    jmp Stop
-
-.segment "VECTORS"
-.word _INT_Reset
-\end{verbatim}
-\textit{.segment} to dyrektywa mówi¹ca "poni¿sza treœæ nale¿y do bloku danych zdefiniowanego w pliku konfiguracyjnym linkera podanego jako argument dyrektywy". Na tê chwilê brzmi to niezrozumiale, bo jeszcze nawet nie wspomina³em czym jest plik konfiguracyjny linkera. Jest to plik ze wskazówkami jak ma byæ przeprowadzony proces linkowania plików obiektowych. Do pakietu CC65 jest do³¹czony przyk³adowy plik dla platformy NES jednak¿e wymaga wielu zmian by byc w zgodzie z dobrymi praktykami przyjêtymi przez spo³ecznoœæ wspó³czeœnie programuj¹c¹ na tê konsolê, zatem nic nam po nim i trzeba samemu rozgryŸæ jak stworzyæ w³asny. Stwórzmy nowy plik, nazwijmy go \textit{nes.cfg}. W naszym przypadku plik bêdzie mia³ nastêpuj¹c¹ treœæ:
-\begin{verbatim}
-MEMORY {
-    RAM:        start = $0000,  size = $0800, type = rw, file = "";
-    HDR:        start = $0000,  size = $0010, type = ro, file = %O, fill = yes, fillval = $00;
-    PRG:        start = $8000,  size = $8000, type = ro, file = %O, fill = yes, fillval = $00;
-}
-
-SEGMENTS {
-    BSS:      load = RAM, type = bss;
-    HEADER:   load = HDR, type = ro;
-    CODE:     load = PRG, type = ro,  start = $8000;
-    VECTORS:  load = PRG, type = ro,  start = $FFFC;
-}
-\end{verbatim}
-/textit{MEMORY} oraz /textit{SEGMENTS} wyznaczaj¹ grupy zasad steruj¹cych linkerem. Etykiety w sekcji /textit{SEGMENTS} opisuj¹ dwie rzeczy - mapê pamiêci w programie NES za pomoc¹ atrybutu \textit{start} oraz determinuje kolejnoœæ danych w pliku wynikowym dla etykiet z atrybutem /textit{type} o wartoœci \textit{ro}. Kolejnoœæ etykiet mówi jak zostan¹ ustawione dane w pliku wynikowym wyznaczone przez atrybut \textit{load}. Wartoœci tam podane odpowiadaj¹ etykietom zdefiniowanych w sekcji \textit{MEMORY}. Ka¿da wpis definiuje wielkoœæ obszaru, typ dostêpu (odczyt / zapis), w jakim pliku wynikowym siê znajdzie obszar, opcjonalne wype³nienie wartoœciami.
-Podsumowuj¹c: \textit{SEGMENTS} odnosi siê do reprezentacji programu na konsoli, \textit{MEMORY} odnosi siê do reprezentacji danych w pliku ROM.
-
-Proszê zwróciæ uwagê, ¿e nazwy segmentów u¿yte w pliku Ÿród³owym programu pokrywaj¹ siê z etykietami w sekcji \textit{SEGMENTS} w pliku konfiguracyjnym.
-Z tego dla pliku ROM i¿:
-\begin{itemize}
-\item na pocz¹tku pliku pojawi siê szesnastobajtowy nag³ówek,
-\item nastêpne szesnaœcie kilobajtów zajm¹ dane spod segmentu \textit{CODE}, pozosta³a wolna przestrzeñ zostanie wype³niona zerami
-\item potem to, co jest pod segmentem \textit{VECTORS} pos³u¿y linkerowi do nadpisania ostatnich 4 bajty segmentu \textit{CODE} (\$8000 - \$FFFC = \$04)
-\end{itemize}
-
-A dla konsoli wynika ¿e:
-\begin{itemize}
-\item to co znajduje siê za dyrektyw¹ \textit{CODE} w pliku Ÿród³owym zostanie zamapowane na obszar $8000 - $FFFF na konsoli NES,
-\item to co znajduje siê za dyrektyw¹ \textit{VECTORS} w pliku Ÿród³owym zostanie zamapowane na obszar $FFFC - $FFFF na konsoli NES, czêœciowo nadpisuj¹c segment \textit{CODE}; jest to jak najbardziej po¿¹dane.
-\end{itemize}
-
-Zanim potwierdzimy powy¿sze s³owa, potrzebujemy stworzyæ wynikowy plik ROM. Umieszczamy pliki ca65.exe oraz ld65.exe w tym folderze co nasz kod Ÿród³owy oraz plik konfiguracyjny. Najpierw kompilacja:
-\begin{verbatim}
-ca65 -o main.o main.s
-\end{verbatim}
-Argument \textit{-o} pozwala ustaliæ wynikow¹ nazwê pliku obiektowego. Na koñcu podajemy listê plików Ÿród³owych.
-Nastêpnie czas na linkowanie:
-\begin{verbatim}
-ld65 -t nes -o main.nes main.o
-\end{verbatim}
-Argument \textit{-t} ustala nazwê pliku, pod któr¹ linker znajdzie konfiguracjê. Co wa¿ne, plik musi mieæ rozszerzenie *.cfg którego nie podajemy w powy¿szym poleceniu. Argument \textit{-o} ustala nazwê wynikow¹ pliku ROM. Na koñcu jest lista plików obiektowych.
-
-Zobaczmy jak te dwa narzêdzia stworzy³y plik ROM. Do tego trzeba pos³u¿yæ siê oprogramowaniem zwanym hexedytorem:
-\begin{figure}[H]
-    \includegraphics[width=\textwidth]{project1}
-    \caption{Podgl¹d pliku ROM w programie HxD.}
-\end{figure}
-Kompilator inaczej zakodowa³ instrukcjê \textit{sta} - zwi¹zane jest to z tak zwanym \nameref{zeropage} i nie ma wp³ywu na poprawnoœæ programu. Kiedy przyjrzymy siê przesuniêciom poszczególnych elementów wzglêdem pocz¹tku pliku zobaczymy, i¿ wszystko jest ustawione tak jak rozkazaliœmy linkerowi.
-
-Teraz uruchommy ROM w \nameref{emulator}. Przywita nas jednokolorowy ekran. Aby sprawdziæ czy komórka pamiêci zawiera po¿¹dan¹ wartoœæ, musimy wybraæ z menu \textit{Debug} opcjê \textit{Memory Tools} i upewniæ siê, ¿e w dropdownie \textit{View} mamy wybran¹ opcjê \textit{CPU Memory}:
-\begin{figure}[H]
-    \includegraphics[width=\textwidth]{project2}
-    \caption{Podgl¹d RAM w emulatorze Mesen.}
-\end{figure}
-Faktycznie, jest tam wartoœæ szesnaœcie heksadecymalnie, zatem wszystko dzia³a jak powinno.
-Jest to dobry przyk³ad na naukê obs³ugi debuggera. Zatem w oknie g³ównym Mesena wybieramy z menu \textit{Debug} opcjê \textit{Debugger}. Okno debuggera mo¿e przyt³oczyæ ogromem informacji, na pocz¹tek skupimy siê na podgl¹dzie kodu. Postawmy breakpoint na adresie \$8000 (pocz¹tek kodu) klikaj¹c LPM na lewo od numeru adresu. Nastêpnie wyci¹gamy na wierzch okno z podgl¹dem RAM aby widzieæ nasz¹ zmienian¹ komórkê pamiêci a nastêpnie z menu debuggera wybieramy \textit{Debug} opcjê \textit{Reset}. Debugger sfokusuje siê na adresie \$8000, co oznaczone jest ¿ó³tym t³em oraz ¿ó³t¹ strza³k¹ wskazuj¹c¹ kolejn¹ instrukcjê do wykonania. Jednak¿e jest pewien problem - w pamiêci ju¿ jest ustawiona wartoœæ \$16. Otó¿ NES nie czyœci pamiêci podczas resetu - program sam musi o to zadbaæ.
-\begin{figure}[H]
-    \includegraphics[width=\textwidth]{project3}
-    \caption{Debugger w emulatorze Mesen.}
-\end{figure}
-Mimo tego przeœledŸmy wykonanie krok po kroku. W tym celu kilka razy kliknijmy przycisk \textit{Step Into}. Otó¿ po wykonaniu instrukcji \textit{sta} komórka w podgl¹dzie RAM podœwietli³a siê na czerwono - tak w³aœnie Mesen pokazuje, i¿ na danej komórce pamiêci odby³ siê zapis. Po dotarciu do instrukcji \textit{jmp} program "stoi" na instrukcji tak jak chcieliœmy pisz¹c pêtlê nieskoñczon¹.
-
-WprowadŸmy poprawkê ustawiaj¹c¹ wartoœæ na zero tu¿ po resecie, segment \textit{CODE} bêdzie wygl¹da³ nastêpuj¹co:
-\begin{verbatim}
-_INT_Reset:
-    lda #$00
-    sta $0000
-    lda #$16
-    sta $0000
-Stop:
-    jmp Stop
-\end{verbatim}
-
-Skompilujmy a nastêpnie podejrzyjmy w debuggerze jak ta wersja kodu siê wykonuje. Je¿eli nie wy³¹czyliœmy emulatora to breakpoint nadal bêdzie postawiony w po¿¹danym miejscu. Potrzebujemy przejœæ programu dwukrotnie - pierwsze przejœcie ustali wartoœæ w RAM na \$16, a w drugim zobaczymy dwukrotne ustawianie wartoœci - najpierw na zero, potem ponownie na \$16.
-Warto równie¿ popatrzeæ na sekcjê \textit{CPU Status} na prawo od naszego kodu w debuggerze a dok³adniej pole \textit{A} - to jest w³aœnie rejestr procesora, akumulator.
-
-Za nami bardzo d³ugie wprowadzenie a w³aœciwie nic wielkiego nie zaprogramowaliœmy. S¹ to solidne fundamenty do dalszego kodowania, bez nich prêdzej czy póŸniej wychodz¹ braki tej podstawowej wiedzy, niezrozumienie bardziej skomplikowanych zagadnieñ. Narzêdzia deweloperskie emulatora to równie¿ potê¿na rzecz któr¹ warto wykorzystywaæ przy ka¿dej napotkanej w¹tpliwoœci / problemie, pozwalaj¹ zajrzeæ do "czarnej skrzynki" jak¹ niejako jest NES daj¹c podgl¹d na procesy zachodz¹ce w uk³adach scalonych nawet w mikroskali jak¹ jest pojedyncza instrukcja procesora.
-
-\subsection{W³aœciwe "Hello World"}
-NES to konsola maj¹ca wiele pu³apek czyhaj¹cych na programistê któremu brakuje wiedzy technicznej na temat tego sprzêtu. Poni¿ej omówiê program który w pe³ni poprawnie zainicjuje konsolê do dzia³ania. Jest on wspólnym opracowaniem wielu ludzi wspó³czeœnie zajmuj¹cych siê t¹ tematyk¹ \cite{initcode}. Jest tam trochê dzia³añ które mo¿na by pomin¹æ gdy¿ prawid³owe wartoœci mog¹ ju¿ tam byæ ustawione, jednak¿e nie musi byæ to regu³a oraz pozostawi³o by to konsolê w stanie niezdefiniowanym nara¿aj¹c na trudne w zdebuggowaniu b³êdy. Przedstawiê ten kod go w kilku fragmentach. Nadal kod bêdzie dopisywany do pliku main.s, nale¿y to robiæ na samym pocz¹tku segmentu \textit{CODE}. Oto pierwszy z nich:
+\subsection{Hello World}
+Wiedz¹c ¿e jest perfekcyjnie opracowany kawa³ek kodu inicjuj¹cy konsolê do pe³ni poprawnego dzia³ania po prostu go skopiowa³em, zbudowa³em plik ROM a nastêpnie analizowa³em krok po kroku jak on dzia³a w emulatorze i co tam siê dziejê pod "mask¹" konsoli. Ten kod wygl¹da nastêpuj¹co:
 \begin{verbatim}
 reset:
     sei
     cld
     ldx #$40
     stx $4017
-    ldx #$FF
+    ldx #$ff
     txs
     inx
     stx $2000
     stx $2001
     stx $4010
-\end{verbatim}
-Opkod \textit{sei} to instrukcja wy³¹czaj¹ca odnotowywanie przez CPU przerwañ niemaskowalnych. To znaczy ¿e procesor nie bêdzie reagowa³ na przerwania, dziêki czemu nie bêdzie zak³óca³ wykonania naszego kodu inicjuj¹cego. Przerwania nadal nadal siê "wewnêtrznie", cyklicznie wystêpuj¹!
-Instrukcja \textit{cld} wy³¹cza tryb dziesiêtny. Oczywiœcie wariant procesora wbudowany w NES ma wyciêty tryb dziesiêtny, jednak¿e debuggery ogólnie dzia³aj¹ce na kodzie napisanym pod MOS 6502 opieraj¹ siê na tym, i¿ ta konkretna flaga jest ustawiona.
-Nastêpnie pojawiaj¹ siê \textit{stx} oraz \textit{ldx} - odpowiedniki instrukcji \textit{sta} oraz \textit{lda} tyle ¿e dla rejestru X. Jest jeszcze analogiczna par¹ mnemoników dla rejestru Y (\textit{sty}, \textit{ldy}).
-Wartoœæ \#\$40 to w³aœciwie ustawienie bitu numer szeœæ. Ta wartoœæ jest wysy³ana pod port \$4017 CPU w celu wy³¹czenia przerwañ generowanych przez dodatkowe podzespo³y rozszerzaj¹ce mo¿liwoœci kartrid¿a.
-Nastêpnie odbywa siê inicjacja stosu - wartoœæ \$FF jest ³adowana do rejestru X, mnemonik \textit{txs} kopiuje tê wartoœæ z rejestru X do rejestru wskaŸnika stosu. Proszê zauwa¿yæ ¿e to dolna czêœæ wskaŸnika stosu - górna zostanie ustawiona póŸniej.
-W rejestrze X nadal jest wartoœæ \$FF. Instrukcja \textit{inx} inkrementuje X o jeden, zatem rejestr siê "przekrêca", ustawiaj¹c siê na wartoœæ 0. Trzy kolejne zapisy pod adresy \$2000, \$2001 oraz \$4010 to wy³¹czenie wszelkich flag którymi te trzy rejestry zarz¹dzaj¹. Najwa¿niejsze z nich to dezaktywacja \nameref{nmi} - znaczy to tyle ¿e przestanie wykonywaæ siê to przerwanie (rejestr \$2000), wy³¹czenie renderowania ekranu (\$2001), wy³¹czenie przerwania DMC którego dedykowanym zastosowaniem jest prawid³owe odgrywanie digitalizowanych próbek dŸwiêkowych (\$4010).
 
-Powy¿sze instrukcje s¹ powi¹zane z kolei krokiem - trzeba odczekaæ dwie klatki obrazu aby uk³ad graficzny ustabilizowa³ siê oraz zacz¹³ pracowaæ w pe³ni prawid³owo \nameref{ppu} (TODO: dok³adne wskazanie omówienia co tam siê dzieje). Mamy wy³¹czone \nameref{nmi} ale jest jeszcze jedna metoda na odliczenie klatek obrazu. PPU zawsze sygnalizuje moment w którym zakoñczy³ rysowanie klatki obrazu (rozpocznie wygaszanie pionowe obrazu) poprzez ustawienie najwy¿szego bitu w rejestrze flag \$2002:
-\begin{verbatim}
-vblankwit1:
     bit $2002
-    bpl vblankwait1    
-\end{verbatim} 
+
+@vblankwait1:  
+    bit $2002
+    bpl @vblankwait1
+
+    txa
+@clrmem:
+    sta $000,x
+    sta $100,x
+    sta $200,x
+    sta $300,x
+    sta $400,x
+    sta $500,x
+    sta $600,x
+    sta $700,x
+    inx
+    bne @clrmem
+   
+@vblankwait2:
+    bit $2002
+    bpl @vblankwait2
+\end{verbatim}
+Mia³em ju¿ wiedzê na temat najczêœciej u¿ywanych mnemoników typu \textit(lda / ldx, sta / stx, inx, txs, txa) gdy¿ by³y proste do zrozumienia, idea etykiet równie¿ by³a jasna, orientacja na temat instrukcji skoków warunkowych te¿ by³a ale szczegó³ów nie zna³em. Co do fragmentów kodu to czêœæ pod etykiet¹ \textit{@clrmem} by³a jasna - zerowanie ca³ego powierzchni RAM (adresy \$0000 - \$07FF). Pêtla koñczy³a siê gdy rejestr X siê "przekrêci³" na zero. Pêtle z etykietami \textit{vblankwait} by³y po to, ¿eby konsola mog³a poprawnie wyœwietlaæ grafikê. Mnemonik \textit{cld} wy³¹cza³ tryb dziesiêtny którego w sumie i tak nie ma w tej wersji procesora.
+
+W celu zrozumienia ca³oœci w stu procentach zacz¹³em wertowaæ internet oraz debugowaæ ten kod.
+Opkod \textit{sei} to instrukcja wy³¹czaj¹ca odnotowywanie przez CPU przerwañ niemaskowalnych. To znaczy ¿e procesor nie bêdzie reagowa³ na przerwania, dziêki czemu nie bêdzie zak³óca³ wykonania naszego kodu inicjuj¹cego. Przerwania nadal nadal siê "wewnêtrznie", cyklicznie wystêpuj¹!
+Instrukcja \textit{cld} ma sens gdy¿ debuggery ogólnie dzia³aj¹ce na kodzie napisanym pod MOS 6502 (nie konkretnie pod NES) opieraj¹ siê na tym, i¿ ta konkretna flaga jest ustawiona.
+Wartoœæ \#\$40 to w³aœciwie ustawienie bitu numer szeœæ. Ta wartoœæ jest wysy³ana pod port \$4017 CPU w celu wy³¹czenia przerwañ generowanych przez dodatkowe podzespo³y rozszerzaj¹ce mo¿liwoœci kartrid¿a.
+Nastêpnie odbywa siê inicjacja stosu - wartoœæ \$FF jest ³adowana do rejestru X, mnemonik \textit{txs} kopiuje tê wartoœæ z rejestru X do rejestru wskaŸnika stosu. Proszê zauwa¿yæ ¿e to dolna czêœæ wskaŸnika stosu - górna jest ustawiona na wartoœæ \$01. Zatem w tym przypadku góra stosu to adres \$01FF.
+Trzy kolejne zapisy wartoœci zero pod adresy \$2000, \$2001 oraz \$4010 to wy³¹czenie wszelkich flag którymi te trzy rejestry zarz¹dzaj¹. Najwa¿niejsze z nich to dezaktywacja \nameref{nmi} - znaczy to tyle ¿e przestanie wykonywaæ siê to przerwanie (rejestr \$2000), wy³¹czenie renderowania ekranu (\$2001), wy³¹czenie przerwania DMC którego dedykowanym zastosowaniem jest prawid³owe odgrywanie digitalizowanych próbek dŸwiêkowych (\$4010).
+
+Z pêtlami \textit{vblankwait} sprawa okazuje siê bardziej skomplikowana. 
+Trzeba odczekaæ dwie klatki obrazu aby uk³ad graficzny ustabilizowa³ siê oraz zacz¹³ pracowaæ w pe³ni prawid³owo \nameref{ppu} (TODO: dok³adne wskazanie omówienia co tam siê dzieje). Mamy wy³¹czone \nameref{nmi} ale jest jeszcze jedna metoda na odliczenie klatek obrazu. PPU zawsze sygnalizuje moment w którym zakoñczy³ rysowanie klatki obrazu (rozpocznie wygaszanie pionowe obrazu) poprzez ustawienie najwy¿szego bitu w rejestrze flag \$2002. A ten mo¿na sprawdziæ mnemonikiem \textit{bit}.
 Opkod \textit{bit} ma specyficzne dzia³anie: wykonuje operacjê bitow¹ "akumulator AND operand instrukcji \textit{bit}", nastêpnie "zapomina" wynik za to ustawia flagê Z (flaga zero) jeœli wynik operacji AND by³ równy zero. Oprócz tego zawsze kopiuje bit szósty operandu do flagi V (flaga przepe³nienia), a siódmy do flagi N (flaga wartoœci ujemnej). W akumulatorze mamy w tej chwili wartoœæ zero - w jego przypadku akurat mamy gwarancjê ¿e po uruchomieniu konsoli / resecie zawsze bêdzie to wartoœæ zero a wczeœniej w kodzie nigdzie nie manipulowaliœmy tym rejestrem. Przyk³ad powinien rozjaœniæ:
 \begin{verbatim}
 W rejestrze A mamy wartoœæ zero.
@@ -399,271 +282,34 @@ bêdzie nastêpuj¹cy:
     %00000000
 AND %10000000
     %00000000
+\end{verbatim}
 a w rezultacie:
 \begin{enumerate}
 \item flaga Z zostanie ustawiona,
 \item flaga V zostanie wyzerowana,
 \item flaga N zostanie ustawiona.
 \end{enumerate}
-\end{verbatim}
 Powy¿sze omówienie instrukcji \textit{bit} to sytuacja to¿sama z t¹, gdy w³aœnie PPU da³o znak ¿e skoñczy³o rysowaæ klatkê.
-Instrukcja \textit{bpl} to jeden ze skoków warunkowych - dla \textit{bpl} skok do etykiety podanej jako operand ma miejsce, gdy flaga wartoœci ujemnej jest wyzerowana.
+Instrukcja \textit{bpl} to jeden ze skoków warunkowych - dla \textit{bpl} skok do etykiety podanej jako operand ma miejsce, gdy flaga wartoœci ujemnej (V) jest wyzerowana.
 Zatem program bêdzie "krêci³ siê w miejscu" dopóki flaga jest ujemna. Przestanie to robiæ gdy opkod \textit{bit} ustawi flagê N, a to siê stanie gdy PPU skoñczy rysowaæ klatkê oraz ustawi najwy¿szy bit w rejestrze \$2002. W ten sposób nale¿y rozumieæ zaprezentowany kod. Dzia³a to poprawnie tak¿e dlatego, i¿ po odczycie rejestru \$2002 najwy¿szy bit zostanie wyczyszczony, zatem nie ma mowy o sytuacji gdzie PPU ustawi³o tê flagê jakimœ cudem wczeœniej a teraz jest w trakcie rysowania kolejnej klatki.
 
-Mamy jeszcze ca³¹ klatkê obrazu do wykorzystania, zatem zróbmy coœ po¿ytecznego: czyszczenie RAM:
+Instrukcja \textit{bne} zamykaj¹ca pêtlê czyszcz¹c¹ RAM polega na fladze zero (Z). W przypadku tego skoku warunkowego skok ma miejsce gdy ta flaga jest wyzerowana / nieustawiona. Z tego wynika ¿e wykonanie zostanie przepuszczone za tê instrukcjê gdy flaga Z ustawi siê, a ustawi siê w momencie inkrementacji przekrêcaj¹c rejestr X (z wartoœci $FF na $00).
+
+Pêtla \textit{vblankwait2} ma dzia³anie analogiczne do oczekiwania na pierwsze rozpoczêcie wygaszania obrazu.
+
+Ten kod ju¿ wymaga³ bardzo du¿ej wiedzy ¿eby zrozumieæ co jak jest wykonane oraz czemu tak, a to nadal nie uruchomi siê nawet na emulatorze. W sekcji kodu potrzeba dodatkowych linii treœci a do tego warto jakoœ pokazaæ i¿ wszystko zosta³o zainicjowane poprawnie:
 \begin{verbatim}
-clear_memory:
-    lda #$00
-    sta $0000, x
-    sta $0100, x
-    sta $0200, x
-    sta $0300, x
-    sta $0400, x
-    sta $0500, x
-    sta $0600, x
-    sta $0700, x
-    inx
-    bne clear_memory
-\end{verbatim}
-Na pocz¹tek warto odnotowaæ ¿e rejestr X zawiera w tej chwili nadal wartoœæ zero. Instrukcja \textit{sta} ma kilka wariantów, powy¿szy korzysta z jednego z trybów procesora zwanego "Absolute X". Dzia³a to tak, ¿e w celu wyznaczenia adresu pod którym zmodyfikuje siê wartoœæ do konkretnego adresu w pierwszym operandzie \textit{sta} dodawana jest wartoœæ rejestru X, bêd¹cego zarazem drugim operandem. Na koñcu pêtli jest inkrementacja tego¿ rejestru oraz instrukcja \textit{bne} - kolejny skok warunkowy do etykiety podanej jako operand maj¹cy miejsce, gdy flaga Z ma wartoœæ zero. Zauwa¿my ¿e pierwsze sprawdzenie rejestru X odbywa siê gdy ma on wartoœæ jeden, zatem flaga Z nie bêdzie ustawiona dziêki czemu bêdzie mia³ skok do podanej etykiety. Tak bêdzie a¿ do momentu, gdy X siê "przekrêci" i wska¿e wartoœæ zero. W tym momencie wszystkie komórki RAM (zakres \$0000 - \$07FF) bêd¹ zawieraæ wartoœci zero. 
-Sam proces zerowania odbywa siê tak, ¿e w pierwszym kroku wyzerowane bêd¹ komórki \$0000, \$0100, \$0200, ... , \$0700. W drugim: \$0001, \$0101, \$0201, ... , \$0701. W ostatnim, dwieœcie piêædziesi¹tym szóstym kroku zerowanie odbêdzie siê pod adresami \$00FF, \$01FF, \$02FF, ... , \$07FF.
-
-Teraz czas na czekania na koniec drugiej klatki obrazu:
-\begin{verbatim}
-vblankwait2:
-    bit $2002
-    bpl vblankwait2
-\end{verbatim}
-Dzia³anie analogiczne do oczekiwania na pierwsze rozpoczêcie wygaszania obrazu.
-
-W tym momencie PPU jest ju¿ gotowe do pracy. Wykorzystajmy to wyœwietlaj¹c jednokolorowy obraz we fioletowym kolorze. Zrobimy to tak:
-\begin{verbatim}
-    lda #%01100000
-    sta $2001
-\end{verbatim}
-To co w³aœciwe ³adujemy do rejestru \$2001 to flagi ustawiaj¹ce "intensywny odcieñ" kolorów czerwonego oraz zielonego (TODO: referencja do opisu rejestru \$2001). Jest to graficzna funkcjonalnoœæ PPU, polegaj¹c¹ na tym i¿ wszystkie kolory w palecie kolorów (TODO: link) zmieniaj¹ odcieñ na bardziej czerwony, zielony, niebieski b¹dŸ dowolny miks nich. Nie bêdziemy wchodziæ w ten temat, gdy¿ jest to niemal nieu¿ywana funkcjonalnoœæ a jej praktyczne zastosowanie jest minimalne. Po prostu przyda nam siê ona do szybkiego testu czy uk³ad graficzny dzia³a poprawnie. O palecie barw bêdzie w dalszej czêœci dokumentu.
-
-Zanim skompilujemy program to mo¿emy ju¿ usun¹æ kawa³ek kodu który napisaliœmy w poprzedniej podsekcji - nie ma potrzeby oddzielnego ustawiania komórki RAM o adresie \$0000 na zero. Finalny kod wygl¹da nastêpuj¹co:
-\begin{verbatim}
-.segment "HEADER"
-.byte "NES"
-.byte $1A
-.byte 2
-.byte 0
-.byte %00000000
-.byte %00000000
-.byte 0, 0
-.byte 0, 0, 0, 0, 0, 0
-
-.segment "CODE"
-_INT_Reset:
-    sei
-    cld
-    ldx    #$40
-    stx    $4017
-    ldx    #$FF
-    txs
-    inx
-    stx    $2000
-    stx    $2001
-    stx    $4010
-    
-vblankwait1:
-    bit    $2002
-    bpl    vblankwait1    
-    
-clear_memory:
-    lda    #$00
-    sta    $0000, x
-    sta    $0100, x
-    sta    $0200, x
-    sta    $0300, x
-    sta    $0400, x
-    sta    $0500, x
-    sta    $0600, x
-    sta    $0700, x
-    inx
-    bne    clear_memory
-
-vblankwait2:
-    bit $2002
-    bpl vblankwait2    
-    
-    lda #%01100000
-    sta $2001
-    
-    lda #$16
-    sta $0000
+   lda	#%01100000
+	sta	$2001
+	
+	lda #$16
+	sta $0000
 Stop:
-    jmp Stop
+	jmp Stop
 
 .segment "VECTORS"
 .word _INT_Reset
 \end{verbatim}
-
-Nie ma potrzeby zmiany pliku konfiguracyjnego linkera. Budowê pliku ROM przeprowadzamy tymi samymi komendami co poprzednio:
-\begin{verbatim}
-ca65 -o main.o main.s
-ld65 -t nes -o main.nes main.o
-\end{verbatim}
-
-Jeœli nie wy³¹czyliœmy poprzednio breakpointu w debuggerze to po otworzeniu œwie¿o skompilowanego ROM w emulatorze wykonanie programu bêdzie wstrzymane przed pierwsz¹ instrukcj¹. W tym celu trzeba wejœæ w okno debuggera i nacisn¹æ przycisk \textit{Continue}.
-\begin{figure}[H]
-    \includegraphics[width=\textwidth]{project4}
-    \caption{Przycisk \textit{Continue} w debuggerze emulatora Mesen.}
-\end{figure}
-
-Po udanym procesie budowania naszym oczom powinien ukazaæ siê jednokolorowy, fioletowy ekran:
-\begin{figure}[H]
-    \includegraphics[width=\textwidth]{project5}
-    \caption{Wynik dotychczas napisanego kodu.}
-\end{figure}
-
-Warto poœwiêciæ chwilê podgl¹dowi w debuggerze tego, jak wykonuje siê kod w celu lepszego zrozumienia. Warte odnotowania jest, i¿ debugger u¿ywa specjalnych etykiet dla niektórych rejestrów - s¹ to zwyczajowe nazwy tych¿e. Po najechaniu na tak¹ etykietê ujrzymy szczegó³owy opis danego rejestru. Po prawej stronie okna jest lista wszystkich takich rejestrów w okienku \textit{Labels}, w³aœnie tam mo¿na równie¿ edytowaæ treœæ pokazuj¹c¹ siê w dymku. Bêdzie o tym mowa jeszcze póŸniej. 
-Druga sprawa to w sekcji \textit{PPU Status} zaznaczone s¹ checkboxy \textit{Intensify Red} oraz \textit{Intensify Green} - to w³aœnie bity które ustawiliœmy w rejestrze \$2001. Mo¿emy odznaczyæ / zaznaczyæ te pola gdy zatrzymamy wykonanie programu. Zmiany bêd¹ widoczne po ponownym uruchomieniu wykonania kodu, polecam poeksperymentowaæ.
-\begin{figure}[H]
-    \includegraphics[width=\textwidth]{project6}
-    \caption{Podgl¹d stanu flag "intensywnych odcieni" w debuggerze.}
-\end{figure}
-
-\subsection{Paleta kolorów}
-Uk³ad graficzny NES ma grupê zdefiniowanych kolorów jakie mo¿na uzyskaæ. Ta grupa liczy szeœædziesi¹t cztery ró¿ne barwy:
-\begin{figure}[H]
-    \includegraphics[width=\textwidth]{Savtool-swatches}
-    \caption{Wszystkie mo¿liwe kolory do uzyskania na konsoli NES.}
-\end{figure}
-U³o¿enie nie jest przypadkowe - na krañcach mamy odcienie szaroœci, w œrodku kolory s¹ u³o¿one w pionie wed³ug jasnoœci, w poziomie na podstawie ko³a barw (TODO: na pewno?). £atwo zauwa¿yæ ¿e iloœæ ró¿nych kolorów jest mniejsza: jest dziesiêæ identycznych czerni oraz dwa razy wystêpuje kolor bia³y. Odejmuj¹c duplikaty dostajemy 54 unikalne barwy. Jest jeszcze jedna istotna sprawa - kolor oznaczony jako \$0D sprawia problemy niektórym odbiornikom telewizyjnym które interpretuj¹ go jako sygna³ synchronizacyjny co powoduje problemy z poprawnym wyœwietlaniem obrazu, tote¿ zaleca siê go nie stosowaæ. Z tego powodu ten kolor równie¿ nazywa siê potocznie "ciemniejszym ni¿ czerñ".
-
-To te¿ nie jest tak, ¿e mo¿emy u¿ywaæ wszystkich kolorów w danej chwili. PPU ma dedykowany obszar pamiêci na ograniczon¹ iloœæ kolorów. Podzielony jest on kolory t³a (background / BGR) oraz kolory sprite'ów (sprites / SPR). Obie grupy maj¹ po cztery palety. Te kolei maj¹ cztery kolory. Jednak to nie koniec Tutaj napotykamy na kolejne ograniczenie - jeden z kolorów jest wspólny dla wszystkich palet a zarazem pe³ni rolê koloru przezroczystego dla sprite'ów. Przyk³ad:
-\begin{figure}[H]
-    \includegraphics[width=\textwidth]{project7}
-    \caption{Podgl¹d obecnie ustawionej palety barw w emulatorze Mesen.}
-\end{figure}
-Po lewej stronie s¹ kolory t³a, po prawej sprite'ów. Ka¿da paleta zajmuje jeden rz¹d. Pierwszy kolor w ka¿dej palecie to kolor wspólny, tutaj jest to czerñ (oznaczenie \$0F). Palety przyjê³o siê numerowaæ od zera. Zatem paleta numer 0 dla t³a zawiera cztery barwy - czarny (wspólny, \$0F), niebieski (\$01), szary (\$00), niebieski (\$01). Barwy jak najbardziej mog¹ siê powtarzaæ w ramach palety. Paleta numer 1 dla t³a zawiera kolory: czarny (wspólny, \$0F), granatowy (\$02), granatowy (\$02), szary (\$00). Barwy mog¹ powtarzaæ siê równie¿ miêdzy ró¿nymi paletami. Ni¿ej s¹ palety numer 2 oraz 3, skonstruowane analogicznie. Czerñ bêdzie kolorem domyœlnie wype³niaj¹cym ekran jeœli nie bêdzie w tym miejscu innej barwy.
-Palety sprite'ów te¿ maj¹ cztery komórki na kolory. Przeanalizujmy paletê numer zero: czarny (wspólny, \$0F), niebieski (\$01), jasnoró¿owy (\$34), fioletowy (\$03). Kolejne palety skonstruowane s¹ analogicznie. W tym przypadku czarny bêdzie kolorem przezroczystym - piksel z tym kolorem bêdzie zast¹piony kolorem t³a. Zatem w³aœciwie ka¿da tego typu paleta ma tylko trzy unikalne kolory.
-
-Podsumowuj¹c - w danej chwili program mo¿e mieæ do dyspozycji 25 unikalnych kolorów: cztery kolory z palety BGR 0, plus po trzy kolory z palet BGR 1 - 3 (powtarza siê jeden kolor wystêpuj¹cy w palecie zero) ³¹cznie dziewiêæ, plus po trzy kolory z palet SPR 0 - 3.
-
-Skorzystajmy z przyswojonej wiedzy i ustalmy paletê kolorów w naszym programie. Przyda siê ona do dalszych zagadnieñ. Najpierw opracujemy tablicê z wartoœciami po¿¹danych kolorów:
-\begin{verbatim}
-palette:
-	.byte $0f, $01, $21, $31	; BGR 0
-	.byte $0f, $02, $22, $32	; BGR 1
-	.byte $0f, $03, $23, $33	; BGR 2
-	.byte $0f, $04, $24, $34	; BGR 3
-	.byte $0f, $05, $25, $35	; SPR 0
-	.byte $0f, $06, $26, $36	; SPR 1
-	.byte $0f, $07, $27, $37	; SPR 2
-	.byte $0f, $08, $28, $38	; SPR 3
-\end{verbatim}
-Umieszczamy j¹ za pêtl¹ nieskoñczon¹ \textit{Stop}. Symbol œrednika oznacza komentarz - to co napiszemy po œredniku nie jest traktowane jak kod. Tutaj u¿yliœmy komentarza do opisu które dane odpowiadaj¹ której palecie barw.
-To co jest po etykiecie \textit{palette} traktujemy jako jeden ci¹g³y obszar. Podzia³ na wiersze zosta³ zastosowany dla czytelnoœci.
-Zatem mamy do wczytania 32 wartoœci. Jak to zrobiæ? Musimy napisaæ odpowiedni¹ pêtlê, jednak¿e najpierw wpiszmy te wartoœci do pamiêci RAM pod adresy \$0010 - \$002F - podmienimy to na wysy³anie danych do PPU za chwilê. Poni¿szy kod umieszczamy po pêtli \textit{vblankwait2} ale przed konfiguracj¹ rejestru \$2001:
-\begin{verbatim}
-	ldx #$00
-_loop_Palette:
-	lda palette, x
-	sta $0010, x
-	inx
-	cpx #$20
-	bne _loop_Palette
-\end{verbatim}
-Przed rozpoczêciem pêtli w rejestrze X umieszczamy pocz¹tkow¹ wartoœæ licznika. Nastêpnie mamy pêtle która zajmuje siê przetwarzaniem danych. Mnemonik \textit{lda} równie¿ ma tryb "absolute X" który ju¿ widzieliœmy w wykonaniu instrukcji \textit{sta} przy czyszczeniu RAM. Zatem kod \textit{lda palette, x} za³aduje bajt danych spod adresu (etykieta \textit(palette) + wartoœæ w rejestrze X). Nastêpnie wrzucamy tê wartoœæ do RAM, inkrementujemy X. Kolejna instrukcja, \textit{cpx} porównuje wartoœæ znajduj¹c¹ siê w rejestrze X z wartoœci¹ podan¹ jako operand. Istniej¹ równie¿ analogiczne operacje do porównywania dla pozosta³ych rejestrów {cmp dla rejestru A, cpy dla rejestru Y}. Rezultatem porównania jest ustawienie odpowiednich flag procesora. Tutaj porównanie jest z wartoœci¹ \#\$20 {32 dziesiêtnie} czyli wielkoœci¹ naszych danych, czyli po tylu bajtach chcemy zakoñczyæ przetwarzanie. ¯eby to zapewniæ po porównaniu stawiamy skok warunkowy, tutaj jest to \textit{bne}. Dlaczego? W³aœciwie warunek koñca pêtli mo¿na uj¹æ jako \textit{rejestr X == \#\$20} i tylko w tym jednym przypadku zostanie ustawiona flaga procesora Z; w innych przypadkach bêdzie ona wyzerowana, a co za tym idzie \textit{bne} bêdzie skaka³ na pocz¹tek pêtli zawsze z wyj¹tkiem sytuacji w której w³aœnie chcemy zakoñczyæ pêtli - wtedy \textit{bne} "przepuœci" wykonywanie programu dalej.
-
-Powy¿szy kod to pewien wzorzec na przetwarzanie zbiorów danych, które ma czêsto miejsce w kodzie.
-
-Czas na kompilacje oraz uruchomienie. Po za³adowaniu ROMu do emulatora i wejœciu do podgl¹du pamiêci powinniœmy ujrzeæ nastêpuj¹cy widok:
-\begin{figure}[H]
-    \includegraphics[width=\textwidth]{project8}
-    \caption{Podgl¹d RAM w emulatorze Mesen z przetworzonymi danymi.}
-\end{figure}
-Uda³o siê za³adowaæ poprawnie przetworzyæ dane, zatem czas na przes³anie ich do PPU.
-
-Przypominam i¿ program komunikuje siê bezpoœrednio wy³¹cznie z CPU, zatem nie mo¿emy u¿yæ instrukcji \textit{sta} i tylko zmieniæ adresu docelowego. CPU ma dedykowane adresy do komunikacji z PPU i ich w³aœnie u¿yjemy.
-Najpierw przygotowujemy PPU powiadamiaj¹c poprzez CPU o adresie do którego chcemy uzyskaæ dostêp, umieszczaj¹c poni¿szy kod po pêtli \textit{vblankwait2} a przed pêtl¹ przetwarzaj¹c¹ dane:
-\begin{verbatim}
-   lda	$2002
-	lda	#$3f
-	sta	$2006
-	lda	#$00
-	sta   $2006
-\end{verbatim}
-Odczyt rejestru \$2002 s³u¿y do zresetowania adresu wewnêtrznego PPU. Uk³ad graficzny ca³y czas wykonuje jakieœ operacje u¿ywaj¹c w³aœnie tego wewnêtrznego adresu a my musimy mu "przeszkodziæ" przerywaj¹c domyœln¹ pracê.
-Nastêpnie ³adujemy górn¹ czêœæ adresu pocz¹tku palety te³ (\#\$3f) i wysy³amy do adresu \$2006 CPU. Ten z kolei przekazuje go PPU którego zadaniem jest ustawiæ tê wartoœæ w swoim wewnêtrznym adresie. Kolejna para \textit{lda / sta} przesy³a dolny bajt adresu pocz¹tku palety te³. Adres \$3F00 to pierwsza wartoœæ palety BGR 0.
-
-Kolejna czynnoœæ to faktyczne przesy³anie danych. Wymaga to ma³ej zmiany w pêtli, podmienienia instrukcji \textit{sta} na nastêpuj¹c¹:
-\begin{verbatim}
-	sta $2007
-\end{verbatim}
-Instrukcja ta robi dwie rzeczy: poprzez poœrednika - CPU wysy³a zawartoœæ rejestru A pod wczeœniej ustalony adres w PPU, a samo PPU zwiêksza wewnêtrzny adres o jeden.
-
-Zatem ca³a pêtla bêdzie wygl¹da³a tak:
-\begin{verbatim}
-_loop_Palette:
-	lda palette, x
-	sta $2007
-	inx
-	cpx #$20
-	bne _loop_Palette
-\end{verbatim}
-Rozwijaj¹c w¹tek ta pêtla przeœle zawartoœæ tablicy \textit{palette} do PPU bajt po bajcie. W pierwszym kroku pierwsza wartoœæ z tablicy wyl¹duje pod adresem \$3F00, w drugim druga wartoœæ znajdzie siê pod adresem \$3F01, ... , w ostatnim, trzydziestym drugim kroku ostatnia wartoœæ z tablicy zostanie umieszczona pod adresem \$3F1F.
-
-PPU przechowuje palety t³a pod adresami \$3F00 - \$3F0F a adresu sprite'ów pod adresami \$3F10 - \$3F1F. W powy¿szych kodzie korzystamy z faktu "ci¹g³oœci" tego obszaru - nie musimy osobno ustawiaæ adresu na pocz¹tek obszaru palet sprite'ów, przesy³aj¹c za jednym zamachem wszystkie dane.
-
-Czas na przetestowanie zmian. Po uruchomieniu emulatora pierwsz¹ spraw¹ mog¹c¹ rzuciæ siê w oczy jest inny kolor t³a w oknie g³ównym w przypadku gdy domyœlnie emulator mia³ ustawione inny "wspó³dzielony" kolor.  W celu sprawdzenia czy palety zosta³y pomyœlnie ustawione, nale¿y przejœæ do menu \textit{debug -> PPU Viewer} a nastêpnie do zak³adki \textit{Palette Viewer}. 
-\begin{figure}[H]
-    \includegraphics[width=\textwidth]{project9}
-    \caption{Podgl¹d ustalonej przez program palety kolorów w emulatorze Mesen.}
-\end{figure}
-Na obrazku powy¿ej wygl¹da na to, ¿e wszystko dzia³a jak nale¿y. To okno pozwala równie¿ na ustawienie innych kolorów w trakcie dzia³ania, wystarczy klikn¹æ w odpowiedni¹ komórkê a nastêpnie wybraæ po¿¹dany kolor; zmiana nast¹pi natychmiastowo. Przydatna sprawa przy eksperymentowaniu.
-
-\subsection{Grafika - Sprite'y}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\subsection{Grafika - T³o}
-
-
-
-
-
-
-
-
-
-
-
-
-\subsection{Synchronizacja pêtli g³ównej programu z \nameref{nmi}}
-
-
-
-
-
-
-
-
-
-
-
-
-\subsection{Rozpoznawanie regionu konsoli}
-
-
-
-
-
 
 
 
@@ -828,6 +474,8 @@ https://www.amazon.com/Controllers-Children-Birthday-Childhood-Memories/dp/B083R
 \bibitem{IMG-mgiq502} http://www.retrogamingmuseum.com/the-collection/micro-genius-nes-clone
 \bibitem{IMG-pegiq502} https://archiwum.allegro.pl/oferta/konsola-pegasus-iq-502-pady-pudelko-plomba-i7530854084.html
 \bibitem{IMG-deniq502} https://youla.ru/moskva/hobbi-razvlecheniya/konsoli-igry/dendy-classic-2-novaia-5b6c9ae1cf689a85567f44a6
+\bibitem{wikinesdev} http://wiki.nesdev.com/w/index.php/Nesdev\_Wiki
+\bibitem{forumnesdev} http://forums.nesdev.com/
 \bibitem{wikiNES}
 https://en.wikipedia.org/wiki/Nintendo\_Entertainment\_System
 \bibitem{wikiNESClones}
@@ -844,6 +492,8 @@ https://en.wikipedia.org/wiki/Nintendo\_Entertainment\_System\_hardware\_clone
 \bibitem{wikitracker} https://pl.wikipedia.org/wiki/Tracker\_(oprogramowanie\_muzyczne)
 \bibitem{initcode} http://wiki.nesdev.com/w/index.php/Init\_code
 \bibitem{IMG-nescolors} http://wiki.nesdev.com/w/index.php/File:Savtool-swatches.png
+\bibitem{nerdynights} https://nerdy-nights.nes.science/
+\bibitem{nesasm} http://www.nespowerpak.com/nesasm/
 \end{thebibliography}
 
 \end{document}
