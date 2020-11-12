@@ -526,24 +526,96 @@ Druga sprawa to w sekcji \textit{PPU Status} zaznaczone s¹ checkboxy \textit{Int
     \caption{Podgl¹d stanu flag "intensywnych odcieni" w debuggerze.}
 \end{figure}
 
-
-
-
-
-
-
-
-
 \subsection{Paleta kolorów}
+Uk³ad graficzny NES ma grupê zdefiniowanych kolorów jakie mo¿na uzyskaæ. Ta grupa liczy szeœædziesi¹t cztery ró¿ne barwy:
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{Savtool-swatches}
+    \caption{Wszystkie mo¿liwe kolory do uzyskania na konsoli NES.}
+\end{figure}
+U³o¿enie nie jest przypadkowe - na krañcach mamy odcienie szaroœci, w œrodku kolory s¹ u³o¿one w pionie wed³ug jasnoœci, w poziomie na podstawie ko³a barw (TODO: na pewno?). £atwo zauwa¿yæ ¿e iloœæ ró¿nych kolorów jest mniejsza: jest dziesiêæ identycznych czerni oraz dwa razy wystêpuje kolor bia³y. Odejmuj¹c duplikaty dostajemy 54 unikalne barwy. Jest jeszcze jedna istotna sprawa - kolor oznaczony jako \$0D sprawia problemy niektórym odbiornikom telewizyjnym które interpretuj¹ go jako sygna³ synchronizacyjny co powoduje problemy z poprawnym wyœwietlaniem obrazu, tote¿ zaleca siê go nie stosowaæ. Z tego powodu ten kolor równie¿ nazywa siê potocznie "ciemniejszym ni¿ czerñ".
 
+To te¿ nie jest tak, ¿e mo¿emy u¿ywaæ wszystkich kolorów w danej chwili. PPU ma dedykowany obszar pamiêci na ograniczon¹ iloœæ kolorów. Podzielony jest on kolory t³a (background / BGR) oraz kolory sprite'ów (sprites / SPR). Obie grupy maj¹ po cztery palety. Te kolei maj¹ cztery kolory. Jednak to nie koniec Tutaj napotykamy na kolejne ograniczenie - jeden z kolorów jest wspólny dla wszystkich palet a zarazem pe³ni rolê koloru przezroczystego dla sprite'ów. Przyk³ad:
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{project7}
+    \caption{Podgl¹d obecnie ustawionej palety barw w emulatorze Mesen.}
+\end{figure}
+Po lewej stronie s¹ kolory t³a, po prawej sprite'ów. Ka¿da paleta zajmuje jeden rz¹d. Pierwszy kolor w ka¿dej palecie to kolor wspólny, tutaj jest to czerñ (oznaczenie \$0F). Palety przyjê³o siê numerowaæ od zera. Zatem paleta numer 0 dla t³a zawiera cztery barwy - czarny (wspólny, \$0F), niebieski (\$01), szary (\$00), niebieski (\$01). Barwy jak najbardziej mog¹ siê powtarzaæ w ramach palety. Paleta numer 1 dla t³a zawiera kolory: czarny (wspólny, \$0F), granatowy (\$02), granatowy (\$02), szary (\$00). Barwy mog¹ powtarzaæ siê równie¿ miêdzy ró¿nymi paletami. Ni¿ej s¹ palety numer 2 oraz 3, skonstruowane analogicznie. Czerñ bêdzie kolorem domyœlnie wype³niaj¹cym ekran jeœli nie bêdzie w tym miejscu innej barwy.
+Palety sprite'ów te¿ maj¹ cztery komórki na kolory. Przeanalizujmy paletê numer zero: czarny (wspólny, \$0F), niebieski (\$01), jasnoró¿owy (\$34), fioletowy (\$03). Kolejne palety skonstruowane s¹ analogicznie. W tym przypadku czarny bêdzie kolorem przezroczystym - piksel z tym kolorem bêdzie zast¹piony kolorem t³a. Zatem w³aœciwie ka¿da tego typu paleta ma tylko trzy unikalne kolory.
 
+Podsumowuj¹c - w danej chwili program mo¿e mieæ do dyspozycji 25 unikalnych kolorów: cztery kolory z palety BGR 0, plus po trzy kolory z palet BGR 1 - 3 (powtarza siê jeden kolor wystêpuj¹cy w palecie zero) ³¹cznie dziewiêæ, plus po trzy kolory z palet SPR 0 - 3.
 
+Skorzystajmy z przyswojonej wiedzy i ustalmy paletê kolorów w naszym programie. Przyda siê ona do dalszych zagadnieñ. Najpierw opracujemy tablicê z wartoœciami po¿¹danych kolorów:
+\begin{verbatim}
+palette:
+	.byte $0f, $01, $21, $31	; BGR 0
+	.byte $0f, $02, $22, $32	; BGR 1
+	.byte $0f, $03, $23, $33	; BGR 2
+	.byte $0f, $04, $24, $34	; BGR 3
+	.byte $0f, $05, $25, $35	; SPR 0
+	.byte $0f, $06, $26, $36	; SPR 1
+	.byte $0f, $07, $27, $37	; SPR 2
+	.byte $0f, $08, $28, $38	; SPR 3
+\end{verbatim}
+Umieszczamy j¹ za pêtl¹ nieskoñczon¹ \textit{Stop}. Symbol œrednika oznacza komentarz - to co napiszemy po œredniku nie jest traktowane jak kod. Tutaj u¿yliœmy komentarza do opisu które dane odpowiadaj¹ której palecie barw.
+To co jest po etykiecie \textit{palette} traktujemy jako jeden ci¹g³y obszar. Podzia³ na wiersze zosta³ zastosowany dla czytelnoœci.
+Zatem mamy do wczytania 32 wartoœci. Jak to zrobiæ? Musimy napisaæ odpowiedni¹ pêtlê, jednak¿e najpierw wpiszmy te wartoœci do pamiêci RAM pod adresy \$0010 - \$002F - podmienimy to na wysy³anie danych do PPU za chwilê. Poni¿szy kod umieszczamy po pêtli \textit{vblankwait2} ale przed konfiguracj¹ rejestru \$2001:
+\begin{verbatim}
+	ldx #$00
+_loop_Palette:
+	lda palette, x
+	sta $0010, x
+	inx
+	cpx #$20
+	bne _loop_Palette
+\end{verbatim}
+Przed rozpoczêciem pêtli w rejestrze X umieszczamy pocz¹tkow¹ wartoœæ licznika. Nastêpnie mamy pêtle która zajmuje siê przetwarzaniem danych. Mnemonik \textit{lda} równie¿ ma tryb "absolute X" który ju¿ widzieliœmy w wykonaniu instrukcji \textit{sta} przy czyszczeniu RAM. Zatem kod \textit{lda palette, x} za³aduje bajt danych spod adresu (etykieta \textit(palette) + wartoœæ w rejestrze X). Nastêpnie wrzucamy tê wartoœæ do RAM, inkrementujemy X. Kolejna instrukcja, \textit{cpx} porównuje wartoœæ znajduj¹c¹ siê w rejestrze X z wartoœci¹ podan¹ jako operand. Istniej¹ równie¿ analogiczne operacje do porównywania dla pozosta³ych rejestrów {cmp dla rejestru A, cpy dla rejestru Y}. Rezultatem porównania jest ustawienie odpowiednich flag procesora. Tutaj porównanie jest z wartoœci¹ \#\$20 {32 dziesiêtnie} czyli wielkoœci¹ naszych danych, czyli po tylu bajtach chcemy zakoñczyæ przetwarzanie. ¯eby to zapewniæ po porównaniu stawiamy skok warunkowy, tutaj jest to \textit{bne}. Dlaczego? W³aœciwie warunek koñca pêtli mo¿na uj¹æ jako \textit{rejestr X == \#\$20} i tylko w tym jednym przypadku zostanie ustawiona flaga procesora Z; w innych przypadkach bêdzie ona wyzerowana, a co za tym idzie \textit{bne} bêdzie skaka³ na pocz¹tek pêtli zawsze z wyj¹tkiem sytuacji w której w³aœnie chcemy zakoñczyæ pêtli - wtedy \textit{bne} "przepuœci" wykonywanie programu dalej.
 
+Powy¿szy kod to pewien wzorzec na przetwarzanie zbiorów danych, które ma czêsto miejsce w kodzie.
 
+Czas na kompilacje oraz uruchomienie. Po za³adowaniu ROMu do emulatora i wejœciu do podgl¹du pamiêci powinniœmy ujrzeæ nastêpuj¹cy widok:
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{project8}
+    \caption{Podgl¹d RAM w emulatorze Mesen z przetworzonymi danymi.}
+\end{figure}
+Uda³o siê za³adowaæ poprawnie przetworzyæ dane, zatem czas na przes³anie ich do PPU.
 
+Przypominam i¿ program komunikuje siê bezpoœrednio wy³¹cznie z CPU, zatem nie mo¿emy u¿yæ instrukcji \textit{sta} i tylko zmieniæ adresu docelowego. CPU ma dedykowane adresy do komunikacji z PPU i ich w³aœnie u¿yjemy.
+Najpierw przygotowujemy PPU powiadamiaj¹c poprzez CPU o adresie do którego chcemy uzyskaæ dostêp, umieszczaj¹c poni¿szy kod po pêtli \textit{vblankwait2} a przed pêtl¹ przetwarzaj¹c¹ dane:
+\begin{verbatim}
+   lda	$2002
+	lda	#$3f
+	sta	$2006
+	lda	#$00
+	sta   $2006
+\end{verbatim}
+Odczyt rejestru \$2002 s³u¿y do zresetowania adresu wewnêtrznego PPU. Uk³ad graficzny ca³y czas wykonuje jakieœ operacje u¿ywaj¹c w³aœnie tego wewnêtrznego adresu a my musimy mu "przeszkodziæ" przerywaj¹c domyœln¹ pracê.
+Nastêpnie ³adujemy górn¹ czêœæ adresu pocz¹tku palety te³ (\#\$3f) i wysy³amy do adresu \$2006 CPU. Ten z kolei przekazuje go PPU którego zadaniem jest ustawiæ tê wartoœæ w swoim wewnêtrznym adresie. Kolejna para \textit{lda / sta} przesy³a dolny bajt adresu pocz¹tku palety te³. Adres \$3F00 to pierwsza wartoœæ palety BGR 0.
 
+Kolejna czynnoœæ to faktyczne przesy³anie danych. Wymaga to ma³ej zmiany w pêtli, podmienienia instrukcji \textit{sta} na nastêpuj¹c¹:
+\begin{verbatim}
+	sta $2007
+\end{verbatim}
+Instrukcja ta robi dwie rzeczy: poprzez poœrednika - CPU wysy³a zawartoœæ rejestru A pod wczeœniej ustalony adres w PPU, a samo PPU zwiêksza wewnêtrzny adres o jeden.
 
+Zatem ca³a pêtla bêdzie wygl¹da³a tak:
+\begin{verbatim}
+_loop_Palette:
+	lda palette, x
+	sta $2007
+	inx
+	cpx #$20
+	bne _loop_Palette
+\end{verbatim}
+Rozwijaj¹c w¹tek ta pêtla przeœle zawartoœæ tablicy \textit{palette} do PPU bajt po bajcie. W pierwszym kroku pierwsza wartoœæ z tablicy wyl¹duje pod adresem \$3F00, w drugim druga wartoœæ znajdzie siê pod adresem \$3F01, ... , w ostatnim, trzydziestym drugim kroku ostatnia wartoœæ z tablicy zostanie umieszczona pod adresem \$3F1F.
 
+PPU przechowuje palety t³a pod adresami \$3F00 - \$3F0F a adresu sprite'ów pod adresami \$3F10 - \$3F1F. W powy¿szych kodzie korzystamy z faktu "ci¹g³oœci" tego obszaru - nie musimy osobno ustawiaæ adresu na pocz¹tek obszaru palet sprite'ów, przesy³aj¹c za jednym zamachem wszystkie dane.
+
+Czas na przetestowanie zmian. Po uruchomieniu emulatora pierwsz¹ spraw¹ mog¹c¹ rzuciæ siê w oczy jest inny kolor t³a w oknie g³ównym w przypadku gdy domyœlnie emulator mia³ ustawione inny "wspó³dzielony" kolor.  W celu sprawdzenia czy palety zosta³y pomyœlnie ustawione, nale¿y przejœæ do menu \textit{debug -> PPU Viewer} a nastêpnie do zak³adki \textit{Palette Viewer}. 
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{project9}
+    \caption{Podgl¹d ustalonej przez program palety kolorów w emulatorze Mesen.}
+\end{figure}
+Na obrazku powy¿ej wygl¹da na to, ¿e wszystko dzia³a jak nale¿y. To okno pozwala równie¿ na ustawienie innych kolorów w trakcie dzia³ania, wystarczy klikn¹æ w odpowiedni¹ komórkê a nastêpnie wybraæ po¿¹dany kolor; zmiana nast¹pi natychmiastowo. Przydatna sprawa przy eksperymentowaniu.
 
 \subsection{Grafika - Sprite'y}
 
@@ -771,6 +843,7 @@ https://en.wikipedia.org/wiki/Nintendo\_Entertainment\_System\_hardware\_clone
 \bibitem{IMG-famitrackeroverview} https://blog.uptodown.com/wp-content/uploads/Famitracker-pianola.jpg.webp
 \bibitem{wikitracker} https://pl.wikipedia.org/wiki/Tracker\_(oprogramowanie\_muzyczne)
 \bibitem{initcode} http://wiki.nesdev.com/w/index.php/Init\_code
+\bibitem{IMG-nescolors} http://wiki.nesdev.com/w/index.php/File:Savtool-swatches.png
 \end{thebibliography}
 
 \end{document}
